@@ -4,9 +4,11 @@ import app.reitan.hyttebok.graphql.AppSchema
 import com.google.gson.Gson
 import io.ktor.application.Application
 import io.ktor.application.log
+import io.ktor.locations.KtorExperimentalLocationsAPI
 import io.ktor.routing.routing
 import org.koin.ktor.ext.inject
 
+@KtorExperimentalLocationsAPI
 @Suppress("unused")
 fun Application.routes() {
     routing {

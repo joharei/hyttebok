@@ -12,8 +12,6 @@ import io.ktor.locations.KtorExperimentalLocationsAPI
 import io.ktor.locations.Locations
 import io.ktor.request.path
 import org.jetbrains.exposed.sql.Database
-import org.koin.core.Koin
-import org.koin.log.PrintLogger
 import org.koin.standalone.StandAloneContext.startKoin
 import org.slf4j.event.Level
 
@@ -42,6 +40,6 @@ fun Application.module(testing: Boolean = false) {
     }
     install(CORS) {
         host("localhost:3000")
-        host("https://hyttebok-1ac54.firebaseapp.com/")
+        host("hyttebok-1ac54.firebaseapp.com", schemes = listOf("https"))
     }
 }

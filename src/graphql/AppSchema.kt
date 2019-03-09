@@ -1,11 +1,12 @@
 package app.reitan.hyttebok.graphql
 
+import app.reitan.hyttebok.TripService
 import app.reitan.hyttebok.models.TripDao
 import com.github.pgutkowski.kgraphql.KGraphQL
-import org.jetbrains.exposed.sql.transactions.transaction
 import org.joda.time.DateTime
+import org.koin.core.Koin
 
-class AppSchema {
+class AppSchema(private val service: TripService) {
 
     val schema = KGraphQL.schema {
 
@@ -19,20 +20,27 @@ class AppSchema {
         }
 
         query("trips") {
-            resolver<List<Trip>> {
-                transaction {
-                    TripDao.all().map(::Trip)
-                }
+            suspendResolver<List<Trip>> {
+                service.getAllTrips()
+                    .map(::Trip)
             }
         }
 
         query("trip") {
-            resolver { id: Int ->
-                transaction {
-                    TripDao[id].let(::Trip)
-                }
+            suspendResolver { slug: String ->
+                Trip(service.getTrip(slug))
             }
         }
+
+        mutation("doNothing") {
+            description = "Does nothing"
+            resolver { a: String ->
+                Koin.logger.info("called mutation with $a")
+                Dummy()
+            }
+        }
+
+        type<Dummy>()
     }
 }
 
@@ -55,3 +63,6 @@ data class Trip(
         tripDao.photos
     )
 }
+
+@Suppress("unused")
+class Dummy(val dummy: String = "")

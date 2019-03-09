@@ -40,6 +40,6 @@ fun Application.module(testing: Boolean = false) {
     }
     install(CORS) {
         host("localhost:3000")
-        host("hyttebok-1ac54.firebaseapp.com", schemes = listOf("https"))
+        host("hyttebok.reitan.app", schemes = listOf("https"))
     }
 }

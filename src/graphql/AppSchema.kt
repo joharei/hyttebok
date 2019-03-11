@@ -3,7 +3,7 @@ package app.reitan.hyttebok.graphql
 import app.reitan.hyttebok.TripService
 import app.reitan.hyttebok.models.TripDao
 import com.github.pgutkowski.kgraphql.KGraphQL
-import org.joda.time.DateTime
+import org.joda.time.LocalDate
 import org.koin.core.Koin
 
 class AppSchema(private val service: TripService) {
@@ -14,9 +14,9 @@ class AppSchema(private val service: TripService) {
             description = "A trip to the cabin"
         }
 
-        stringScalar<DateTime> {
-            serialize = DateTime::toString
-            deserialize = DateTime::parse
+        stringScalar<LocalDate> {
+            serialize = LocalDate::toString
+            deserialize = LocalDate::parse
         }
 
         query("trips") {
@@ -49,8 +49,8 @@ data class Trip(
     val title: String,
     val slug: String,
     val text: String,
-    val startDate: DateTime,
-    val endDate: DateTime,
+    val startDate: LocalDate,
+    val endDate: LocalDate,
     val photos: String
 ) {
     constructor(tripDao: TripDao) : this(
@@ -58,8 +58,8 @@ data class Trip(
         tripDao.title,
         tripDao.slug,
         tripDao.text,
-        tripDao.startDate,
-        tripDao.endDate,
+        tripDao.startDate.toLocalDate(),
+        tripDao.endDate.toLocalDate(),
         tripDao.photos
     )
 }

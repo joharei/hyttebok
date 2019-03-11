@@ -1,12 +1,12 @@
 package app.reitan.hyttebok.graphql
 
-import app.reitan.hyttebok.TripService
+import app.reitan.hyttebok.DBService
 import app.reitan.hyttebok.models.TripDao
 import com.github.pgutkowski.kgraphql.KGraphQL
 import org.joda.time.LocalDate
 import org.koin.core.Koin
 
-class AppSchema(private val service: TripService) {
+class AppSchema(private val service: DBService) {
 
     val schema = KGraphQL.schema {
 
@@ -29,6 +29,12 @@ class AppSchema(private val service: TripService) {
         query("trip") {
             suspendResolver { slug: String ->
                 Trip(service.getTrip(slug))
+            }
+        }
+
+        query("isUserAuthorized") {
+            suspendResolver { firebaseUid: String ->
+                service.isUserAuthorized(firebaseUid)
             }
         }
 

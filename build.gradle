@@ -46,10 +46,11 @@ dependencies {
     compile "org.postgresql:postgresql:$postgresql_version"
 
     // GraphQL
-    compile "com.github.pgutkowski:kgraphql:$kgraphql_version"
+    compile "com.apurebase:kgraphql:$kgraphql_version"
 
     // Dependency Injection
     compile "org.koin:koin-ktor:$koin_version"
+    compile "org.koin:koin-logger-slf4j:$koin_version"
 
     // Testing
     testCompile "io.ktor:ktor-server-tests:$ktor_version"

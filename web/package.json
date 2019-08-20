@@ -1,0 +1,10 @@
+{
+  "name": "hyttebok-elm-frontend",
+  "version": "1.0.0",
+  "scripts": {
+    "downgen": "elm-graphql http://localhost:8080/graphql --base Hyttebok"
+  },
+  "devDependencies": {
+    "@dillonkearns/elm-graphql": "^3.6.2"
+  }
+}

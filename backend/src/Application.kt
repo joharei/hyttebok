@@ -8,6 +8,8 @@ import io.ktor.features.CallLogging
 import io.ktor.features.ContentNegotiation
 import io.ktor.features.DefaultHeaders
 import io.ktor.gson.gson
+import io.ktor.http.HttpHeaders
+import io.ktor.http.HttpMethod
 import io.ktor.locations.KtorExperimentalLocationsAPI
 import io.ktor.locations.Locations
 import io.ktor.request.path
@@ -43,7 +45,10 @@ fun Application.module(testing: Boolean = false) {
         }
     }
     install(CORS) {
+        method(HttpMethod.Post)
+        header(HttpHeaders.ContentType)
         host("localhost:3000")
+        host("localhost:8000")
         host("hyttebok.reitan.app", schemes = listOf("https"))
     }
 }

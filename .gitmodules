@@ -1,0 +1,3 @@
+[submodule "web/external-deps/material-components-elm"]
+	path = web/external-deps/material-components-elm
+	url = git@github.com:aforemny/material-components-elm.git

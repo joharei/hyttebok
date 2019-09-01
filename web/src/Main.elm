@@ -2,14 +2,16 @@ module Main exposing (main)
 
 import Browser
 import Browser.Navigation as Nav
-import Graphql.Document as Document
 import Graphql.Http
 import Graphql.Operation exposing (RootQuery)
 import Graphql.SelectionSet as SelectionSet exposing (SelectionSet)
 import Html exposing (..)
+import Html.Attributes
 import Hyttebok.Object
 import Hyttebok.Object.Trip as Trip
 import Hyttebok.Query as Query
+import Material.List exposing (list, listConfig, listItem, listItemConfig)
+import Material.Typography as Typography
 import RemoteData exposing (RemoteData)
 import Url
 import Url.Parser as Parser exposing (Parser)
@@ -102,15 +104,6 @@ update msg model =
 
 
 
--- SUBSCRIPTIONS
-
-
-subscriptions : Model -> Sub Msg
-subscriptions _ =
-    Sub.none
-
-
-
 -- VIEW
 
 
@@ -118,7 +111,7 @@ view : Model -> Browser.Document Msg
 view model =
     { title = "Hyttebok"
     , body =
-        [ div []
+        [ div [ Typography.typography ]
             [ h1 [] [ text "Turer" ]
             , case model.trips of
                 RemoteData.NotAsked ->
@@ -131,7 +124,7 @@ view model =
                     text "Klarte ikke å hente turer"
 
                 RemoteData.Success trips ->
-                    ul [] (List.map viewTrip trips)
+                    list { listConfig | additionalAttributes = [ Html.Attributes.style "max-width" "600px" ] } (List.map viewTrip trips)
             ]
         ]
     }
@@ -139,7 +132,7 @@ view model =
 
 viewTrip : Trip -> Html msg
 viewTrip trip =
-    li []
+    listItem listItemConfig
         [ text trip.name
         ]
 

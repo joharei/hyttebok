@@ -1,0 +1,34 @@
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+  - elm_frontend
+
+jobs:
+  - job: Backend
+    pool:
+      vmImage: ubuntu-latest
+    steps:
+      - task: Gradle@2
+        inputs:
+          gradleWrapperFile: backend/gradlew
+          workingDirectory: backend
+          tasks: build
+
+  - job: Frontend
+    pool:
+      vmImage: ubuntu-latest
+    steps:
+      - checkout: self
+        submodules: true
+
+      - task: Npm@1
+        inputs:
+          command: install
+          workingDir: web
+
+      - task: Npm@1
+        inputs:
+          command: custom
+          workingDir: web
+          customCommand: run build

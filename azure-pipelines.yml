@@ -9,11 +9,12 @@ jobs:
     pool:
       vmImage: ubuntu-latest
     steps:
-      - task: Gradle@2
-        inputs:
-          gradleWrapperFile: backend/gradlew
-          workingDirectory: backend
-          tasks: build
+      - script: |
+          git remote add heroku https://heroku:$(heroku token)@git.heroku.com/hyttebok.git
+          git subtree split --prefix backend -b heroku
+          git push -f heroku heroku:master
+          git branch -D heroku
+        displayName: Push to Heroku
 
   - job: Frontend
     pool:

@@ -4,32 +4,65 @@
 trigger:
   - elm_frontend
 
-jobs:
-  - job: Backend
-    pool:
-      vmImage: ubuntu-latest
-    steps:
-      - script: |
-          git remote add heroku https://heroku:$(heroku token)@git.heroku.com/hyttebok.git
-          git subtree split --prefix backend -b heroku
-          git push -f heroku heroku:master
-          git branch -D heroku
-        displayName: Push to Heroku
+stages:
+  - stage: Build
+    jobs:
+      - job: Backend
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+          - task: Gradle@2
+            inputs:
+              gradleWrapperFile: backend/gradlew
+              workingDirectory: backend
+              tasks: build
 
-  - job: Frontend
-    pool:
-      vmImage: ubuntu-latest
-    steps:
-      - checkout: self
-        submodules: true
+      - job: Frontend
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+          - checkout: self
+            submodules: true
 
-      - task: Npm@1
-        inputs:
-          command: install
-          workingDir: web
+          - task: Npm@1
+            inputs:
+              command: install
+              workingDir: web
 
-      - task: Npm@1
-        inputs:
-          command: custom
-          workingDir: web
-          customCommand: run build
+          - task: Npm@1
+            inputs:
+              command: custom
+              workingDir: web
+              customCommand: run build
+
+          - publish: web/build
+            artifact: Frontend build
+
+  - stage: Deploy
+    dependsOn: Build
+    jobs:
+      - job: Backend
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+          - script: |
+              git remote add heroku https://heroku:$(heroku token)@git.heroku.com/hyttebok.git
+              git subtree split --prefix backend -b heroku
+              git push -f heroku heroku:master
+              git branch -D heroku
+            displayName: Push to Heroku
+
+      - job: Frontend
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+          - task: DownloadPipelineArtifact@2
+            inputs:
+              artifact: Frontend build
+              path: $(Build.SourcesDirectory)/web/build
+
+          - script: npx --package firebase-tools firebase deploy --only hosting:hyttebok-elm
+            workingDirectory: web
+            env:
+              FIREBASE_TOKEN: $(Firebase token)
+            displayName: Deploy to Firebase Hosting

@@ -11,3 +11,5 @@ repl-temp-*
 
 # node
 node_modules
+
+.firebase

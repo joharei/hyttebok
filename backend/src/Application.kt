@@ -50,5 +50,6 @@ fun Application.module(testing: Boolean = false) {
         host("localhost:3000")
         host("localhost:8000")
         host("hyttebok.reitan.app", schemes = listOf("https"))
+        host("hyttebok-elm.firebaseapp.com", schemes = listOf("https"))
     }
 }

@@ -2,7 +2,8 @@
     "type": "application",
     "source-directories": [
         "external-deps/material-components-elm/src",
-        "src"
+        "src",
+        "env"
     ],
     "elm-version": "0.19.0",
     "dependencies": {

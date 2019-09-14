@@ -2,6 +2,7 @@ module Main exposing (main)
 
 import Browser
 import Browser.Navigation as Nav
+import Constants
 import Graphql.Http
 import Graphql.Operation exposing (RootQuery)
 import Graphql.SelectionSet as SelectionSet exposing (SelectionSet)
@@ -71,7 +72,7 @@ makeRequest : Cmd Msg
 makeRequest =
     query
         |> Graphql.Http.queryRequest
-            "http://localhost:8080/graphql"
+            Constants.graphqlUrl
         |> Graphql.Http.send (RemoteData.fromResult >> GotResponse)
 
 

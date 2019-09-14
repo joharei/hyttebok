@@ -29,6 +29,16 @@ stages:
               command: install
               workingDir: web
 
+          - script: |
+              cat > env/Constants.elm <<EOF
+              module Constants exposing (graphqlUrl)
+
+              graphqlUrl =
+                  "https://hyttebok.herokuapp.com/graphql"
+              EOF
+            displayName: Add environment files
+            workingDirectory: web
+
           - task: Npm@1
             inputs:
               command: custom

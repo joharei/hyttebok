@@ -11,6 +11,7 @@ import Html.Attributes
 import Hyttebok.Object
 import Hyttebok.Object.Trip as Trip
 import Hyttebok.Query as Query
+import Markdown
 import Material.Drawer as Drawer exposing (drawerContent, drawerHeader, drawerTitle, permanentDrawer, permanentDrawerConfig)
 import Material.List exposing (ListItemConfig, list, listConfig, listItem, listItemConfig)
 import Material.TopAppBar as TopAppBar exposing (topAppBar, topAppBarConfig)
@@ -153,8 +154,22 @@ view model =
                             ]
                         ]
                     ]
-                , div [ TopAppBar.fixedAdjust ]
-                    []
+                , div
+                    [ Html.Attributes.style "padding-left" "18px"
+                    , Html.Attributes.style "padding-right" "18px"
+                    , Html.Attributes.style "overflow" "auto"
+                    , Html.Attributes.style "height" "100%"
+                    , Html.Attributes.style "box-sizing" "border-box"
+                    , TopAppBar.fixedAdjust
+                    , Drawer.appContent
+                    ]
+                    [ case model.page of
+                        Main ->
+                            mainBody
+
+                        _ ->
+                            text ""
+                    ]
                 ]
             ]
         ]
@@ -195,6 +210,17 @@ drawerBody tripModel selectedId =
                 list { listConfig | additionalAttributes = [ Html.Attributes.style "max-width" "300px" ] } (List.map (viewTrip listItemConfig_) trips)
         ]
     ]
+
+
+mainBody : Html msg
+mainBody =
+    Markdown.toHtml [] """
+Fordi vi har glemt å skrive i hytteboka ("analog" / "manuell") fra dag 1 ble denne digitale hytteboka opprinnelig laget hjemme som en oppsummering av bruk av hytta på basis as almanakker, bilder og andre kilder 2 år etter at vi kjøpte den.
+
+Ideen var at dette skulle føres inn i den analoge hytteboka med penn en dag jeg hadde god tid og hadde gått dagens tur.
+
+I ettertid har det vist seg at det aldri vil skje, og at det heller ikke er praktisk. Derfor er denne hytteboka nå blitt til "Faktisk hyttebok", og inneholder alle turene (med et visst etterslep...) vi har hatt på hytta, inkludert bilder og kart over turene.
+                """
 
 
 

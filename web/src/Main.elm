@@ -17,7 +17,8 @@ import Material.TopAppBar as TopAppBar exposing (topAppBar, topAppBarConfig)
 import Material.Typography as Typography
 import RemoteData exposing (RemoteData)
 import Url
-import Url.Parser as Parser exposing (Parser)
+import Url.Builder
+import Url.Parser as Parser exposing ((</>), Parser, int, s)
 
 
 
@@ -44,7 +45,6 @@ type alias Model =
     { key : Nav.Key
     , page : Page
     , trips : TripModel
-    , drawerSelectedId : Maybe Int
     }
 
 
@@ -55,6 +55,7 @@ type alias TripModel =
 type Page
     = NotFound
     | Main
+    | TripPage Int
 
 
 init : () -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
@@ -62,7 +63,6 @@ init _ url key =
     ( { key = key
       , page = toRoute url
       , trips = RemoteData.Loading
-      , drawerSelectedId = Nothing
       }
     , makeRequest
     )
@@ -84,7 +84,7 @@ type Msg
     = LinkClicked Browser.UrlRequest
     | UrlChanged Url.Url
     | GotResponse TripModel
-    | SetDrawerSelectedId (Maybe Int)
+    | NavigateToTrip (Maybe Int)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -108,9 +108,14 @@ update msg model =
             , Cmd.none
             )
 
-        SetDrawerSelectedId index ->
-            ( { model | drawerSelectedId = index }
-            , Cmd.none
+        NavigateToTrip id ->
+            ( model
+            , case id of
+                Just idValue ->
+                    Nav.pushUrl model.key (Url.Builder.absolute [ "trip", String.fromInt idValue ] [])
+
+                Nothing ->
+                    Cmd.none
             )
 
 
@@ -129,7 +134,15 @@ view model =
             , Typography.typography
             ]
             [ permanentDrawer permanentDrawerConfig
-                (drawerBody model.trips SetDrawerSelectedId model.drawerSelectedId)
+                (drawerBody model.trips
+                    (case model.page of
+                        TripPage id ->
+                            Just id
+
+                        _ ->
+                            Nothing
+                    )
+                )
             , div [ Drawer.appContent ]
                 [ topAppBar { topAppBarConfig | fixed = True }
                     [ TopAppBar.row []
@@ -155,13 +168,13 @@ viewTrip listItemConfig_ trip =
         ]
 
 
-drawerBody : TripModel -> (Maybe Int -> msg) -> Maybe Int -> List (Html msg)
-drawerBody tripModel setSelectedId selectedId =
+drawerBody : TripModel -> Maybe Int -> List (Html Msg)
+drawerBody tripModel selectedId =
     let
-        listItemConfig_ index =
+        listItemConfig_ id =
             { listItemConfig
-                | activated = selectedId == index
-                , onClick = Just (setSelectedId index)
+                | activated = selectedId == id
+                , onClick = Just (NavigateToTrip id)
             }
     in
     [ drawerHeader []
@@ -213,7 +226,9 @@ tripSelection =
 route : Parser (Page -> a) a
 route =
     Parser.oneOf
-        [ Parser.map Main Parser.top ]
+        [ Parser.map Main Parser.top
+        , Parser.map TripPage (s "trip" </> int)
+        ]
 
 
 toRoute : Url.Url -> Page

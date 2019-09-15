@@ -11,7 +11,9 @@ import Html.Attributes
 import Hyttebok.Object
 import Hyttebok.Object.Trip as Trip
 import Hyttebok.Query as Query
-import Material.List exposing (list, listConfig, listItem, listItemConfig)
+import Material.Drawer as Drawer exposing (drawerContent, drawerHeader, drawerTitle, permanentDrawer, permanentDrawerConfig)
+import Material.List exposing (ListItemConfig, list, listConfig, listItem, listItemConfig)
+import Material.TopAppBar as TopAppBar exposing (topAppBar, topAppBarConfig)
 import Material.Typography as Typography
 import RemoteData exposing (RemoteData)
 import Url
@@ -42,6 +44,7 @@ type alias Model =
     { key : Nav.Key
     , page : Page
     , trips : TripModel
+    , drawerSelectedId : Maybe Int
     }
 
 
@@ -59,6 +62,7 @@ init _ url key =
     ( { key = key
       , page = toRoute url
       , trips = RemoteData.Loading
+      , drawerSelectedId = Nothing
       }
     , makeRequest
     )
@@ -80,6 +84,7 @@ type Msg
     = LinkClicked Browser.UrlRequest
     | UrlChanged Url.Url
     | GotResponse TripModel
+    | SetDrawerSelectedId (Maybe Int)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -103,6 +108,11 @@ update msg model =
             , Cmd.none
             )
 
+        SetDrawerSelectedId index ->
+            ( { model | drawerSelectedId = index }
+            , Cmd.none
+            )
+
 
 
 -- VIEW
@@ -112,30 +122,66 @@ view : Model -> Browser.Document Msg
 view model =
     { title = "Hyttebok"
     , body =
-        [ div [ Typography.typography ]
-            [ h1 [] [ text "Turer" ]
-            , case model.trips of
-                RemoteData.NotAsked ->
-                    text "Vent litt..."
-
-                RemoteData.Loading ->
-                    text "Vent litt..."
-
-                RemoteData.Failure _ ->
-                    text "Klarte ikke å hente turer"
-
-                RemoteData.Success trips ->
-                    list { listConfig | additionalAttributes = [ Html.Attributes.style "max-width" "600px" ] } (List.map viewTrip trips)
+        [ div
+            [ Html.Attributes.style "display" "-ms-flexbox"
+            , Html.Attributes.style "display" "flex"
+            , Html.Attributes.style "height" "100vh"
+            , Typography.typography
+            ]
+            [ permanentDrawer permanentDrawerConfig
+                (drawerBody model.trips SetDrawerSelectedId model.drawerSelectedId)
+            , div [ Drawer.appContent ]
+                [ topAppBar { topAppBarConfig | fixed = True }
+                    [ TopAppBar.row []
+                        [ TopAppBar.section
+                            [ TopAppBar.alignStart
+                            ]
+                            [ Html.span [ TopAppBar.title ] [ text "Hyttebok" ]
+                            ]
+                        ]
+                    ]
+                , div [ TopAppBar.fixedAdjust ]
+                    []
+                ]
             ]
         ]
     }
 
 
-viewTrip : Trip -> Html msg
-viewTrip trip =
-    listItem listItemConfig
+viewTrip : (Maybe Int -> ListItemConfig msg) -> Trip -> Html msg
+viewTrip listItemConfig_ trip =
+    listItem (listItemConfig_ (Maybe.Just trip.id))
         [ text trip.name
         ]
+
+
+drawerBody : TripModel -> (Maybe Int -> msg) -> Maybe Int -> List (Html msg)
+drawerBody tripModel setSelectedId selectedId =
+    let
+        listItemConfig_ index =
+            { listItemConfig
+                | activated = selectedId == index
+                , onClick = Just (setSelectedId index)
+            }
+    in
+    [ drawerHeader []
+        [ Html.h3 [ drawerTitle ] [ text "Turer" ]
+        ]
+    , drawerContent []
+        [ case tripModel of
+            RemoteData.NotAsked ->
+                text "Vent litt..."
+
+            RemoteData.Loading ->
+                text "Vent litt..."
+
+            RemoteData.Failure _ ->
+                text "Klarte ikke å hente turer"
+
+            RemoteData.Success trips ->
+                list { listConfig | additionalAttributes = [ Html.Attributes.style "max-width" "300px" ] } (List.map (viewTrip listItemConfig_) trips)
+        ]
+    ]
 
 
 

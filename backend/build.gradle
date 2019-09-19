@@ -51,9 +51,6 @@ dependencies {
     // Dependency Injection
     compile "org.koin:koin-ktor:$koin_version"
     compile "org.koin:koin-logger-slf4j:$koin_version"
-
-    // Testing
-    testCompile "io.ktor:ktor-server-tests:$ktor_version"
 }
 
 task stage(dependsOn: ['installDist'])

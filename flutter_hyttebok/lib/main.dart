@@ -1,19 +1,28 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_hyttebok/TripsList.dart';
+import 'package:flutter_hyttebok/containers/trips_list.dart';
+import 'package:flutter_hyttebok/models/app_state.dart';
+import 'package:flutter_hyttebok/reducers/app_reducer.dart';
+import 'package:flutter_redux/flutter_redux.dart';
+import 'package:redux/redux.dart';
 
-import 'Body.dart';
+import 'body.dart';
 
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
+  final store = Store<AppState>(appReducer, initialState: AppState.initial());
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.brown,
+    return StoreProvider(
+      store: store,
+      child: MaterialApp(
+        title: 'Flutter Demo',
+        theme: ThemeData(
+          primarySwatch: Colors.brown,
+        ),
+        home: MyHomePage(title: 'Hyttebok'),
       ),
-      home: MyHomePage(title: 'Hyttebok'),
     );
   }
 }
@@ -35,7 +44,7 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
       ),
       drawer: MediaQuery.of(context).size.width < 600
-          ? Drawer(child: TripsList())
+          ? Drawer(child: TripsListContainer())
           : null,
       body: Body(),
     );

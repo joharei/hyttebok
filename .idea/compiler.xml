@@ -2,8 +2,8 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <bytecodeTargetLevel>
-      <module name="hyttebok.main" target="11" />
-      <module name="hyttebok.test" target="11" />
+      <module name="hyttebok.main" target="13" />
+      <module name="hyttebok.test" target="13" />
     </bytecodeTargetLevel>
   </component>
 </project>

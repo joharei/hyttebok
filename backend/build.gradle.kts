@@ -53,3 +53,7 @@ kotlin.sourceSets["test"].kotlin.srcDirs("test")
 
 sourceSets["main"].resources.srcDirs("resources")
 sourceSets["test"].resources.srcDirs("testresources")
+
+task("stage") {
+    dependsOn("installDist")
+}

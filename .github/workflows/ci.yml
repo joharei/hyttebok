@@ -21,6 +21,7 @@ jobs:
         java-version: 1.13
 
     - name: Build with Gradle
+      working-directory: backend
       run: ./gradlew build
   
   deploy_backend:

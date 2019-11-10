@@ -6,25 +6,23 @@
     "@material-ui/core": "^3.9.2",
     "@material-ui/icons": "^3.0.2",
     "apollo-boost": "^0.3.1",
-    "axios": "^0.18.0",
-    "debug": "^4.1.1",
-    "firebase": "^5.8.6",
+    "firebase": "^7.3.0",
     "graphql": "^14.1.1",
-    "react": "^16.8",
+    "react": "^16.11.0",
     "react-apollo": "^2.5.2",
-    "react-dom": "^16.8",
+    "react-dom": "^16.11.0",
     "react-markdown": "^4.0.6",
     "react-mde": "^7.0.4",
     "react-router-dom": "^4.3.1",
-    "react-scripts": "^2.1.4",
-    "recompose": "^0.30.0",
-    "typescript": "^3.2.4"
+    "react-scripts": "^3.2.0",
+    "typescript": "^3.7.2"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "lint": "eslint \"./src/**/*.{ts,tsx,tsx.snap}\" --max-warnings 0"
   },
   "browserslist": [
     ">0.2%",
@@ -33,17 +31,18 @@
     "not op_mini all"
   ],
   "devDependencies": {
-    "@types/debug": "^4.1.2",
-    "@types/jest": "^23.3.13",
-    "@types/node": "^10.12.18",
-    "@types/react": "^16.7.20",
-    "@types/react-dom": "^16.0.11",
-    "@types/react-router-dom": "^4.3.1",
-    "eslint-plugin-prettier": "^3.0.1",
-    "prettier": "^1.16.4",
-    "tslint": "^5.13.0",
-    "tslint-config-prettier": "^1.18.0",
-    "tslint-immutable": "^5.3.0",
-    "tslint-react": "^3.6.0"
+    "@types/jest": "^24.0.22",
+    "@types/node": "^12.12.7",
+    "@types/react": "^16.9.11",
+    "@types/react-dom": "^16.9.4",
+    "@types/react-router-dom": "^5.1.2",
+    "eslint": "^6.6.0",
+    "eslint-config-prettier": "^6.5.0",
+    "eslint-config-react": "^1.1.7",
+    "eslint-plugin-jest": "^23.0.3",
+    "eslint-plugin-prettier": "^3.1.1",
+    "eslint-plugin-react": "^7.16.0",
+    "eslint-plugin-react-hooks": "^2.2.0",
+    "prettier": "^1.19.1"
   }
 }

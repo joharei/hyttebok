@@ -1,0 +1,74 @@
+{
+  "extends": [
+    "eslint:recommended",
+    "plugin:react/recommended",
+    "plugin:@typescript-eslint/recommended",
+    "prettier/@typescript-eslint",
+    "plugin:prettier/recommended",
+    "plugin:jest/recommended",
+    "plugin:jest/style"
+  ],
+  "plugins": [
+    "react",
+    "react-hooks",
+    "@typescript-eslint",
+    "prettier",
+    "jest"
+  ],
+  "env": {
+    "browser": true,
+    "jest": true,
+    "es6": true
+  },
+  "rules": {
+    "prettier/prettier": [
+      "warn",
+      {
+        "singleQuote": true
+      }
+    ],
+    "jest/no-large-snapshots": "warn",
+    "@typescript-eslint/explicit-function-return-type": "off",
+    "@typescript-eslint/no-parameter-properties": [
+      "error",
+      {
+        "allows": [
+          "public readonly"
+        ]
+      }
+    ],
+    "react/jsx-boolean-value": [
+      "error",
+      "never"
+    ],
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn"
+  },
+  "settings": {
+    "react": {
+      "pragma": "React",
+      "version": "detect"
+    }
+  },
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaVersion": 6,
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true
+    }
+  },
+  "overrides": [
+    {
+      "files": "**/*.tsx.snap",
+      "rules": {
+        "jest/no-large-snapshots": [
+          "warn",
+          {
+            "maxSize": 200
+          }
+        ]
+      }
+    }
+  ]
+}

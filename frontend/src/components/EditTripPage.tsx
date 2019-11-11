@@ -15,11 +15,16 @@ import ReactMarkdown from 'react-markdown';
 import ReactMde from 'react-mde';
 import 'react-mde/lib/styles/css/react-mde-all.css';
 import { RouteComponentProps } from 'react-router';
-import { EditTripQuery, GET_EDIT_TRIP } from '../apollo/EditTripQuery';
-import { ITripWithText } from '../models/ITrip';
+import { GET_EDIT_TRIP } from '../apollo/EditTripQuery';
+import { TripWithText } from '../models/Trip';
+import { useQuery } from '@apollo/react-hooks';
+import {
+  GetEditTrip,
+  GetEditTripVariables,
+} from '../generated/apollo/GetEditTrip';
 
 interface Props {
-  trip: ITripWithText;
+  trip: TripWithText;
 }
 
 const useStyles = makeStyles(({ spacing }: Theme) => ({
@@ -150,19 +155,20 @@ const EditTripPageUI = (props: Props) => {
   );
 };
 
-export const EditTripPage = (props: RouteComponentProps<{ slug: string }>) => (
-  <EditTripQuery
-    query={GET_EDIT_TRIP}
-    variables={{ slug: props.match.params.slug }}
-  >
-    {({ data: { trip } = { trip: undefined }, loading, error }) => {
-      if (loading) {
-        return <CircularProgress />;
-      }
-      if (error || !trip) {
-        return <p>Error</p>;
-      }
-      return <EditTripPageUI trip={trip} />;
-    }}
-  </EditTripQuery>
-);
+export const EditTripPage = (props: RouteComponentProps<{ slug: string }>) => {
+  const { data, loading, error } = useQuery<GetEditTrip, GetEditTripVariables>(
+    GET_EDIT_TRIP,
+    {
+      variables: { slug: props.match.params.slug },
+    }
+  );
+
+  if (loading) {
+    return <CircularProgress />;
+  }
+  if (error || !data) {
+    return <p>Error</p>;
+  }
+
+  return <EditTripPageUI trip={data.trip} />;
+};

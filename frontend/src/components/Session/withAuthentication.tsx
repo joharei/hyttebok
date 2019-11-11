@@ -8,23 +8,23 @@ import { Unsubscribe, User } from 'firebase';
 import React from 'react';
 import { AuthUserContext } from '.';
 import client from '../../apollo/client';
-import { IAuthorizedData, IS_AUTHORIZED } from '../../apollo/IsAuthorizedQuery';
+import { IS_AUTHORIZED } from '../../apollo/IsAuthorizedQuery';
 import Firebase, { withFirebase } from '../Firebase';
+import { IsAuthorized } from '../../generated/apollo/IsAuthorized';
 
-interface IState {
-  authUser: User | null,
-  unauthorizedDialogOpen: boolean
+interface State {
+  authUser: User | null;
+  unauthorizedDialogOpen: boolean;
 }
 
-interface IProps {
-  firebase: Firebase
+interface Props {
+  firebase: Firebase;
 }
 
-const withAuthentication = <P extends IProps>(
-  Component: React.ComponentType<P>,
+const withAuthentication = <P extends Props>(
+  Component: React.ComponentType<P>
 ): React.ComponentType<P> => {
-  class WithAuthentication extends React.Component<P, IState> {
-
+  class WithAuthentication extends React.Component<P, State> {
     private listener: Unsubscribe | null = null;
 
     constructor(props: Readonly<P>) {
@@ -38,41 +38,43 @@ const withAuthentication = <P extends IProps>(
 
     public componentDidMount(): void {
       if (this.props.firebase !== undefined) {
-        this.listener = this.props.firebase.auth.onAuthStateChanged(authUser => {
-          authUser
-            ? client
-              .query<IAuthorizedData>({
-                query: IS_AUTHORIZED,
-                variables: {
-                  firebaseUid: authUser.uid,
-                },
-              })
-              .then(value => {
-                if (value.loading) {
-                  return;
-                }
-                if (value.errors) {
-                  this.setState({
-                    authUser: null,
-                    unauthorizedDialogOpen: false,
-                  });
-                }
-                if (value.data.isUserAuthorized) {
-                  this.setState({
-                    authUser,
-                    unauthorizedDialogOpen: false,
-                  });
-                } else {
-                  this.props.firebase.doSignOut().then(() => {
-                    this.setState({
-                      authUser: null,
-                      unauthorizedDialogOpen: true,
-                    });
-                  });
-                }
-              })
-            : this.setState({ authUser: null });
-        });
+        this.listener = this.props.firebase.auth.onAuthStateChanged(
+          authUser => {
+            authUser
+              ? client
+                  .query<IsAuthorized>({
+                    query: IS_AUTHORIZED,
+                    variables: {
+                      firebaseUid: authUser.uid,
+                    },
+                  })
+                  .then(value => {
+                    if (value.loading) {
+                      return;
+                    }
+                    if (value.errors) {
+                      this.setState({
+                        authUser: null,
+                        unauthorizedDialogOpen: false,
+                      });
+                    }
+                    if (value.data.isUserAuthorized) {
+                      this.setState({
+                        authUser,
+                        unauthorizedDialogOpen: false,
+                      });
+                    } else {
+                      this.props.firebase.doSignOut().then(() => {
+                        this.setState({
+                          authUser: null,
+                          unauthorizedDialogOpen: true,
+                        });
+                      });
+                    }
+                  })
+              : this.setState({ authUser: null });
+          }
+        );
       }
     }
 
@@ -86,7 +88,7 @@ const withAuthentication = <P extends IProps>(
       return (
         <AuthUserContext.Provider value={this.state.authUser}>
           <div>
-            <Component {...this.props as any} />
+            <Component {...(this.props as any)} />
 
             <Dialog
               open={this.state.unauthorizedDialogOpen}
@@ -101,12 +103,11 @@ const withAuthentication = <P extends IProps>(
                 </DialogContentText>
               </DialogContent>
               <DialogActions>
-                <Button onClick={this.handleClose} color="primary" autoFocus={true}>
+                <Button onClick={this.handleClose} color="primary" autoFocus>
                   Ok
                 </Button>
               </DialogActions>
             </Dialog>
-
           </div>
         </AuthUserContext.Provider>
       );

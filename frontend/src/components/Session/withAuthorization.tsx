@@ -3,29 +3,29 @@ import React from 'react';
 import { compose } from 'react-apollo';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { AuthUserContext } from '.';
-import { IS_AUTHORIZED, IsAuthorizedQuery } from '../../apollo/IsAuthorizedQuery';
+import {
+  IS_AUTHORIZED,
+  IsAuthorizedQuery,
+} from '../../apollo/IsAuthorizedQuery';
 import * as ROUTES from '../../constants/routes';
 import Firebase, { withFirebase } from '../Firebase';
 
-interface IProps {
-  firebase: Firebase
+interface Props {
+  firebase: Firebase;
 }
 
-const withAuthorization = <P extends IProps>(
-  Component: React.ComponentType<P>,
+const withAuthorization = <P extends Props>(
+  Component: React.ComponentType<P>
 ): React.ComponentType<P> => {
   class WithAuthorization extends React.Component<P & RouteComponentProps> {
-
     private listener: Unsubscribe | null = null;
 
     public componentDidMount(): void {
-      this.listener = this.props.firebase.auth.onAuthStateChanged(
-        authUser => {
-          if (!this.condition(authUser)) {
-            this.props.history.push(ROUTES.LANDING);
-          }
-        },
-      );
+      this.listener = this.props.firebase.auth.onAuthStateChanged(authUser => {
+        if (!this.condition(authUser)) {
+          this.props.history.push(ROUTES.LANDING);
+        }
+      });
     }
 
     public componentWillUnmount(): void {
@@ -41,14 +41,25 @@ const withAuthorization = <P extends IProps>(
             if (authUser === null) {
               return null;
             }
-            return <IsAuthorizedQuery query={IS_AUTHORIZED} variables={{ firebaseUid: authUser.uid }}>
-              {({ data: { isUserAuthorized } = { isUserAuthorized: false }, loading, error }) => {
-                if (loading || error) {
-                  return null;
-                }
-                return isUserAuthorized ? <Component {...this.props} /> : null;
-              }}
-            </IsAuthorizedQuery>;
+            return (
+              <IsAuthorizedQuery
+                query={IS_AUTHORIZED}
+                variables={{ firebaseUid: authUser.uid }}
+              >
+                {({
+                  data: { isUserAuthorized } = { isUserAuthorized: false },
+                  loading,
+                  error,
+                }) => {
+                  if (loading || error) {
+                    return null;
+                  }
+                  return isUserAuthorized ? (
+                    <Component {...this.props} />
+                  ) : null;
+                }}
+              </IsAuthorizedQuery>
+            );
           }}
         </AuthUserContext.Consumer>
       );
@@ -58,10 +69,7 @@ const withAuthorization = <P extends IProps>(
       authUser ? authUser.email === 'johan.reitan@gmail.com' : false;
   }
 
-  return compose(
-    withRouter,
-    withFirebase,
-  )(WithAuthorization);
+  return compose(withRouter, withFirebase)(WithAuthorization);
 };
 
 export default withAuthorization;

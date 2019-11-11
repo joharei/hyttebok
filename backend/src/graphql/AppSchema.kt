@@ -36,15 +36,6 @@ class AppSchema(private val service: DBService) {
                 service.isUserAuthorized(firebaseUid)
             }
         }
-
-        mutation("doNothing") {
-            description = "Does nothing"
-            resolver { a: String ->
-                Dummy()
-            }
-        }
-
-        type<Dummy>()
     }
 }
 

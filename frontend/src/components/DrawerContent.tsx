@@ -5,9 +5,11 @@ import List from '@material-ui/core/List';
 import ListItemText from '@material-ui/core/ListItemText';
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router-dom';
-import { GET_TRIPS, TripsQuery } from '../apollo/TripsQuery';
+import { GET_TRIPS } from '../apollo/TripsQuery';
 import { TRIP } from '../constants/routes';
 import { ReactRouterLink } from './router_links';
+import { useQuery } from '@apollo/react-hooks';
+import { GetTrips } from '../generated/apollo/GetTrips';
 
 const useStyles = makeStyles(({ mixins }: Theme) => ({
   toolbar: mixins.toolbar,
@@ -22,35 +24,37 @@ export const DrawerContent = ({ setTitle }: Props) => {
 
   const updateTitle = (title: string) => () => setTitle(title);
 
+  const { data, loading, error } = useQuery<GetTrips>(GET_TRIPS);
+
+  const content = () => {
+    if (loading) {
+      return <CircularProgress />;
+    }
+    if (error || !data) {
+      return <p>Error</p>;
+    }
+    return (
+      <List>
+        {data.trips.map(trip => (
+          <ListItem
+            component={ReactRouterLink}
+            button
+            key={trip.slug}
+            to={`${TRIP}/${trip.slug}`}
+            onClick={updateTitle(trip.title)}
+          >
+            <ListItemText primary={trip.title} />
+          </ListItem>
+        ))}
+      </List>
+    );
+  };
+
   return (
     <div>
       <div className={classes.toolbar} />
       <Divider />
-      <TripsQuery query={GET_TRIPS}>
-        {({ data: { trips } = { trips: [] }, loading, error }) => {
-          if (loading) {
-            return <CircularProgress />;
-          }
-          if (error) {
-            return <p>Error</p>;
-          }
-          return (
-            <List>
-              {trips.map(trip => (
-                <ListItem
-                  component={ReactRouterLink}
-                  button
-                  key={trip.slug}
-                  to={`${TRIP}/${trip.slug}`}
-                  onClick={updateTitle(trip.title)}
-                >
-                  <ListItemText primary={trip.title} />
-                </ListItem>
-              ))}
-            </List>
-          );
-        }}
-      </TripsQuery>
+      {content()}
     </div>
   );
 };

@@ -1,0 +1,29 @@
+# This file was generated based on ".graphqlconfig". Do not edit manually.
+
+schema {
+    query: Query
+}
+
+"Query object"
+type Query {
+    isUserAuthorized(firebaseUid: String!): Boolean!
+    trip(slug: String!): Trip!
+    trips: [Trip!]!
+}
+
+"A trip to the cabin"
+type Trip {
+    endDate: LocalDate!
+    id: Int!
+    photos: String!
+    slug: String!
+    startDate: LocalDate!
+    text: String!
+    title: String!
+}
+
+
+"The Long scalar type represents a signed 64‐bit numeric non‐fractional value"
+scalar Long
+
+scalar LocalDate

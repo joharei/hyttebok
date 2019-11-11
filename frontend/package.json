@@ -3,11 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@apollo/react-hooks": "^3.1.3",
     "@material-ui/core": "^4.6.0",
     "@material-ui/icons": "^4.5.1 ",
-    "apollo-boost": "^0.3.1",
+    "apollo-boost": "^0.4.4",
+    "apollo-client": "^2.6.4",
+    "apollo-utilities": "^1.3.2",
     "firebase": "^7.3.0",
-    "graphql": "^14.1.1",
+    "graphql": "^14.5.8",
     "react": "^16.11.0",
     "react-apollo": "^2.5.2",
     "react-dom": "^16.11.0",
@@ -22,7 +25,10 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "lint": "eslint \"./src/**/*.{ts,tsx,tsx.snap}\" --max-warnings 0"
+    "lint": "eslint \"./src/**/*.{ts,tsx,tsx.snap}\" --max-warnings 0",
+    "apollo:download-schema": "apollo client:download-schema --endpoint http://localhost:8080/graphql schema.json",
+    "apollo:codegen": "apollo client:codegen src/generated/apollo --localSchemaFile schema.json --excludes node_modules --includes \"src/**/*.{ts,tsx}\" --target typescript --tagName gql --outputFlat --passthroughCustomScalars --customScalarsPrefix Hyttebok --useReadOnlyTypes --tsFileExtension=d.ts",
+    "apollo:downgen": "yarn apollo:download-schema && yarn apollo:codegen"
   },
   "browserslist": [
     ">0.2%",
@@ -36,6 +42,7 @@
     "@types/react": "^16.9.11",
     "@types/react-dom": "^16.9.4",
     "@types/react-router-dom": "^5.1.2",
+    "apollo": "^2.21.0",
     "eslint": "^6.6.0",
     "eslint-config-prettier": "^6.5.0",
     "eslint-config-react": "^1.1.7",

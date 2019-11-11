@@ -1,57 +1,68 @@
-import { createStyles, Grid, Theme, WithStyles } from '@material-ui/core';
-import AppBar from '@material-ui/core/AppBar';
-import withStyles from '@material-ui/core/styles/withStyles';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
+import {
+  AppBar,
+  Button,
+  Grid,
+  makeStyles,
+  Theme,
+  Toolbar,
+  Typography,
+} from '@material-ui/core';
 import React from 'react';
 import { compose } from 'react-apollo';
 import { Route, RouteComponentProps } from 'react-router';
 import * as ROUTES from '../constants/routes';
-import AdminTripsList from './AdminTripsList';
-import EditTripPage from './EditTripPage';
-import { LinkButton } from './router_links';
+import { AdminTripsList } from './AdminTripsList';
+import { EditTripPage } from './EditTripPage';
+import { ReactRouterLink } from './router_links';
 import { withAuthorization } from './Session';
 
-const styles = (theme: Theme) => createStyles({
+const useStyles = makeStyles(({ spacing, mixins }: Theme) => ({
   content: {
     flexGrow: 1,
-    padding: theme.spacing.unit * 3,
+    padding: spacing(3),
   },
-  toolbar: theme.mixins.toolbar,
+  toolbar: mixins.toolbar,
   grow: {
     flexGrow: 1,
   },
-});
+}));
 
-function AdminPage(props: WithStyles<typeof styles> & RouteComponentProps) {
-
-  const { classes, match } = props;
+const AdminPage = ({ match: { path, url } }: RouteComponentProps) => {
+  const classes = useStyles();
 
   return (
     <div>
       <AppBar position="fixed">
         <Toolbar>
-          <Typography variant="h6" color="inherit" noWrap={true} className={classes.grow}>
+          <Typography
+            variant="h6"
+            color="inherit"
+            noWrap
+            className={classes.grow}
+          >
             Admin
           </Typography>
 
-          <LinkButton color="inherit" to={ROUTES.LANDING}>Til forsiden</LinkButton>
+          <Button
+            component={ReactRouterLink}
+            color="inherit"
+            to={ROUTES.LANDING}
+          >
+            Til forsiden
+          </Button>
         </Toolbar>
       </AppBar>
 
       <main>
-        <div className={classes.toolbar}/>
+        <div className={classes.toolbar} />
 
-        <Grid container={true} justify='center' className={classes.content}>
-          <Route path={`${match.path}/:slug`} component={EditTripPage}/>
-          <Route path={`${match.url}/`} exact={true} component={AdminTripsList}/>
+        <Grid container justify="center" className={classes.content}>
+          <Route path={`${path}/:slug`} component={EditTripPage} />
+          <Route path={`${url}/`} exact component={AdminTripsList} />
         </Grid>
       </main>
     </div>
   );
-}
+};
 
-export default compose(
-  withStyles(styles, { withTheme: true }),
-  withAuthorization,
-)(AdminPage);
+export default compose(withAuthorization)(AdminPage);

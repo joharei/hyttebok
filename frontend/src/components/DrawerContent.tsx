@@ -1,4 +1,4 @@
-import { createStyles, WithStyles, withStyles } from '@material-ui/core';
+import { ListItem, makeStyles, Theme } from '@material-ui/core';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Divider from '@material-ui/core/Divider';
 import List from '@material-ui/core/List';
@@ -7,51 +7,50 @@ import * as React from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import { GET_TRIPS, TripsQuery } from '../apollo/TripsQuery';
 import { TRIP } from '../constants/routes';
-import { LinkListItem } from './router_links';
+import { ReactRouterLink } from './router_links';
 
-const styles = (theme: any) => createStyles({
-  toolbar: theme.mixins.toolbar,
-});
+const useStyles = makeStyles(({ mixins }: Theme) => ({
+  toolbar: mixins.toolbar,
+}));
 
-interface IProps extends WithStyles<typeof styles, true>, RouteComponentProps {
-  setTitle: (title: string) => void,
+interface Props extends RouteComponentProps {
+  setTitle: (title: string) => void;
 }
 
-function DrawerContent(props: IProps) {
+export const DrawerContent = ({ setTitle }: Props) => {
+  const classes = useStyles();
 
-  const { setTitle, classes } = props;
+  const updateTitle = (title: string) => () => setTitle(title);
 
   return (
     <div>
-      <div className={classes.toolbar}/>
-      <Divider/>
+      <div className={classes.toolbar} />
+      <Divider />
       <TripsQuery query={GET_TRIPS}>
         {({ data: { trips } = { trips: [] }, loading, error }) => {
           if (loading) {
-            return <CircularProgress/>;
+            return <CircularProgress />;
           }
           if (error) {
             return <p>Error</p>;
           }
           return (
             <List>
-              {trips.map((trip) => (
-                <LinkListItem button={true} key={trip.slug} to={`${TRIP}/${trip.slug}`}
-                              onClick={updateTitle(trip.title)}>
-                    <ListItemText primary={trip.title}/>
-                  </LinkListItem>
-                ),
-              )}
+              {trips.map(trip => (
+                <ListItem
+                  component={ReactRouterLink}
+                  button
+                  key={trip.slug}
+                  to={`${TRIP}/${trip.slug}`}
+                  onClick={updateTitle(trip.title)}
+                >
+                  <ListItemText primary={trip.title} />
+                </ListItem>
+              ))}
             </List>
           );
         }}
       </TripsQuery>
     </div>
   );
-
-  function updateTitle(title: string) {
-    return () => setTitle(title);
-  }
-}
-
-export default withStyles(styles, { withTheme: true })(DrawerContent);
+};

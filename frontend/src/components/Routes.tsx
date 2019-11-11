@@ -4,10 +4,10 @@ import { ADMIN, LANDING, TRIP } from '../constants/routes';
 import AdminPage from './AdminPage';
 import ResponsiveDrawer from './ResponsiveDrawer';
 
-export default () => (
+export const Routes = () => (
   <Switch>
-    <Route path={LANDING} exact={true} component={ResponsiveDrawer}/>
-    <Route path={TRIP} component={ResponsiveDrawer}/>
-    <Route path={ADMIN} component={AdminPage}/>
+    <Route path={LANDING} exact component={ResponsiveDrawer} />
+    <Route path={TRIP} component={ResponsiveDrawer} />
+    <Route path={ADMIN} component={AdminPage} />
   </Switch>
-)
+);

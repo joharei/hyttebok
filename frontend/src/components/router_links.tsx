@@ -1,22 +1,20 @@
-import Button, { ButtonProps } from '@material-ui/core/Button';
-import ListItem, { ListItemProps } from '@material-ui/core/ListItem';
-import TableRow, { TableRowProps } from '@material-ui/core/TableRow';
 import * as React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, LinkProps } from 'react-router-dom';
+import { TableRowProps } from '@material-ui/core/TableRow';
+import { TableRow } from '@material-ui/core';
 
-interface IRouterLinkProps {
-  to: string;
-  replace?: boolean;
-}
+// The use of React.forwardRef will no longer be required for react-router-dom v6.
+// See https://github.com/ReactTraining/react-router/issues/6056
+export const ReactRouterLink = React.forwardRef<
+  HTMLAnchorElement,
+  Omit<LinkProps, 'innerRef'>
+>((props, ref) => (
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  <Link innerRef={ref as any} {...props} />
+));
+ReactRouterLink.displayName = 'ReactRouterLink';
 
-export const LinkListItem = (props: ListItemProps & IRouterLinkProps) => (
-  <ListItem {...props} component={Link as any}/>
-);
-
-export const LinkTableRow = (props: TableRowProps & IRouterLinkProps) => (
-  <TableRow {...props} component={Link as any}/>
-);
-
-export const LinkButton = (props: ButtonProps & IRouterLinkProps) => (
-  <Button {...props} component={Link as any}/>
+export const LinkTableRow = (props: TableRowProps & { to: string }) => (
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  <TableRow {...props} component={ReactRouterLink as any} />
 );

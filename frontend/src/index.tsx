@@ -10,9 +10,9 @@ import registerServiceWorker from './registerServiceWorker';
 ReactDOM.render(
   <FirebaseContext.Provider value={new Firebase()}>
     <ApolloProvider client={client}>
-      <App/>
+      <App />
     </ApolloProvider>
   </FirebaseContext.Provider>,
-  document.getElementById('root') as HTMLElement,
+  document.getElementById('root') as HTMLElement
 );
 registerServiceWorker();

@@ -2,18 +2,20 @@ import { Grid } from '@material-ui/core';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import * as React from 'react';
 import ReactMarkdown from 'react-markdown';
-import { RouteComponentProps } from 'react-router';
 import { GET_TRIP_PAGE } from '../apollo/TripPageQuery';
 import { useQuery } from '@apollo/react-hooks';
 import {
   GetTripPage,
   GetTripPageVariables,
 } from '../generated/apollo/GetTripPage';
+import { useParams } from 'react-router-dom';
 
-export const TripPage = ({ match }: RouteComponentProps<{ slug: string }>) => {
+export const TripPage = () => {
+  const { slug } = useParams<{ slug: string }>();
+
   const { data, loading, error } = useQuery<GetTripPage, GetTripPageVariables>(
     GET_TRIP_PAGE,
-    { variables: { slug: match.params.slug } }
+    { variables: { slug } }
   );
 
   if (loading) {

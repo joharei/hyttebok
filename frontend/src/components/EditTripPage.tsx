@@ -14,7 +14,6 @@ import { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import ReactMde from 'react-mde';
 import 'react-mde/lib/styles/css/react-mde-all.css';
-import { RouteComponentProps } from 'react-router';
 import { GET_EDIT_TRIP } from '../apollo/EditTripQuery';
 import { TripWithText } from '../models/Trip';
 import { useQuery } from '@apollo/react-hooks';
@@ -22,6 +21,7 @@ import {
   GetEditTrip,
   GetEditTripVariables,
 } from '../generated/apollo/GetEditTrip';
+import { useParams } from 'react-router-dom';
 
 interface Props {
   trip: TripWithText;
@@ -155,11 +155,13 @@ const EditTripPageUI = (props: Props) => {
   );
 };
 
-export const EditTripPage = (props: RouteComponentProps<{ slug: string }>) => {
+export const EditTripPage = () => {
+  const { slug } = useParams<{ slug: string }>();
+
   const { data, loading, error } = useQuery<GetEditTrip, GetEditTripVariables>(
     GET_EDIT_TRIP,
     {
-      variables: { slug: props.match.params.slug },
+      variables: { slug },
     }
   );
 

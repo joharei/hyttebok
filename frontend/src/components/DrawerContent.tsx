@@ -4,7 +4,6 @@ import Divider from '@material-ui/core/Divider';
 import List from '@material-ui/core/List';
 import ListItemText from '@material-ui/core/ListItemText';
 import * as React from 'react';
-import { RouteComponentProps } from 'react-router-dom';
 import { GET_TRIPS } from '../apollo/TripsQuery';
 import { TRIP } from '../constants/routes';
 import { ReactRouterLink } from './router_links';
@@ -15,7 +14,7 @@ const useStyles = makeStyles(({ mixins }: Theme) => ({
   toolbar: mixins.toolbar,
 }));
 
-interface Props extends RouteComponentProps {
+interface Props {
   setTitle: (title: string) => void;
 }
 

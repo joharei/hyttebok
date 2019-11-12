@@ -3,9 +3,8 @@ import * as React from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import './App.css';
 import { Routes } from './components/Routes';
-import { withAuthentication } from './components/Session';
 
-const App = () => (
+export const App = () => (
   <>
     <CssBaseline />
     <Router>
@@ -13,5 +12,3 @@ const App = () => (
     </Router>
   </>
 );
-
-export default withAuthentication<any>(App);

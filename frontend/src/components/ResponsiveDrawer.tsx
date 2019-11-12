@@ -1,4 +1,13 @@
-import { Grid, makeStyles, Theme } from '@material-ui/core';
+import {
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Grid,
+  makeStyles,
+  Theme,
+} from '@material-ui/core';
 import AppBar from '@material-ui/core/AppBar';
 import Button from '@material-ui/core/Button';
 import Drawer from '@material-ui/core/Drawer';
@@ -8,15 +17,13 @@ import IconButton from '@material-ui/core/IconButton';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import * as React from 'react';
-import { useState } from 'react';
-import { compose } from 'react-apollo';
+import { useEffect, useState } from 'react';
 import { Route, RouteComponentProps } from 'react-router';
 import * as ROUTES from '../constants/routes';
 import { DrawerContent } from './DrawerContent';
-import Firebase, { withFirebase } from './Firebase';
 import { ReactRouterLink } from './router_links';
-import { AuthUserContext } from './Session';
 import { TripPage } from './TripPage';
+import { useAuth } from './Auth/useAuth';
 
 const drawerWidth = 300;
 
@@ -55,20 +62,24 @@ const useStyles = makeStyles(({ breakpoints, spacing, mixins }: Theme) => ({
   },
 }));
 
-interface Props extends RouteComponentProps {
-  firebase: Firebase;
-}
-
-const ResponsiveDrawer = ({
-  firebase: { doSignInWithGoogle, doSignOut },
+export const ResponsiveDrawer = ({
   match: { path, url },
-}: Props) => {
+}: RouteComponentProps) => {
   const classes = useStyles();
 
   const [mobileOpen, setMobileOpen] = useState(false);
   const toggleDrawer = () => setMobileOpen(!mobileOpen);
 
   const [title, setTitle] = useState('Hyttebok');
+  const [unauthorizedDialogOpen, setUnauthorizedDialogOpen] = useState(false);
+
+  const { user, signIn, signOut, admin } = useAuth();
+
+  useEffect(() => {
+    if (admin === false) {
+      setUnauthorizedDialogOpen(true);
+    }
+  }, [admin]);
 
   function renderDrawerContent(routeProps: RouteComponentProps) {
     return <DrawerContent {...routeProps} setTitle={setTitle} />;
@@ -120,28 +131,48 @@ const ResponsiveDrawer = ({
           >
             {title}
           </Typography>
-          <AuthUserContext.Consumer>
-            {authUser =>
-              authUser ? (
-                <div>
-                  <Button
-                    component={ReactRouterLink}
-                    color="inherit"
-                    to={ROUTES.ADMIN}
-                  >
-                    Til adminsiden
-                  </Button>
-                  <Button color="inherit" onClick={doSignOut}>
-                    Logg ut
-                  </Button>
-                </div>
-              ) : (
-                <Button color="inherit" onClick={doSignInWithGoogle}>
-                  Logg inn
+          {user && admin === true ? (
+            <div>
+              <Button
+                component={ReactRouterLink}
+                color="inherit"
+                to={ROUTES.ADMIN}
+              >
+                Til adminsiden
+              </Button>
+              <Button color="inherit" onClick={signOut}>
+                Logg ut
+              </Button>
+            </div>
+          ) : (
+            <Button color="inherit" onClick={signIn}>
+              Logg inn
+            </Button>
+          )}
+          {unauthorizedDialogOpen && (
+            <Dialog
+              open={unauthorizedDialogOpen}
+              onClose={() => setUnauthorizedDialogOpen(false)}
+              aria-labelledby="alert-dialog-title"
+              aria-describedby="alert-dialog-description"
+            >
+              <DialogTitle id="alert-dialog-title">Ingen adgang!</DialogTitle>
+              <DialogContent>
+                <DialogContentText id="alert-dialog-description">
+                  Denne siden er privat, og slipper bare inn spesielt utvalgte!
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button
+                  onClick={() => setUnauthorizedDialogOpen(false)}
+                  color="primary"
+                  autoFocus
+                >
+                  Ok
                 </Button>
-              )
-            }
-          </AuthUserContext.Consumer>
+              </DialogActions>
+            </Dialog>
+          )}
         </Toolbar>
       </AppBar>
       <nav className={classes.drawer}>
@@ -177,5 +208,3 @@ const ResponsiveDrawer = ({
     </div>
   );
 };
-
-export default compose(withFirebase)(ResponsiveDrawer);

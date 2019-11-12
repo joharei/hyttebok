@@ -8,13 +8,12 @@ import {
   Typography,
 } from '@material-ui/core';
 import React from 'react';
-import { compose } from 'react-apollo';
 import { Route, RouteComponentProps } from 'react-router';
 import * as ROUTES from '../constants/routes';
 import { AdminTripsList } from './AdminTripsList';
 import { EditTripPage } from './EditTripPage';
 import { ReactRouterLink } from './router_links';
-import { withAuthorization } from './Session';
+import { useAuth } from './Auth/useAuth';
 
 const useStyles = makeStyles(({ spacing, mixins }: Theme) => ({
   content: {
@@ -27,42 +26,45 @@ const useStyles = makeStyles(({ spacing, mixins }: Theme) => ({
   },
 }));
 
-const AdminPage = ({ match: { path, url } }: RouteComponentProps) => {
+export const AdminPage = ({ match: { path, url } }: RouteComponentProps) => {
   const classes = useStyles();
+  const { admin } = useAuth();
 
   return (
-    <div>
-      <AppBar position="fixed">
-        <Toolbar>
-          <Typography
-            variant="h6"
-            color="inherit"
-            noWrap
-            className={classes.grow}
-          >
-            Admin
-          </Typography>
+    <>
+      {admin && (
+        <div>
+          <AppBar position="fixed">
+            <Toolbar>
+              <Typography
+                variant="h6"
+                color="inherit"
+                noWrap
+                className={classes.grow}
+              >
+                Admin
+              </Typography>
 
-          <Button
-            component={ReactRouterLink}
-            color="inherit"
-            to={ROUTES.LANDING}
-          >
-            Til forsiden
-          </Button>
-        </Toolbar>
-      </AppBar>
+              <Button
+                component={ReactRouterLink}
+                color="inherit"
+                to={ROUTES.LANDING}
+              >
+                Til forsiden
+              </Button>
+            </Toolbar>
+          </AppBar>
 
-      <main>
-        <div className={classes.toolbar} />
+          <main>
+            <div className={classes.toolbar} />
 
-        <Grid container justify="center" className={classes.content}>
-          <Route path={`${path}/:slug`} component={EditTripPage} />
-          <Route path={`${url}/`} exact component={AdminTripsList} />
-        </Grid>
-      </main>
-    </div>
+            <Grid container justify="center" className={classes.content}>
+              <Route path={`${path}/:slug`} component={EditTripPage} />
+              <Route path={`${url}/`} exact component={AdminTripsList} />
+            </Grid>
+          </main>
+        </div>
+      )}
+    </>
   );
 };
-
-export default compose(withAuthorization)(AdminPage);

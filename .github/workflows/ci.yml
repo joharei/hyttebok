@@ -73,6 +73,7 @@ jobs:
         working-directory: frontend
         run: |
           yarn install
+          yarn apollo:codegen
           yarn build
           
       - name: Archive production artifacts

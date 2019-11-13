@@ -25,27 +25,27 @@ repositories {
 
 dependencies {
     // Kotlin
-    compile(kotlin("stdlib-jdk8"))
+    implementation(kotlin("stdlib-jdk8"))
 
     // Ktor Server
-    compile("io.ktor:ktor-server-netty:$ktor_version")
-    compile("io.ktor:ktor-server-core:$ktor_version")
-    compile("io.ktor:ktor-gson:$ktor_version")
-    compile("io.ktor:ktor-locations:$ktor_version")
+    implementation("io.ktor:ktor-server-netty:$ktor_version")
+    implementation("io.ktor:ktor-server-core:$ktor_version")
+    implementation("io.ktor:ktor-gson:$ktor_version")
+    implementation("io.ktor:ktor-locations:$ktor_version")
 
     // Logging
-    compile("ch.qos.logback:logback-classic:$logback_version")
+    implementation("ch.qos.logback:logback-classic:$logback_version")
 
     // Database
-    compile("org.jetbrains.exposed:exposed:$exposed_version")
-    compile("org.postgresql:postgresql:$postgresql_version")
+    implementation("org.jetbrains.exposed:exposed:$exposed_version")
+    implementation("org.postgresql:postgresql:$postgresql_version")
 
     // GraphQL
-    compile("com.apurebase:kgraphql:$kgraphql_version")
+    implementation("com.apurebase:kgraphql:$kgraphql_version")
 
     // Dependency Injection
-    compile("org.koin:koin-ktor:$koin_version")
-    compile("org.koin:koin-logger-slf4j:$koin_version")
+    implementation("org.koin:koin-ktor:$koin_version")
+    implementation("org.koin:koin-logger-slf4j:$koin_version")
 }
 
 kotlin.sourceSets["main"].kotlin.srcDirs("src")

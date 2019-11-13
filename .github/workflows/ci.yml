@@ -99,9 +99,9 @@ jobs:
           name: frontend_build
           
       - name: Deploy to Firebase
-        uses: w9jds/firebase-action@v1.1.0
+        uses: w9jds/firebase-action@v1.2.0
         with:
           args: deploy --only hosting:prod
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
-          PROJECT_PATH: ./frontend/firebase.json
+          PROJECT_PATH: ./frontend

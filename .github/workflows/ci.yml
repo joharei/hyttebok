@@ -99,7 +99,7 @@ jobs:
           name: frontend_build
           
       - name: Deploy to Firebase
-        uses: w9jds/firebase-action@v1
+        uses: w9jds/firebase-action@v1.1.0
         with:
           args: deploy --only hosting:prod
         env:

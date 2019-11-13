@@ -7,12 +7,16 @@ import {
   Grid,
   makeStyles,
   Theme,
+  Tooltip,
 } from '@material-ui/core';
 import AppBar from '@material-ui/core/AppBar';
 import Button from '@material-ui/core/Button';
 import Drawer from '@material-ui/core/Drawer';
 import Hidden from '@material-ui/core/Hidden';
-import Icon from '@material-ui/core/Icon';
+import MenuIcon from '@material-ui/icons/Menu';
+import EditIcon from '@material-ui/icons/Edit';
+import LockIcon from '@material-ui/icons/Lock';
+import LockOpenIcon from '@material-ui/icons/LockOpen';
 import IconButton from '@material-ui/core/IconButton';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
@@ -117,7 +121,7 @@ export const ResponsiveDrawer = ({
             onClick={toggleDrawer}
             className={classes.menuButton}
           >
-            <Icon>menu</Icon>
+            <MenuIcon />
           </IconButton>
           <Typography
             variant="h6"
@@ -129,21 +133,50 @@ export const ResponsiveDrawer = ({
           </Typography>
           {user && admin === true ? (
             <div>
-              <Button
-                component={ReactRouterLink}
-                color="inherit"
-                to={ROUTES.ADMIN}
-              >
-                Til adminsiden
-              </Button>
-              <Button color="inherit" onClick={signOut}>
-                Logg ut
-              </Button>
+              <Hidden smUp>
+                <Tooltip title="Til adminsiden">
+                  <IconButton
+                    component={ReactRouterLink}
+                    color="inherit"
+                    to={ROUTES.ADMIN}
+                  >
+                    <EditIcon />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="Logg ut">
+                  <IconButton color="inherit" onClick={signOut}>
+                    <LockIcon />
+                  </IconButton>
+                </Tooltip>
+              </Hidden>
+              <Hidden smDown>
+                <Button
+                  component={ReactRouterLink}
+                  color="inherit"
+                  to={ROUTES.ADMIN}
+                >
+                  Til adminsiden
+                </Button>
+                <Button color="inherit" onClick={signOut}>
+                  Logg ut
+                </Button>
+              </Hidden>
             </div>
           ) : (
-            <Button color="inherit" onClick={signIn}>
-              Logg inn
-            </Button>
+            <>
+              <Hidden smUp>
+                <Tooltip title="Logg inn">
+                  <IconButton color="inherit" onClick={signIn}>
+                    <LockOpenIcon />
+                  </IconButton>
+                </Tooltip>
+              </Hidden>
+              <Hidden smDown>
+                <Button color="inherit" onClick={signIn}>
+                  Logg inn
+                </Button>
+              </Hidden>
+            </>
           )}
           {unauthorizedDialogOpen && (
             <Dialog
@@ -172,7 +205,7 @@ export const ResponsiveDrawer = ({
         </Toolbar>
       </AppBar>
       <nav className={classes.drawer}>
-        <Hidden smUp implementation="css">
+        <Hidden smUp>
           <Drawer
             variant="temporary"
             open={mobileOpen}
@@ -189,7 +222,7 @@ export const ResponsiveDrawer = ({
             />
           </Drawer>
         </Hidden>
-        <Hidden xsDown implementation="css">
+        <Hidden xsDown>
           <Drawer
             classes={{
               paper: classes.drawerPaper,

@@ -97,6 +97,7 @@ jobs:
         uses: actions/download-artifact@v1
         with:
           name: frontend_build
+          path: frontend/build
           
       - name: Deploy to Firebase
         uses: w9jds/firebase-action@v1.2.0

@@ -81,10 +81,6 @@ export const ResponsiveDrawer = ({
     }
   }, [admin]);
 
-  function renderDrawerContent(routeProps: RouteComponentProps) {
-    return <DrawerContent {...routeProps} setTitle={setTitle} />;
-  }
-
   function renderRootPage() {
     return (
       <Grid container>
@@ -185,7 +181,12 @@ export const ResponsiveDrawer = ({
               paper: classes.drawerPaper,
             }}
           >
-            <Route path={path} render={renderDrawerContent} />
+            <DrawerContent
+              setTitle={title => {
+                setTitle(title);
+                toggleDrawer();
+              }}
+            />
           </Drawer>
         </Hidden>
         <Hidden xsDown implementation="css">
@@ -196,7 +197,7 @@ export const ResponsiveDrawer = ({
             variant="permanent"
             open
           >
-            <Route path={path} render={renderDrawerContent} />
+            <DrawerContent setTitle={setTitle} />
           </Drawer>
         </Hidden>
       </nav>

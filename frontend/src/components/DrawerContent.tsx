@@ -9,6 +9,8 @@ import { TRIP } from '../constants/routes';
 import { ReactRouterLink } from './router_links';
 import { useQuery } from '@apollo/react-hooks';
 import { GetTrips } from '../generated/apollo/GetTrips';
+import { useLocation } from 'react-router-dom';
+import { useEffect, useRef, useState } from 'react';
 
 const useStyles = makeStyles(({ mixins }: Theme) => ({
   toolbar: mixins.toolbar,
@@ -20,10 +22,20 @@ interface Props {
 
 export const DrawerContent = ({ setTitle }: Props) => {
   const classes = useStyles();
+  const location = useLocation();
+  const selectedListItemRef = useRef<HTMLAnchorElement>(null);
+  const [scrollToItem, setScrollToItem] = useState(true);
 
   const updateTitle = (title: string) => () => setTitle(title);
 
   const { data, loading, error } = useQuery<GetTrips>(GET_TRIPS);
+
+  useEffect(() => {
+    if (scrollToItem && selectedListItemRef && selectedListItemRef.current) {
+      selectedListItemRef.current.scrollIntoView({ block: 'center' });
+      setScrollToItem(false);
+    }
+  }, [scrollToItem, selectedListItemRef]);
 
   const content = () => {
     if (loading) {
@@ -41,6 +53,13 @@ export const DrawerContent = ({ setTitle }: Props) => {
             key={trip.slug}
             to={`${TRIP}/${trip.slug}`}
             onClick={updateTitle(trip.title)}
+            selected={location.pathname === `${TRIP}/${trip.slug}`}
+            {...{
+              ref:
+                location.pathname === `${TRIP}/${trip.slug}`
+                  ? selectedListItemRef
+                  : undefined,
+            }}
           >
             <ListItemText primary={trip.title} />
           </ListItem>

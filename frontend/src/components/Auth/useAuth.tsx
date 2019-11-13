@@ -1,7 +1,8 @@
 /* global process */
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import firebase, { User } from 'firebase';
+import * as firebase from 'firebase/app';
+import 'firebase/auth';
 
 firebase.initializeApp({
   apiKey: process.env.REACT_APP_API_KEY,
@@ -16,7 +17,7 @@ firebase.auth().useDeviceLanguage();
 interface Auth {
   signIn: () => Promise<void>;
   signOut: () => Promise<void>;
-  user: User | null;
+  user: firebase.User | null;
   admin: boolean | null;
 }
 
@@ -34,7 +35,7 @@ export const useAuth = () => {
 };
 
 function useProvideAuth(): Auth {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<firebase.User | null>(null);
   const [admin, setAdmin] = useState<boolean | null>(null);
 
   const signIn = () => {

@@ -16,9 +16,9 @@ import React from 'react';
 import { GET_ADMIN_TRIPS } from '../apollo/AdminTripsQuery';
 import { ADMIN } from '../constants/routes';
 import { formatDateString } from '../utils/date';
-import { LinkTableRow } from './router_links';
 import { useQuery } from '@apollo/react-hooks';
 import { GetAdminTrips } from '../generated/apollo/GetAdminTrips';
+import { useHistory } from 'react-router-dom';
 
 const useStyles = makeStyles(({ spacing }: Theme) => ({
   fab: {
@@ -33,6 +33,7 @@ const useStyles = makeStyles(({ spacing }: Theme) => ({
 
 export const AdminTripsList = () => {
   const classes = useStyles();
+  const history = useHistory();
 
   const { data, loading, error } = useQuery<GetAdminTrips>(GET_ADMIN_TRIPS);
 
@@ -44,7 +45,7 @@ export const AdminTripsList = () => {
   }
 
   return (
-    <div>
+    <>
       <Grid xs={12} md={8} lg={6} item>
         <Paper>
           <Table>
@@ -57,10 +58,10 @@ export const AdminTripsList = () => {
             </TableHead>
             <TableBody>
               {data.trips.map(trip => (
-                <LinkTableRow
-                  hover
+                <TableRow
                   key={trip.slug}
-                  to={`${ADMIN}/${trip.slug}`}
+                  hover
+                  onClick={() => history.push(`${ADMIN}/${trip.slug}`)}
                 >
                   <TableCell component="th" scope="row">
                     {trip.title}
@@ -71,7 +72,7 @@ export const AdminTripsList = () => {
                   <TableCell align="right">
                     {formatDateString(trip.endDate)}
                   </TableCell>
-                </LinkTableRow>
+                </TableRow>
               ))}
             </TableBody>
           </Table>
@@ -87,6 +88,6 @@ export const AdminTripsList = () => {
         <AddIcon className={classes.fabIcon} />
         Ny tur
       </Fab>
-    </div>
+    </>
   );
 };

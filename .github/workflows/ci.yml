@@ -46,6 +46,7 @@ jobs:
       - name: Deploy to Heroku
         env:
           HEROKU_TOKEN: ${{ secrets.HEROKU_TOKEN }}
+          FIREBASE_CONFIG: ${{ secrets.FIREBASE_CONFIG }}
         run: |
           git remote add heroku https://heroku:$HEROKU_TOKEN@git.heroku.com/hyttebok.git
           git subtree split --prefix backend -b heroku

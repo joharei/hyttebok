@@ -1,10 +1,10 @@
-val kotlin_version: String by project
-val ktor_version: String by project
-val logback_version: String by project
-val exposed_version: String by project
-val postgresql_version: String by project
-val kgraphql_version: String by project
-val koin_version: String by project
+val kotlinVersion: String by project
+val ktorVersion: String by project
+val logbackVersion: String by project
+val exposedVersion: String by project
+val postgresqlVersion: String by project
+val kgraphqlVersion: String by project
+val koinVersion: String by project
 
 group = "hyttebok"
 version = "0.0.1"
@@ -28,24 +28,24 @@ dependencies {
     implementation(kotlin("stdlib-jdk8"))
 
     // Ktor Server
-    implementation("io.ktor:ktor-server-netty:$ktor_version")
-    implementation("io.ktor:ktor-server-core:$ktor_version")
-    implementation("io.ktor:ktor-gson:$ktor_version")
-    implementation("io.ktor:ktor-locations:$ktor_version")
+    implementation("io.ktor:ktor-server-netty:$ktorVersion")
+    implementation("io.ktor:ktor-server-core:$ktorVersion")
+    implementation("io.ktor:ktor-gson:$ktorVersion")
+    implementation("io.ktor:ktor-locations:$ktorVersion")
 
     // Logging
-    implementation("ch.qos.logback:logback-classic:$logback_version")
+    implementation("ch.qos.logback:logback-classic:$logbackVersion")
 
     // Database
-    implementation("org.jetbrains.exposed:exposed:$exposed_version")
-    implementation("org.postgresql:postgresql:$postgresql_version")
+    implementation("org.jetbrains.exposed:exposed:$exposedVersion")
+    implementation("org.postgresql:postgresql:$postgresqlVersion")
 
     // GraphQL
-    implementation("com.apurebase:kgraphql:$kgraphql_version")
+    implementation("com.apurebase:kgraphql:$kgraphqlVersion")
 
     // Dependency Injection
-    implementation("org.koin:koin-ktor:$koin_version")
-    implementation("org.koin:koin-logger-slf4j:$koin_version")
+    implementation("org.koin:koin-ktor:$koinVersion")
+    implementation("org.koin:koin-logger-slf4j:$koinVersion")
 }
 
 kotlin.sourceSets["main"].kotlin.srcDirs("src")

@@ -57,6 +57,7 @@ jobs:
           echo $FIREBASE_CONFIG > firebase-adminsdk-secrets.json
           git add -f firebase-adminsdk-secrets.json
           git commit -m 'add firebase secrets'
+          git checkout master
 
           git push -f heroku heroku:master
           git branch -D heroku

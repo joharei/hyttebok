@@ -49,6 +49,12 @@ jobs:
         run: |
           git remote add heroku https://heroku:$HEROKU_TOKEN@git.heroku.com/hyttebok.git
           git subtree split --prefix backend -b heroku
+
+          git checkout heroku
+          echo $FIREBASE_CONFIG > firebase-adminsdk-secrets.json
+          git add firebase-adminsdk-secrets.json
+          git commit -m 'add firebase secrets'
+
           git push -f heroku heroku:master
           git branch -D heroku
 

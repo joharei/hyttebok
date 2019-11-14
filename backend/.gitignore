@@ -70,3 +70,5 @@ fabric.properties
 
 build/
 .gradle/
+
+firebase-adminsdk-secrets.json

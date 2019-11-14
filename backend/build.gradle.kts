@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 val kotlinVersion: String by project
 val ktorVersion: String by project
 val logbackVersion: String by project
@@ -5,6 +7,7 @@ val exposedVersion: String by project
 val postgresqlVersion: String by project
 val kgraphqlVersion: String by project
 val koinVersion: String by project
+val firebaseAdminVersion: String by project
 
 group = "hyttebok"
 version = "0.0.1"
@@ -46,6 +49,14 @@ dependencies {
     // Dependency Injection
     implementation("org.koin:koin-ktor:$koinVersion")
     implementation("org.koin:koin-logger-slf4j:$koinVersion")
+
+    // Firebase
+    implementation("com.google.firebase:firebase-admin:$firebaseAdminVersion")
+}
+
+tasks.withType<KotlinCompile>().all {
+    kotlinOptions.freeCompilerArgs += "-Xuse-experimental=io.ktor.util.KtorExperimentalAPI"
+    kotlinOptions.freeCompilerArgs += "-Xuse-experimental=io.ktor.locations.KtorExperimentalLocationsAPI"
 }
 
 kotlin.sourceSets["main"].kotlin.srcDirs("src")

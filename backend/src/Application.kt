@@ -1,6 +1,9 @@
 package app.reitan.hyttebok
 
 import app.reitan.hyttebok.di.mainModule
+import com.google.auth.oauth2.GoogleCredentials
+import com.google.firebase.FirebaseApp
+import com.google.firebase.FirebaseOptions
 import io.ktor.application.Application
 import io.ktor.application.install
 import io.ktor.features.CORS
@@ -52,4 +55,10 @@ fun Application.module(testing: Boolean = false) {
         host("hyttebok.reitan.app", schemes = listOf("https"))
         host("hyttebok-elm.firebaseapp.com", schemes = listOf("https"))
     }
+
+    FirebaseApp.initializeApp(
+        FirebaseOptions.Builder()
+            .setCredentials(GoogleCredentials.getApplicationDefault())
+            .build()
+    )
 }

@@ -1,8 +1,8 @@
 import { gql } from 'apollo-boost';
 
-export const GET_EDIT_TRIP = gql`
-  query GetEditTrip($slug: String!) {
-    trip(slug: $slug) {
+export const SAVE_TRIP = gql`
+  mutation SaveTrip($trip: TripInput!) {
+    saveTrip(trip: $trip) {
       id
       slug
       title

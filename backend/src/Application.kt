@@ -21,6 +21,7 @@ import org.koin.Logger.slf4jLogger
 import org.koin.ktor.ext.Koin
 import org.slf4j.event.Level
 
+
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
 @KtorExperimentalLocationsAPI
@@ -50,6 +51,7 @@ fun Application.module(testing: Boolean = false) {
     install(CORS) {
         method(HttpMethod.Post)
         header(HttpHeaders.ContentType)
+        header(HttpHeaders.Authorization)
         host("localhost:3000")
         host("localhost:8000")
         host("hyttebok.reitan.app", schemes = listOf("https"))

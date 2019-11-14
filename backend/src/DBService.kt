@@ -1,14 +1,11 @@
 package app.reitan.hyttebok
 
-import app.reitan.hyttebok.models.AuthUserDao
-import app.reitan.hyttebok.models.AuthUsers
+import app.reitan.hyttebok.graphql.TripInput
 import app.reitan.hyttebok.models.TripDao
 import app.reitan.hyttebok.models.Trips
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
-import org.joda.time.DateTime
 
 class DBService {
 
@@ -21,12 +18,22 @@ class DBService {
         TripDao.find { Trips.slug eq slug }.single()
     }
 
-    suspend fun isUserAuthorized(firebaseUid: String): Boolean = dbQuery {
-        when(val user = AuthUserDao.find { AuthUsers.firebaseUid eq firebaseUid }.singleOrNull()) {
-            null -> false
-            else -> {
-                user.lastLogin = DateTime.now()
-                true
+    suspend fun saveTrip(trip: TripInput): TripDao = dbQuery {
+        if (trip.id != null) {
+            TripDao[trip.id].apply {
+                title = trip.title
+                slug = trip.slug
+                text = trip.text
+                startDate = trip.startDate.toDateTimeAtStartOfDay()
+                endDate = trip.endDate.toDateTimeAtStartOfDay()
+            }
+        } else {
+            TripDao.new {
+                title = trip.title
+                slug = trip.slug
+                text = trip.text
+                startDate = trip.startDate.toDateTimeAtStartOfDay()
+                endDate = trip.endDate.toDateTimeAtStartOfDay()
             }
         }
     }

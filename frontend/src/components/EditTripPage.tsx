@@ -15,16 +15,17 @@ import ReactMarkdown from 'react-markdown';
 import ReactMde from 'react-mde';
 import 'react-mde/lib/styles/css/react-mde-all.css';
 import { GET_EDIT_TRIP } from '../apollo/EditTripQuery';
-import { TripWithText } from '../models/Trip';
-import { useQuery } from '@apollo/react-hooks';
+import { useMutation, useQuery } from '@apollo/react-hooks';
 import {
   GetEditTrip,
   GetEditTripVariables,
 } from '../generated/apollo/GetEditTrip';
 import { useParams } from 'react-router-dom';
+import { SAVE_TRIP } from '../apollo/SaveTripMutation';
+import { SaveTrip, SaveTripVariables } from '../generated/apollo/SaveTrip';
 
 interface Props {
-  trip: TripWithText;
+  trip: GetEditTrip['trip'];
 }
 
 const useStyles = makeStyles(({ spacing }: Theme) => ({
@@ -55,10 +56,15 @@ const EditTripPageUI = (props: Props) => {
 
   const { title, startDate, endDate, text } = trip;
 
+  const [saveTrip, { loading }] = useMutation<SaveTrip, SaveTripVariables>(
+    SAVE_TRIP
+  );
+
   const handleChange = (name: 'title' | 'startDate' | 'endDate' | 'text') => (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    setTrip(prevTrip => ({ ...prevTrip, [name]: event.target.value }));
+    const value = event.target.value;
+    setTrip(prevTrip => ({ ...prevTrip, [name]: value }));
   };
 
   const handleTextChange = (value: string) => {
@@ -147,8 +153,26 @@ const EditTripPageUI = (props: Props) => {
         color="primary"
         variant="extended"
         aria-label="Add"
+        onClick={() =>
+          saveTrip({
+            variables: {
+              trip: {
+                id: trip.id,
+                slug: trip.slug,
+                title: trip.title,
+                startDate: trip.startDate,
+                endDate: trip.endDate,
+                text: trip.text,
+              },
+            },
+          })
+        }
       >
-        <SaveIcon className={classes.fabIcon} />
+        {loading ? (
+          <CircularProgress />
+        ) : (
+          <SaveIcon className={classes.fabIcon} />
+        )}
         Lagre
       </Fab>
     </>

@@ -124,9 +124,7 @@ const EditTripPageUI = (props: Props) => {
                 <ReactMde
                   value={text}
                   onChange={handleTextChange}
-                  selectedTab="write"
-                  onTabChange={undefined}
-                  generateMarkdownPreview={undefined}
+                  disablePreview
                   minEditorHeight={500}
                   maxEditorHeight={Number.MAX_VALUE}
                   minPreviewHeight={0}

@@ -12,12 +12,14 @@ object Graph {
         .logger(DefaultLogger().apply { loggingLevel = LoggerLevel.ERROR })
         .buildClient()
 
+    private const val rootPath = "Hytteboka"
+
     fun getThumbUrl(path: String): String {
         return graphClient
             .me()
             .drive()
             .root()
-            .itemWithPath("hyttebok/$path")
+            .itemWithPath("$rootPath/$path")
             .buildRequest()
             .expand("thumbnails")
             .get()
@@ -37,7 +39,7 @@ object Graph {
             .me()
             .drive()
             .root()
-            .itemWithPath("hyttebok/$path")
+            .itemWithPath("$rootPath/$path")
             .createLink("embed", "anonymous")
             .buildRequest()
             .post()
@@ -60,12 +62,13 @@ object Graph {
             .me()
             .drive()
             .root()
-            .itemWithPath("hyttebok/$path")
+            .itemWithPath("$rootPath/$path")
             .children()
             .buildRequest()
             .expand("thumbnails")
             .get()
             .let { concatThumbsFromPages(it) }
+            .filter { it.file != null }
             .map { AllPhotosUrls(it.thumbnails.currentPage.first().large.url, getOriginalUrl("$path/${it.name}")) }
     }
 
@@ -73,6 +76,6 @@ object Graph {
         if (page.currentPage.isEmpty()) return emptyList()
         if (page.nextPage == null) return page.currentPage
 
-        return page.currentPage + concatThumbsFromPages(page.nextPage.buildRequest().expand("thumbnails").get())
+        return page.currentPage + concatThumbsFromPages(page.nextPage.buildRequest().get())
     }
 }

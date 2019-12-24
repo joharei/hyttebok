@@ -23,30 +23,39 @@ fun getUserAccessToken(): String {
         .setTokenCacheAccessAspect(TokenPersistence())
         .build()
 
-    val token = app.acquireTokenSilently(
-        SilentParameters.builder(appScopes, app.accounts.join().first())
-            .forceRefresh(true)
-            .build()
-    ).exceptionally {
-        // Create consumer to receive the DeviceCode object
-        // This method gets executed during the flow and provides
-        // the URL the user logs into and the device code to enter
-        val deviceCodeConsumer =
-            Consumer { deviceCode: DeviceCode ->
-                // Print the login information to the console
-                println(deviceCode.message())
-            }
-        // Request a token, passing the requested permission scopes
-        app.acquireToken(
-            DeviceCodeFlowParameters
-                .builder(appScopes, deviceCodeConsumer)
+    val accounts = app.accounts.join()
+    val token = if (accounts.isEmpty()) {
+        acquireTokenInteractive(app)
+    } else {
+        app.acquireTokenSilently(
+            SilentParameters.builder(appScopes, app.accounts.join().first())
+                .forceRefresh(true)
                 .build()
-        ).join()
-    }.exceptionally { ex: Throwable ->
-        throw RuntimeException("Unable to authenticate", ex)
-    }.join()
+        ).exceptionally {
+            acquireTokenInteractive(app)
+        }.join()
+    }
 
     return token.accessToken()
+}
+
+private fun acquireTokenInteractive(app: PublicClientApplication): IAuthenticationResult {
+    // Create consumer to receive the DeviceCode object
+    // This method gets executed during the flow and provides
+    // the URL the user logs into and the device code to enter
+    val deviceCodeConsumer =
+        Consumer { deviceCode: DeviceCode ->
+            // Print the login information to the console
+            println(deviceCode.message())
+        }
+    // Request a token, passing the requested permission scopes
+    return app.acquireToken(
+        DeviceCodeFlowParameters
+            .builder(appScopes, deviceCodeConsumer)
+            .build()
+    ).exceptionally { ex: Throwable ->
+        throw RuntimeException("Unable to authenticate", ex)
+    }.join()
 }
 
 class SimpleAuthProvider : IAuthenticationProvider {

@@ -21,6 +21,8 @@ dependencies {
     implementation("org.slf4j:slf4j-nop:1.8.0-beta4")
     implementation("com.microsoft.graph:microsoft-graph:1.6.0")
     implementation("com.microsoft.azure:msal4j:1.1.0")
+
+    implementation("com.google.firebase:firebase-admin:6.11.0")
 }
 
 kotlin.sourceSets["main"].kotlin.srcDirs("src")

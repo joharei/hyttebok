@@ -13,12 +13,10 @@ import {
 } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import React from 'react';
-import { GET_ADMIN_TRIPS } from '../apollo/AdminTripsQuery';
 import { ADMIN } from '../constants/routes';
-import { formatDateString } from '../utils/date';
-import { useQuery } from '@apollo/react-hooks';
-import { GetAdminTrips } from '../generated/apollo/GetAdminTrips';
 import { useHistory } from 'react-router-dom';
+import { useTrips } from '../firebase/useTrips';
+import { formatDateForDisplay } from '../utils/date';
 
 const useStyles = makeStyles(({ spacing }: Theme) => ({
   fab: {
@@ -35,12 +33,12 @@ export const AdminTripsList = () => {
   const classes = useStyles();
   const history = useHistory();
 
-  const { data, loading, error } = useQuery<GetAdminTrips>(GET_ADMIN_TRIPS);
+  const { trips, loading, error } = useTrips();
 
   if (loading) {
     return <CircularProgress />;
   }
-  if (error || !data) {
+  if (error || !trips) {
     return <p>Error</p>;
   }
 
@@ -57,7 +55,7 @@ export const AdminTripsList = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {data.trips.map(trip => (
+              {trips.map(trip => (
                 <TableRow
                   key={trip.slug}
                   hover
@@ -67,10 +65,10 @@ export const AdminTripsList = () => {
                     {trip.title}
                   </TableCell>
                   <TableCell align="right">
-                    {formatDateString(trip.startDate)}
+                    {formatDateForDisplay(trip.startDate)}
                   </TableCell>
                   <TableCell align="right">
-                    {formatDateString(trip.endDate)}
+                    {formatDateForDisplay(trip.endDate)}
                   </TableCell>
                 </TableRow>
               ))}

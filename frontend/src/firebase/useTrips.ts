@@ -16,12 +16,8 @@ export function useTrips() {
         fromFirestore: snapshot => ({
           title: snapshot.data().title,
           slug: snapshot.data().slug,
-          startDate: new Date(
-            snapshot.data().startDate.seconds * 1000
-          ).toLocaleDateString('nb-NO'),
-          endDate: new Date(
-            snapshot.data().endDate.seconds * 1000
-          ).toLocaleDateString('nb-NO'),
+          startDate: new Date(snapshot.data().startDate.seconds * 1000),
+          endDate: new Date(snapshot.data().endDate.seconds * 1000),
         }),
         toFirestore: (modelObject: Trip) => modelObject,
       })

@@ -14,18 +14,13 @@ import { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import ReactMde from 'react-mde';
 import 'react-mde/lib/styles/css/react-mde-all.css';
-import { GET_EDIT_TRIP } from '../apollo/EditTripQuery';
-import { useMutation, useQuery } from '@apollo/react-hooks';
-import {
-  GetEditTrip,
-  GetEditTripVariables,
-} from '../generated/apollo/GetEditTrip';
 import { useParams } from 'react-router-dom';
-import { SAVE_TRIP } from '../apollo/SaveTripMutation';
-import { SaveTrip, SaveTripVariables } from '../generated/apollo/SaveTrip';
+import { TripDetails } from '../models/Trip';
+import { useTripDetails } from '../firebase/useTripDetails';
+import { formatDateForInput } from '../utils/date';
 
 interface Props {
-  trip: GetEditTrip['trip'];
+  trip: TripDetails;
 }
 
 const useStyles = makeStyles(({ spacing }: Theme) => ({
@@ -56,9 +51,7 @@ const EditTripPageUI = (props: Props) => {
 
   const { title, startDate, endDate, text } = trip;
 
-  const [saveTrip, { loading }] = useMutation<SaveTrip, SaveTripVariables>(
-    SAVE_TRIP
-  );
+  const loading = false;
 
   const handleChange = (name: 'title' | 'startDate' | 'endDate' | 'text') => (
     event: React.ChangeEvent<HTMLInputElement>
@@ -98,7 +91,7 @@ const EditTripPageUI = (props: Props) => {
                     InputLabelProps={{
                       shrink: true,
                     }}
-                    value={startDate}
+                    value={formatDateForInput(startDate)}
                     onChange={handleChange('startDate')}
                   />
                 </Grid>
@@ -110,7 +103,7 @@ const EditTripPageUI = (props: Props) => {
                     InputLabelProps={{
                       shrink: true,
                     }}
-                    value={endDate}
+                    value={formatDateForInput(endDate)}
                     onChange={handleChange('endDate')}
                   />
                 </Grid>
@@ -151,20 +144,7 @@ const EditTripPageUI = (props: Props) => {
         color="primary"
         variant="extended"
         aria-label="Add"
-        onClick={() =>
-          saveTrip({
-            variables: {
-              trip: {
-                id: trip.id,
-                slug: trip.slug,
-                title: trip.title,
-                startDate: trip.startDate,
-                endDate: trip.endDate,
-                text: trip.text,
-              },
-            },
-          })
-        }
+        onClick={() => undefined}
       >
         {loading ? (
           <CircularProgress />
@@ -180,19 +160,14 @@ const EditTripPageUI = (props: Props) => {
 export const EditTripPage = () => {
   const { slug } = useParams<{ slug: string }>();
 
-  const { data, loading, error } = useQuery<GetEditTrip, GetEditTripVariables>(
-    GET_EDIT_TRIP,
-    {
-      variables: { slug },
-    }
-  );
+  const { tripDetails, loading, error } = useTripDetails(slug);
 
   if (loading) {
     return <CircularProgress />;
   }
-  if (error || !data) {
+  if (error || !tripDetails) {
     return <p>Error</p>;
   }
 
-  return <EditTripPageUI trip={data.trip} />;
+  return <EditTripPageUI trip={tripDetails} />;
 };

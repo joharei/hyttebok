@@ -9,6 +9,7 @@ import { TRIP } from '../constants/routes';
 import { ReactRouterLink } from './router_links';
 import { useLocation } from 'react-router-dom';
 import { useTrips } from '../firebase/useTrips';
+import { formatDateForDisplay } from '../utils/date';
 
 const useStyles = makeStyles(({ mixins }: Theme) => ({
   toolbar: mixins.toolbar,
@@ -61,7 +62,9 @@ export const DrawerContent = ({ setTitle }: Props) => {
           >
             <ListItemText
               primary={trip.title}
-              secondary={`${trip.startDate} - ${trip.endDate}`}
+              secondary={`${formatDateForDisplay(
+                trip.startDate
+              )} - ${formatDateForDisplay(trip.endDate)}`}
             />
           </ListItem>
         ))}

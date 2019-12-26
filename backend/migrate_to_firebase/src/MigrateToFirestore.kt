@@ -19,10 +19,10 @@ fun main() {
     )
 
     val db = FirestoreClient.getFirestore()
+    val batch = db.batch()
 
     runBlocking {
         launch {
-            val batch = db.batch()
             for (trip in db.collection("trips").listDocuments()) {
                 batch.delete(trip)
             }
@@ -54,10 +54,10 @@ fun main() {
 
                 println("Done")
             }
-
-            batch.commit().get()
-
-            println("Done with all")
         }
     }
+
+    batch.commit().get()
+
+    println("Done with all")
 }

@@ -4,13 +4,11 @@ import Divider from '@material-ui/core/Divider';
 import List from '@material-ui/core/List';
 import ListItemText from '@material-ui/core/ListItemText';
 import * as React from 'react';
-import { GET_TRIPS } from '../apollo/TripsQuery';
+import { useEffect, useRef, useState } from 'react';
 import { TRIP } from '../constants/routes';
 import { ReactRouterLink } from './router_links';
-import { useQuery } from '@apollo/react-hooks';
-import { GetTrips } from '../generated/apollo/GetTrips';
 import { useLocation } from 'react-router-dom';
-import { useEffect, useRef, useState } from 'react';
+import { useTrips } from '../firebase/useTrips';
 
 const useStyles = makeStyles(({ mixins }: Theme) => ({
   toolbar: mixins.toolbar,
@@ -28,7 +26,7 @@ export const DrawerContent = ({ setTitle }: Props) => {
 
   const updateTitle = (title: string) => () => setTitle(title);
 
-  const { data, loading, error } = useQuery<GetTrips>(GET_TRIPS);
+  const { trips, loading, error } = useTrips();
 
   useEffect(() => {
     if (scrollToItem && selectedListItemRef && selectedListItemRef.current) {
@@ -41,12 +39,12 @@ export const DrawerContent = ({ setTitle }: Props) => {
     if (loading) {
       return <CircularProgress />;
     }
-    if (error || !data) {
+    if (error || !trips) {
       return <p>Error</p>;
     }
     return (
       <List>
-        {data.trips.map(trip => (
+        {trips.map(trip => (
           <ListItem
             component={ReactRouterLink}
             button
@@ -61,7 +59,10 @@ export const DrawerContent = ({ setTitle }: Props) => {
                   : undefined,
             }}
           >
-            <ListItemText primary={trip.title} />
+            <ListItemText
+              primary={trip.title}
+              secondary={`${trip.startDate} - ${trip.endDate}`}
+            />
           </ListItem>
         ))}
       </List>

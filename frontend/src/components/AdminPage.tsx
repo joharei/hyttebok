@@ -8,7 +8,7 @@ import {
   Typography,
 } from '@material-ui/core';
 import React from 'react';
-import { Route, RouteComponentProps } from 'react-router';
+import { Route, Switch, useRouteMatch } from 'react-router-dom';
 import * as ROUTES from '../constants/routes';
 import { AdminTripsList } from './AdminTripsList';
 import { EditTripPage } from './EditTripPage';
@@ -26,8 +26,9 @@ const useStyles = makeStyles(({ spacing, mixins }: Theme) => ({
   },
 }));
 
-export const AdminPage = ({ match: { path, url } }: RouteComponentProps) => {
+export const AdminPage = () => {
   const classes = useStyles();
+  const { path, url } = useRouteMatch();
   const { admin } = useAuth();
 
   return (
@@ -59,8 +60,15 @@ export const AdminPage = ({ match: { path, url } }: RouteComponentProps) => {
             <div className={classes.toolbar} />
 
             <Grid container justify="center" className={classes.content}>
-              <Route path={`${path}/:slug`} component={EditTripPage} />
-              <Route path={`${url}/`} exact component={AdminTripsList} />
+              <Switch>
+                <Route
+                  exact
+                  path={`${path}/new-trip`}
+                  component={EditTripPage}
+                />
+                <Route path={`${path}/:slug`} component={EditTripPage} />
+                <Route path={`${url}/`} exact component={AdminTripsList} />
+              </Switch>
             </Grid>
           </main>
         </div>

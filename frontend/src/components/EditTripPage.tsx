@@ -4,6 +4,8 @@ import {
   Grid,
   makeStyles,
   Paper,
+  Snackbar,
+  SnackbarContent,
   Theme,
   Typography,
 } from '@material-ui/core';
@@ -14,13 +16,14 @@ import { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import ReactMde from 'react-mde';
 import 'react-mde/lib/styles/css/react-mde-all.css';
-import { useParams } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import { TripDetails } from '../models/Trip';
 import { useTripDetails } from '../firebase/useTripDetails';
 import { formatDateForInput } from '../utils/date';
+import { useEditTrip } from '../firebase/useEditTrip';
 
 interface Props {
-  trip: TripDetails;
+  trip: TripDetails | null;
 }
 
 const useStyles = makeStyles(({ spacing }: Theme) => ({
@@ -45,18 +48,24 @@ const useStyles = makeStyles(({ spacing }: Theme) => ({
 }));
 
 const EditTripPageUI = (props: Props) => {
-  const [trip, setTrip] = useState(props.trip);
+  const [trip, setTrip] = useState<Partial<TripDetails>>(props.trip ?? {});
 
   const classes = useStyles();
 
-  const { title, startDate, endDate, text } = trip;
+  const { title, startDate, endDate, text }: Partial<TripDetails> = trip;
 
-  const loading = false;
+  const history = useHistory();
+  const { loading, error, saveTrip } = useEditTrip(
+    props.trip ? undefined : (slug: string) => history.push(`/admin/${slug}`)
+  );
 
   const handleChange = (name: 'title' | 'startDate' | 'endDate' | 'text') => (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    const value = event.target.value;
+    const value =
+      name === 'startDate' || name === 'endDate'
+        ? new Date(event.target.value)
+        : event.target.value;
     setTrip(prevTrip => ({ ...prevTrip, [name]: value }));
   };
 
@@ -67,15 +76,15 @@ const EditTripPageUI = (props: Props) => {
   return (
     <>
       <form className={classes.root}>
-        <Grid container spacing={2} direction="column">
-          <Grid item>
+        <Grid container spacing={2}>
+          <Grid item xs={12}>
             <Paper className={classes.paper}>
-              <Grid container spacing={2} direction="column">
+              <Grid container spacing={2}>
                 <Grid item xs={12}>
                   <Typography variant="h4">Endre tur</Typography>
                 </Grid>
 
-                <Grid item>
+                <Grid item xs={4}>
                   <TextField
                     label="Tittel"
                     value={title}
@@ -84,7 +93,7 @@ const EditTripPageUI = (props: Props) => {
                   />
                 </Grid>
 
-                <Grid item>
+                <Grid item xs={4}>
                   <TextField
                     label="Startdato"
                     type="date"
@@ -93,10 +102,11 @@ const EditTripPageUI = (props: Props) => {
                     }}
                     value={formatDateForInput(startDate)}
                     onChange={handleChange('startDate')}
+                    fullWidth
                   />
                 </Grid>
 
-                <Grid item>
+                <Grid item xs={4}>
                   <TextField
                     label="Sluttdato"
                     type="date"
@@ -105,6 +115,7 @@ const EditTripPageUI = (props: Props) => {
                     }}
                     value={formatDateForInput(endDate)}
                     onChange={handleChange('endDate')}
+                    fullWidth
                   />
                 </Grid>
               </Grid>
@@ -127,12 +138,7 @@ const EditTripPageUI = (props: Props) => {
 
             <Grid item xs={6}>
               <Paper className={`${classes.paper} ${classes.scroll}`}>
-                <ReactMarkdown
-                  source={text.replace(
-                    /MEDIA_URL/g,
-                    'hyttebok.photos.reitan.app/'
-                  )}
-                />
+                <ReactMarkdown source={text} />
               </Paper>
             </Grid>
           </Grid>
@@ -144,7 +150,20 @@ const EditTripPageUI = (props: Props) => {
         color="primary"
         variant="extended"
         aria-label="Add"
-        onClick={() => undefined}
+        disabled={!trip.title || !trip.startDate || !trip.endDate || !trip.text}
+        onClick={() => {
+          if (!trip.title || !trip.startDate || !trip.endDate || !trip.text) {
+            return;
+          }
+          saveTrip({
+            id: trip.id,
+            slug: trip.slug,
+            title: trip.title,
+            startDate: trip.startDate,
+            endDate: trip.endDate,
+            text: trip.text,
+          });
+        }}
       >
         {loading ? (
           <CircularProgress />
@@ -153,19 +172,24 @@ const EditTripPageUI = (props: Props) => {
         )}
         Lagre
       </Fab>
+
+      {error && (
+        <Snackbar open={error}>
+          <SnackbarContent message={'Lagring feilet!'} />
+        </Snackbar>
+      )}
     </>
   );
 };
 
 export const EditTripPage = () => {
-  const { slug } = useParams<{ slug: string }>();
-
+  const { slug } = useParams<{ slug?: string }>();
   const { tripDetails, loading, error } = useTripDetails(slug);
 
   if (loading) {
     return <CircularProgress />;
   }
-  if (error || !tripDetails) {
+  if (error) {
     return <p>Error</p>;
   }
 

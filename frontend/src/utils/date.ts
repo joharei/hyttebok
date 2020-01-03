@@ -8,7 +8,11 @@ export function formatDateForDisplay(date: Date): string {
   return date.toLocaleDateString('nb-NO', options);
 }
 
-export function formatDateForInput(date: Date): string {
+export function formatDateForInput(date: Date | undefined): string | undefined {
+  if (!date) {
+    return undefined;
+  }
+
   return (
     date.getFullYear().toString() +
     '-' +

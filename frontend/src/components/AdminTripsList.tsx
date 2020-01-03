@@ -82,6 +82,7 @@ export const AdminTripsList = () => {
         color="primary"
         variant="extended"
         aria-label="Add"
+        onClick={() => history.push(`${ADMIN}/new-trip`)}
       >
         <AddIcon className={classes.fabIcon} />
         Ny tur

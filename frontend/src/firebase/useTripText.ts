@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import * as firebase from 'firebase/app';
 
-export function useTripText(slug: string) {
+export function useTripText(slug: string | undefined) {
   const [error, setError] = React.useState(false);
   const [loading, setLoading] = React.useState(true);
   const [tripText, setTripText] = React.useState<string | null>(null);
@@ -11,26 +11,29 @@ export function useTripText(slug: string) {
   useEffect(() => {
     setLoading(true);
 
-    const unsubscribe = firebase
-      .firestore()
-      .collection('trips')
-      .where('slug', '==', slug)
-      .onSnapshot(
-        snapshot => {
-          const id = snapshot.docs[0].id;
-          if (id) {
-            setTripId(id);
-          } else {
+    if (slug) {
+      const unsubscribe = firebase
+        .firestore()
+        .collection('trips')
+        .where('slug', '==', slug)
+        .onSnapshot(
+          snapshot => {
+            const id = snapshot.docs[0].id;
+            if (id) {
+              setTripId(id);
+            } else {
+              setError(true);
+            }
+          },
+          error => {
+            console.log(error);
             setError(true);
           }
-        },
-        error => {
-          console.log(error);
-          setError(true);
-        }
-      );
+        );
 
-    return () => unsubscribe();
+      return () => unsubscribe();
+    }
+    return;
   }, [slug]);
 
   useEffect(() => {

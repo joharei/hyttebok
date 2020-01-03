@@ -3,7 +3,7 @@ import * as firebase from 'firebase/app';
 import { Trip, TripDetails } from '../models/Trip';
 import { useTripText } from './useTripText';
 
-export function useTripDetails(slug: string) {
+export function useTripDetails(slug: string | undefined) {
   const [error, setError] = React.useState(false);
   const [loading, setLoading] = React.useState(true);
   const [trip, setTrip] = React.useState<Trip | null>(null);
@@ -14,7 +14,12 @@ export function useTripDetails(slug: string) {
   const [tripId, setTripId] = React.useState<string | null>(null);
 
   useEffect(() => {
-    setLoading(true);
+    if (!slug) {
+      setLoading(false);
+      return;
+    } else {
+      setLoading(true);
+    }
 
     const unsubscribe = firebase
       .firestore()
@@ -71,12 +76,12 @@ export function useTripDetails(slug: string) {
   const { tripText } = useTripText(slug);
 
   useEffect(() => {
-    if (trip && tripText) {
+    if (tripId && trip && tripText) {
       setLoading(false);
       setError(false);
-      setTripDetails({ ...trip, text: tripText });
+      setTripDetails({ ...trip, id: tripId, text: tripText });
     }
-  }, [trip, tripText]);
+  }, [tripId, trip, tripText]);
 
   return {
     error,

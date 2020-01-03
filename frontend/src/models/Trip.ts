@@ -6,5 +6,6 @@ export interface Trip {
 }
 
 export interface TripDetails extends Trip {
+  id: string;
   text: string;
 }

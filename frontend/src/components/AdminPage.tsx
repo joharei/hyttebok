@@ -13,7 +13,6 @@ import * as ROUTES from '../constants/routes';
 import { AdminTripsList } from './AdminTripsList';
 import { EditTripPage } from './EditTripPage';
 import { ReactRouterLink } from './router_links';
-import { useAuth } from './Auth/useAuth';
 
 const useStyles = makeStyles(({ spacing, mixins }: Theme) => ({
   content: {
@@ -29,50 +28,41 @@ const useStyles = makeStyles(({ spacing, mixins }: Theme) => ({
 export const AdminPage = () => {
   const classes = useStyles();
   const { path, url } = useRouteMatch();
-  const { admin } = useAuth();
 
   return (
-    <>
-      {admin && (
-        <div>
-          <AppBar position="fixed">
-            <Toolbar>
-              <Typography
-                variant="h6"
-                color="inherit"
-                noWrap
-                className={classes.grow}
-              >
-                Admin
-              </Typography>
+    <div>
+      <AppBar position="fixed">
+        <Toolbar>
+          <Typography
+            variant="h6"
+            color="inherit"
+            noWrap
+            className={classes.grow}
+          >
+            Admin
+          </Typography>
 
-              <Button
-                component={ReactRouterLink}
-                color="inherit"
-                to={ROUTES.LANDING}
-              >
-                Til forsiden
-              </Button>
-            </Toolbar>
-          </AppBar>
+          <Button
+            component={ReactRouterLink}
+            color="inherit"
+            to={ROUTES.LANDING}
+          >
+            Til forsiden
+          </Button>
+        </Toolbar>
+      </AppBar>
 
-          <main>
-            <div className={classes.toolbar} />
+      <main>
+        <div className={classes.toolbar} />
 
-            <Grid container justify="center" className={classes.content}>
-              <Switch>
-                <Route
-                  exact
-                  path={`${path}/new-trip`}
-                  component={EditTripPage}
-                />
-                <Route path={`${path}/:slug`} component={EditTripPage} />
-                <Route path={`${url}/`} exact component={AdminTripsList} />
-              </Switch>
-            </Grid>
-          </main>
-        </div>
-      )}
-    </>
+        <Grid container justify="center" className={classes.content}>
+          <Switch>
+            <Route exact path={`${path}/new-trip`} component={EditTripPage} />
+            <Route path={`${path}/:slug`} component={EditTripPage} />
+            <Route path={`${url}/`} exact component={AdminTripsList} />
+          </Switch>
+        </Grid>
+      </main>
+    </div>
   );
 };

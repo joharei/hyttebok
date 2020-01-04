@@ -17,7 +17,7 @@ export const useAuth = () => {
     useContext(authContext) || {
       signIn: () => undefined,
       signOut: () => undefined,
-      user: null,
+      user: firebase.auth().currentUser,
       admin: null,
     }
   );
@@ -30,10 +30,8 @@ function useProvideAuth(): Auth {
   const signIn = () => {
     return firebase
       .auth()
-      .signInWithPopup(new firebase.auth.GoogleAuthProvider())
-      .then(response => {
-        setUser(response.user);
-      });
+      .signInWithRedirect(new firebase.auth.GoogleAuthProvider())
+      .then();
   };
 
   const signOut = () => {
@@ -46,18 +44,34 @@ function useProvideAuth(): Auth {
   };
 
   useEffect(() => {
-    const unsubscribe = firebase.auth().onAuthStateChanged(user => {
-      setUser(user);
+    firebase.auth().onAuthStateChanged(user => {
+      if (user) {
+        setUser(user);
+      } else {
+        signIn().then();
+      }
     });
 
-    return () => unsubscribe();
+    firebase
+      .auth()
+      .getRedirectResult()
+      .then(result => {
+        if (result.user) {
+          setUser(result.user);
+        }
+      })
+      .catch(error => {
+        console.log(error);
+        signOut().then();
+      });
   }, []);
 
   useEffect(() => {
-    user &&
+    if (user) {
       user
         .getIdTokenResult()
         .then(value => setAdmin(value.claims.admin === true));
+    }
   }, [user]);
 
   useEffect(() => {

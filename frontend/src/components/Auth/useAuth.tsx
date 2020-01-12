@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import * as firebase from 'firebase/app';
 
 firebase.auth().useDeviceLanguage();
@@ -31,8 +37,11 @@ function useProvideAuth(): Auth {
     return firebase
       .auth()
       .signInWithPopup(new firebase.auth.GoogleAuthProvider())
-      .then(response => {
-        setUser(response.user);
+      .then(() => {
+        console.log('Logged in successfully');
+      })
+      .catch(() => {
+        console.error('Failed to log in');
       });
   };
 
@@ -45,20 +54,42 @@ function useProvideAuth(): Auth {
       });
   };
 
+  const metadataUnsubscribe = useRef<(() => void) | null>(null);
   useEffect(() => {
     const unsubscribe = firebase.auth().onAuthStateChanged(user => {
-      setUser(user);
+      // Remove previous listener.
+      metadataUnsubscribe.current?.();
+      // On user login add new listener.
+      if (user) {
+        // Check if refresh is required.
+        metadataUnsubscribe.current = firebase
+          .firestore()
+          .doc(`metadata/${user.uid}`)
+          .onSnapshot(snapshot => {
+            if (snapshot.exists) {
+              user.getIdTokenResult().then(value => {
+                // Check if user is admin
+                if (value.claims.admin === true) {
+                  setUser(user);
+                  setAdmin(true);
+                } else {
+                  // If not, force refresh the token and check again
+                  user.getIdTokenResult(true).then(value => {
+                    setUser(user);
+                    setAdmin(value.claims.admin === true);
+                  });
+                }
+              });
+            }
+          });
+      }
     });
 
-    return () => unsubscribe();
+    return () => {
+      metadataUnsubscribe.current?.();
+      unsubscribe();
+    };
   }, []);
-
-  useEffect(() => {
-    user &&
-      user
-        .getIdTokenResult()
-        .then(value => setAdmin(value.claims.admin === true));
-  }, [user]);
 
   useEffect(() => {
     if (admin === false) {

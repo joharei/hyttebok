@@ -20,10 +20,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "lint": "eslint \"./src/**/*.{ts,tsx,tsx.snap}\" --max-warnings 0",
-    "apollo:download-schema": "apollo client:download-schema --endpoint http://localhost:8080/graphql schema.json",
-    "apollo:codegen": "apollo client:codegen src/generated/apollo --localSchemaFile schema.json --excludes node_modules --includes \"src/**/*.{ts,tsx}\" --target typescript --tagName gql --outputFlat --passthroughCustomScalars --customScalarsPrefix Hyttebok --useReadOnlyTypes --tsFileExtension=d.ts",
-    "apollo:downgen": "yarn apollo:download-schema && yarn apollo:codegen"
+    "lint": "eslint \"./src/**/*.{ts,tsx,tsx.snap}\" --max-warnings 0"
   },
   "browserslist": [
     ">0.2%",

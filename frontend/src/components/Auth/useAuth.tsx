@@ -75,6 +75,8 @@ function useProvideAuth(): Auth {
                   });
                 }
               });
+            } else {
+              signOut().then();
             }
           });
       } else {

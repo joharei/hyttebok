@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import * as firebase from 'firebase/app';
 
 firebase.auth().useDeviceLanguage();
@@ -43,36 +49,44 @@ function useProvideAuth(): Auth {
       });
   };
 
+  const metadataUnsubscribe = useRef<(() => void) | null>(null);
   useEffect(() => {
-    firebase.auth().onAuthStateChanged(user => {
+    const unsubscribe = firebase.auth().onAuthStateChanged(user => {
+      // Remove previous listener.
+      metadataUnsubscribe.current?.();
+      // On user login add new listener.
       if (user) {
-        setUser(user);
+        // Check if refresh is required.
+        metadataUnsubscribe.current = firebase
+          .firestore()
+          .doc(`metadata/${user.uid}`)
+          .onSnapshot(snapshot => {
+            if (snapshot.exists) {
+              user.getIdTokenResult().then(value => {
+                // Check if user is admin
+                if (value.claims.admin === true) {
+                  setUser(user);
+                  setAdmin(true);
+                } else {
+                  // If not, force refresh the token and check again
+                  user.getIdTokenResult(true).then(value => {
+                    setUser(user);
+                    setAdmin(value.claims.admin === true);
+                  });
+                }
+              });
+            }
+          });
       } else {
         signIn().then();
       }
     });
 
-    firebase
-      .auth()
-      .getRedirectResult()
-      .then(result => {
-        if (result.user) {
-          setUser(result.user);
-        }
-      })
-      .catch(error => {
-        console.log(error);
-        signOut().then();
-      });
+    return () => {
+      metadataUnsubscribe.current?.();
+      unsubscribe();
+    };
   }, []);
-
-  useEffect(() => {
-    if (user) {
-      user
-        .getIdTokenResult()
-        .then(value => setAdmin(value.claims.admin === true));
-    }
-  }, [user]);
 
   useEffect(() => {
     if (admin === false) {

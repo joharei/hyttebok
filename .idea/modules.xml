@@ -5,6 +5,7 @@
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/backend.main.iml" filepath="$PROJECT_DIR$/.idea/modules/backend.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/backend.test.iml" filepath="$PROJECT_DIR$/.idea/modules/backend.test.iml" />
       <module fileurl="file://$PROJECT_DIR$/frontend/frontend.iml" filepath="$PROJECT_DIR$/frontend/frontend.iml" />
+      <module fileurl="file://$PROJECT_DIR$/frontend/functions/functions.iml" filepath="$PROJECT_DIR$/frontend/functions/functions.iml" />
       <module fileurl="file://$PROJECT_DIR$/hyttebok.iml" filepath="$PROJECT_DIR$/hyttebok.iml" />
     </modules>
   </component>

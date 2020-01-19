@@ -1,14 +1,4 @@
-import {
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  Grid,
-  makeStyles,
-  Theme,
-  Tooltip,
-} from '@material-ui/core';
+import { Grid, makeStyles, Theme, Tooltip } from '@material-ui/core';
 import AppBar from '@material-ui/core/AppBar';
 import Button from '@material-ui/core/Button';
 import Drawer from '@material-ui/core/Drawer';
@@ -16,12 +6,11 @@ import Hidden from '@material-ui/core/Hidden';
 import MenuIcon from '@material-ui/icons/Menu';
 import EditIcon from '@material-ui/icons/Edit';
 import LockIcon from '@material-ui/icons/Lock';
-import LockOpenIcon from '@material-ui/icons/LockOpen';
 import IconButton from '@material-ui/core/IconButton';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import * as React from 'react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Route, RouteComponentProps } from 'react-router';
 import * as ROUTES from '../constants/routes';
 import { DrawerContent } from './DrawerContent';
@@ -34,16 +23,17 @@ const drawerWidth = 300;
 const useStyles = makeStyles(({ breakpoints, spacing, mixins }: Theme) => ({
   appBar: {
     marginLeft: drawerWidth,
-    [breakpoints.up('sm')]: {
+    [breakpoints.up('md')]: {
       width: `calc(100% - ${drawerWidth}px)`,
     },
   },
   content: {
     flexGrow: 1,
     padding: spacing(3),
+    maxWidth: '100%',
   },
   drawer: {
-    [breakpoints.up('sm')]: {
+    [breakpoints.up('md')]: {
       flexShrink: 0,
       width: drawerWidth,
     },
@@ -53,7 +43,7 @@ const useStyles = makeStyles(({ breakpoints, spacing, mixins }: Theme) => ({
   },
   menuButton: {
     marginRight: 20,
-    [breakpoints.up('sm')]: {
+    [breakpoints.up('md')]: {
       display: 'none',
     },
   },
@@ -75,15 +65,8 @@ export const ResponsiveDrawer = ({
   const toggleDrawer = () => setMobileOpen(!mobileOpen);
 
   const [title, setTitle] = useState('Hyttebok');
-  const [unauthorizedDialogOpen, setUnauthorizedDialogOpen] = useState(false);
 
-  const { user, signIn, signOut, admin } = useAuth();
-
-  useEffect(() => {
-    if (admin === false) {
-      setUnauthorizedDialogOpen(true);
-    }
-  }, [admin]);
+  const { signOut } = useAuth();
 
   function renderRootPage() {
     return (
@@ -131,81 +114,40 @@ export const ResponsiveDrawer = ({
           >
             {title}
           </Typography>
-          {user && admin === true ? (
-            <div>
-              <Hidden smUp>
-                <Tooltip title="Til adminsiden">
-                  <IconButton
-                    component={ReactRouterLink}
-                    color="inherit"
-                    to={ROUTES.ADMIN}
-                  >
-                    <EditIcon />
-                  </IconButton>
-                </Tooltip>
-                <Tooltip title="Logg ut">
-                  <IconButton color="inherit" onClick={signOut}>
-                    <LockIcon />
-                  </IconButton>
-                </Tooltip>
-              </Hidden>
-              <Hidden smDown>
-                <Button
+          <div style={{ display: 'flex' }}>
+            <Hidden mdUp>
+              <Tooltip title="Til adminsiden">
+                <IconButton
                   component={ReactRouterLink}
                   color="inherit"
                   to={ROUTES.ADMIN}
                 >
-                  Til adminsiden
-                </Button>
-                <Button color="inherit" onClick={signOut}>
-                  Logg ut
-                </Button>
-              </Hidden>
-            </div>
-          ) : (
-            <>
-              <Hidden smUp>
-                <Tooltip title="Logg inn">
-                  <IconButton color="inherit" onClick={signIn}>
-                    <LockOpenIcon />
-                  </IconButton>
-                </Tooltip>
-              </Hidden>
-              <Hidden smDown>
-                <Button color="inherit" onClick={signIn}>
-                  Logg inn
-                </Button>
-              </Hidden>
-            </>
-          )}
-          {unauthorizedDialogOpen && (
-            <Dialog
-              open={unauthorizedDialogOpen}
-              onClose={() => setUnauthorizedDialogOpen(false)}
-              aria-labelledby="alert-dialog-title"
-              aria-describedby="alert-dialog-description"
-            >
-              <DialogTitle id="alert-dialog-title">Ingen adgang!</DialogTitle>
-              <DialogContent>
-                <DialogContentText id="alert-dialog-description">
-                  Denne siden er privat, og slipper bare inn spesielt utvalgte!
-                </DialogContentText>
-              </DialogContent>
-              <DialogActions>
-                <Button
-                  onClick={() => setUnauthorizedDialogOpen(false)}
-                  color="primary"
-                  autoFocus
-                >
-                  Ok
-                </Button>
-              </DialogActions>
-            </Dialog>
-          )}
+                  <EditIcon />
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="Logg ut">
+                <IconButton color="inherit" onClick={signOut}>
+                  <LockIcon />
+                </IconButton>
+              </Tooltip>
+            </Hidden>
+            <Hidden smDown>
+              <Button
+                component={ReactRouterLink}
+                color="inherit"
+                to={ROUTES.ADMIN}
+              >
+                Til adminsiden
+              </Button>
+              <Button color="inherit" onClick={signOut}>
+                Logg ut
+              </Button>
+            </Hidden>
+          </div>
         </Toolbar>
       </AppBar>
       <nav className={classes.drawer}>
-        <Hidden smUp>
+        <Hidden mdUp>
           <Drawer
             variant="temporary"
             open={mobileOpen}
@@ -222,7 +164,7 @@ export const ResponsiveDrawer = ({
             />
           </Drawer>
         </Hidden>
-        <Hidden xsDown>
+        <Hidden smDown>
           <Drawer
             classes={{
               paper: classes.drawerPaper,

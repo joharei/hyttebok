@@ -25,6 +25,7 @@ export const Paragraph = (props: ParagraphProps) => {
       <GridList
         cellHeight={cellHeight}
         cols={singleCol ? 1 : imageChildren.length > 2 ? 3 : 2}
+        style={{ maxWidth: '100%' }}
       >
         {imageChildren.map(
           (child: ReactElement<AnchorHTMLAttributes<HTMLAnchorElement>>) => (

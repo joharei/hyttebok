@@ -20,7 +20,7 @@ export const TripPage = () => {
 
   return (
     <Grid container>
-      <Grid md={12} lg={8} xl={6} item>
+      <Grid md={12} lg={8} xl={6} item style={{ maxWidth: '100%' }}>
         <ReactMarkdown source={tripText} renderers={{ paragraph: Paragraph }} />
       </Grid>
     </Grid>

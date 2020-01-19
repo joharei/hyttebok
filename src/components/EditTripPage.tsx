@@ -2,12 +2,14 @@ import {
   CircularProgress,
   Fab,
   Grid,
+  Hidden,
   makeStyles,
   Paper,
   Snackbar,
   SnackbarContent,
   Theme,
   Typography,
+  useMediaQuery,
 } from '@material-ui/core';
 import TextField from '@material-ui/core/TextField';
 import SaveIcon from '@material-ui/icons/Save';
@@ -51,6 +53,10 @@ const EditTripPageUI = (props: Props) => {
   const [trip, setTrip] = useState<Partial<TripDetails>>(props.trip ?? {});
 
   const classes = useStyles();
+  const mobileView = useMediaQuery((theme: Theme) =>
+    theme.breakpoints.down('xs')
+  );
+  const [selectedTab, setSelectedTab] = useState<'write' | 'preview'>('write');
 
   const { title, startDate, endDate, text }: Partial<TripDetails> = trip;
 
@@ -84,7 +90,7 @@ const EditTripPageUI = (props: Props) => {
                   <Typography variant="h4">Endre tur</Typography>
                 </Grid>
 
-                <Grid item xs={4}>
+                <Grid item xs={12} sm={4}>
                   <TextField
                     label="Tittel"
                     value={title}
@@ -93,7 +99,7 @@ const EditTripPageUI = (props: Props) => {
                   />
                 </Grid>
 
-                <Grid item xs={4}>
+                <Grid item xs={12} sm={4}>
                   <TextField
                     label="Startdato"
                     type="date"
@@ -106,7 +112,7 @@ const EditTripPageUI = (props: Props) => {
                   />
                 </Grid>
 
-                <Grid item xs={4}>
+                <Grid item xs={12} sm={4}>
                   <TextField
                     label="Sluttdato"
                     type="date"
@@ -123,12 +129,17 @@ const EditTripPageUI = (props: Props) => {
           </Grid>
 
           <Grid item container direction="row" spacing={2}>
-            <Grid item xs={6}>
+            <Grid item xs={12} sm={6}>
               <Paper>
                 <ReactMde
                   value={text}
                   onChange={handleTextChange}
-                  disablePreview
+                  disablePreview={!mobileView}
+                  generateMarkdownPreview={async markdown => (
+                    <ReactMarkdown source={markdown} />
+                  )}
+                  selectedTab={selectedTab}
+                  onTabChange={setSelectedTab}
                   minEditorHeight={500}
                   maxEditorHeight={Number.MAX_VALUE}
                   minPreviewHeight={0}
@@ -136,11 +147,13 @@ const EditTripPageUI = (props: Props) => {
               </Paper>
             </Grid>
 
-            <Grid item xs={6}>
-              <Paper className={`${classes.paper} ${classes.scroll}`}>
-                <ReactMarkdown source={text} />
-              </Paper>
-            </Grid>
+            <Hidden xsDown>
+              <Grid item xs={6}>
+                <Paper className={`${classes.paper} ${classes.scroll}`}>
+                  <ReactMarkdown source={text} />
+                </Paper>
+              </Grid>
+            </Hidden>
           </Grid>
         </Grid>
       </form>

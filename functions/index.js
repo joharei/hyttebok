@@ -15,7 +15,6 @@ exports.processSignUp = functions
       .then(snapshot => {
         // Check if user meets role criteria.
         if (user.email &&
-          user.emailVerified &&
           !snapshot.empty) {
           const customClaims = {
             admin: true

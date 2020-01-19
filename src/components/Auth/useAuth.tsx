@@ -36,7 +36,7 @@ function useProvideAuth(): Auth {
   const signIn = () => {
     return firebase
       .auth()
-      .signInWithRedirect(new firebase.auth.GoogleAuthProvider())
+      .signInWithRedirect(new firebase.auth.OAuthProvider('microsoft.com'))
       .then();
   };
 
@@ -51,6 +51,14 @@ function useProvideAuth(): Auth {
 
   const metadataUnsubscribe = useRef<(() => void) | null>(null);
   useEffect(() => {
+    firebase
+      .auth()
+      .getRedirectResult()
+      .then()
+      .catch(error => {
+        console.log(error);
+        signOut().then();
+      });
     const unsubscribe = firebase.auth().onAuthStateChanged(user => {
       // Remove previous listener.
       metadataUnsubscribe.current?.();
@@ -75,8 +83,6 @@ function useProvideAuth(): Auth {
                   });
                 }
               });
-            } else {
-              signOut().then();
             }
           });
       } else {

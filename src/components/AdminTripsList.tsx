@@ -27,6 +27,9 @@ const useStyles = makeStyles(({ spacing }: Theme) => ({
   fabIcon: {
     marginRight: spacing(1),
   },
+  tableRowHover: {
+    cursor: 'pointer',
+  },
 }));
 
 export const AdminTripsList = () => {
@@ -59,6 +62,7 @@ export const AdminTripsList = () => {
                 <TableRow
                   key={trip.slug}
                   hover
+                  classes={{ hover: classes.tableRowHover }}
                   onClick={() => history.push(`${ADMIN}/${trip.slug}`)}
                 >
                   <TableCell component="th" scope="row">

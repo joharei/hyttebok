@@ -1,4 +1,5 @@
 import {
+  Backdrop,
   Grid,
   GridList,
   GridListTile,
@@ -9,14 +10,14 @@ import {
 } from '@material-ui/core';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import * as React from 'react';
-import { AnchorHTMLAttributes, ReactElement } from 'react';
+import { AnchorHTMLAttributes, ReactElement, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { useParams } from 'react-router-dom';
 import { useTripText } from '../firebase/useTripText';
 import { LazyImage } from 'react-lazy-images';
 import { Skeleton } from '@material-ui/lab';
 
-const useImageStyles = makeStyles({
+const useImageStyles = makeStyles((theme: Theme) => ({
   image: {
     position: 'absolute',
     left: '50%',
@@ -27,7 +28,16 @@ const useImageStyles = makeStyles({
     '-ms-transform': 'translate(-50%,-50%)',
     transform: 'translate(-50%,-50%)',
   },
-});
+  backdrop: {
+    zIndex: theme.zIndex.drawer + 1,
+    color: '#fff',
+  },
+  fullscreenImage: {
+    height: '90vh',
+    width: '90vw',
+    objectFit: 'contain',
+  },
+}));
 
 interface ImageProps {
   src: string;
@@ -37,36 +47,70 @@ interface ImageProps {
 
 const ImageLink = ({ href, src, height, ...props }: ImageProps) => {
   const classes = useImageStyles();
+  const [open, setOpen] = useState(false);
 
   if (!href.includes('MEDIA_URL')) {
     return (
-      <a href={href} target="_blank" rel="noopener noreferrer">
-        <LazyImage
-          src={src}
-          alt="Bilde"
-          observerProps={{
-            rootMargin: '500px 0px',
+      <>
+        <a
+          href={href}
+          onClick={event => {
+            event.preventDefault();
+            setOpen(true);
           }}
-          placeholder={({ ref }) => (
-            <Skeleton
-              ref={ref}
-              variant="rect"
-              height={height}
-              width={(3 / 2) * height}
+        >
+          <LazyImage
+            src={src}
+            alt="Bilde"
+            observerProps={{
+              rootMargin: '500px 0px',
+            }}
+            placeholder={({ ref }) => (
+              <Skeleton
+                ref={ref}
+                variant="rect"
+                height={height}
+                width={(3 / 2) * height}
+              />
+            )}
+            actual={({ imageProps: { alt, ...rest } }) => (
+              <img
+                className={classes.image}
+                height={height}
+                width="auto"
+                alt={alt}
+                {...rest}
+              />
+            )}
+            error={() => <Typography>Klarte ikke å laste bildet</Typography>}
+          />
+        </a>
+
+        {open && (
+          <Backdrop
+            className={classes.backdrop}
+            open={open}
+            onClick={() => setOpen(false)}
+          >
+            <LazyImage
+              src={href}
+              alt="Bilde"
+              placeholder={({ ref, imageProps: { alt } }) => (
+                <img
+                  className={classes.fullscreenImage}
+                  alt={alt}
+                  ref={ref}
+                  src={src}
+                />
+              )}
+              actual={({ imageProps: { alt, ...rest } }) => (
+                <img className={classes.fullscreenImage} alt={alt} {...rest} />
+              )}
+              error={() => <Typography>Klarte ikke å laste bildet</Typography>}
             />
-          )}
-          actual={({ imageProps: { alt, ...rest } }) => (
-            <img
-              className={classes.image}
-              height={height}
-              width="auto"
-              alt={alt}
-              {...rest}
-            />
-          )}
-          error={() => <Typography>Klarte ikke å laste bildet</Typography>}
-        />
-      </a>
+          </Backdrop>
+        )}
+      </>
     );
   }
   return (

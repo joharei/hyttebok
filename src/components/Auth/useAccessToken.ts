@@ -1,15 +1,17 @@
 import * as firebase from 'firebase/app';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useLocalStorage } from '../../utils/useLocalStorage';
 import { useAuth } from './useAuth';
 
 export const useAccessToken = () => {
   const { user, signIn } = useAuth();
   const [adAccessToken, setAdAccessToken] = useLocalStorage<string | null>('adAccessToken', null);
+  const [reauthenticating, setReauthenticating] = useState(false);
 
   useEffect(() => {
     const reauthenticate = () => {
-      setAdAccessToken('intermediate');
+      setAdAccessToken(null);
+      setReauthenticating(true);
 
       if (!user) {
         signIn();
@@ -34,7 +36,7 @@ export const useAccessToken = () => {
         .catch(e => console.error(e));
     };
 
-    if (adAccessToken === 'intermediate') {
+    if (reauthenticating) {
       // hold on...
     } else if (adAccessToken) {
       fetch('https://graph.microsoft.com/v1.0/me/', {
@@ -55,7 +57,7 @@ export const useAccessToken = () => {
       console.log('No access token. Re-authenticating');
       reauthenticate();
     }
-  }, [adAccessToken, setAdAccessToken, signIn, user]);
+  }, [reauthenticating, adAccessToken, setAdAccessToken, signIn, user]);
 
   return adAccessToken;
 };

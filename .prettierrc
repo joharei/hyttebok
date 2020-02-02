@@ -1,6 +1,6 @@
 {
   "singleQuote": true,
   "trailingComma": "es5",
-  "print-width": "120",
+  "printWidth": 120,
   "bracketSpacing": true
 }

@@ -2,16 +2,20 @@ import { CircularProgress, makeStyles } from '@material-ui/core';
 import React from 'react';
 
 const useStyles = makeStyles({
-  parent: {
+  parent: ({ height }: Props) => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    height: '100vh',
-  },
+    height: height ?? '100vh',
+  }),
 });
 
-export const Loading = () => {
-  const { parent } = useStyles();
+interface Props {
+  height?: string | number;
+}
+
+export const Loading = (props: Props) => {
+  const { parent } = useStyles(props);
 
   return (
     <div className={parent}>

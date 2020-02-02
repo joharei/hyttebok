@@ -14,15 +14,17 @@ import {
 import TextField from '@material-ui/core/TextField';
 import SaveIcon from '@material-ui/icons/Save';
 import * as React from 'react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
-import ReactMde from 'react-mde';
+import ReactMde, { TextApi } from 'react-mde';
 import 'react-mde/lib/styles/css/react-mde-all.css';
 import { useHistory, useParams } from 'react-router-dom';
-import { TripDetails } from '../models/Trip';
-import { useTripDetails } from '../firebase/useTripDetails';
-import { formatDateForInput } from '../utils/date';
-import { useEditTrip } from '../firebase/useEditTrip';
+import { TripDetails } from '../../models/Trip';
+import { useTripDetails } from '../../firebase/useTripDetails';
+import { formatDateForInput } from '../../utils/date';
+import { useEditTrip } from '../../firebase/useEditTrip';
+import { OneDrivePhotoPicker } from './OneDrivePhotoPicker';
+import SettingsSystemDaydreamIcon from '@material-ui/icons/SettingsSystemDaydream';
 
 interface Props {
   trip: TripDetails | null;
@@ -50,31 +52,43 @@ const useStyles = makeStyles(({ spacing }: Theme) => ({
 }));
 
 const EditTripPageUI = (props: Props) => {
-  const [trip, setTrip] = useState<Partial<TripDetails>>(props.trip ?? {});
-
   const classes = useStyles();
-  const mobileView = useMediaQuery((theme: Theme) =>
-    theme.breakpoints.down('xs')
-  );
+  const history = useHistory();
+
+  const [trip, setTrip] = useState<Partial<TripDetails>>(props.trip ?? {});
   const [selectedTab, setSelectedTab] = useState<'write' | 'preview'>('write');
+  const [commands, setCommands] = useState(ReactMde.defaultProps.commands ?? []);
+  const [oneDrivePhotoApi, setOneDrivePhotoApi] = useState<TextApi | null>(null);
+
+  const mobileView = useMediaQuery((theme: Theme) => theme.breakpoints.down('xs'));
 
   const { title, startDate, endDate, text }: Partial<TripDetails> = trip;
-
-  const history = useHistory();
   const { loading, error, saveTrip } = useEditTrip(
     props.trip ? undefined : (slug: string) => history.push(`/admin/${slug}`)
   );
 
+  useEffect(() => {
+    setCommands(prevState => {
+      const commands = Array(...prevState);
+      commands[1].commands.push({
+        name: 'onedrive_image',
+        buttonProps: { 'aria-label': 'Sett inn bilde fra OneDrive' },
+        // eslint-disable-next-line react/display-name
+        icon: () => <SettingsSystemDaydreamIcon fontSize="small" />,
+        execute: (state, api) => {
+          setOneDrivePhotoApi(api);
+        },
+      });
+      return commands;
+    });
+  }, []);
+
   const handleChange = (name: 'title' | 'startDate' | 'endDate' | 'text') => (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    const value =
-      name === 'startDate' || name === 'endDate'
-        ? new Date(event.target.value)
-        : event.target.value;
+    const value = name === 'startDate' || name === 'endDate' ? new Date(event.target.value) : event.target.value;
     setTrip(prevTrip => ({ ...prevTrip, [name]: value }));
   };
-
   const handleTextChange = (value: string) => {
     setTrip(prevTrip => ({ ...prevTrip, text: value }));
   };
@@ -91,12 +105,7 @@ const EditTripPageUI = (props: Props) => {
                 </Grid>
 
                 <Grid item xs={12} sm={4}>
-                  <TextField
-                    label="Tittel"
-                    value={title}
-                    onChange={handleChange('title')}
-                    fullWidth
-                  />
+                  <TextField label="Tittel" value={title} onChange={handleChange('title')} fullWidth />
                 </Grid>
 
                 <Grid item xs={12} sm={4}>
@@ -135,14 +144,13 @@ const EditTripPageUI = (props: Props) => {
                   value={text}
                   onChange={handleTextChange}
                   disablePreview={!mobileView}
-                  generateMarkdownPreview={async markdown => (
-                    <ReactMarkdown source={markdown} />
-                  )}
+                  generateMarkdownPreview={async markdown => <ReactMarkdown source={markdown} />}
                   selectedTab={selectedTab}
                   onTabChange={setSelectedTab}
                   minEditorHeight={500}
                   maxEditorHeight={Number.MAX_VALUE}
                   minPreviewHeight={0}
+                  commands={commands}
                 />
               </Paper>
             </Grid>
@@ -178,13 +186,23 @@ const EditTripPageUI = (props: Props) => {
           });
         }}
       >
-        {loading ? (
-          <CircularProgress />
-        ) : (
-          <SaveIcon className={classes.fabIcon} />
-        )}
+        {loading ? <CircularProgress /> : <SaveIcon className={classes.fabIcon} />}
         Lagre
       </Fab>
+
+      {oneDrivePhotoApi && (
+        <OneDrivePhotoPicker
+          onSuccess={photos => {
+            const photosTemplate = photos
+              .map(({ original, thumbnail }) => `[![](${thumbnail})](${original})`)
+              .join('\n');
+            oneDrivePhotoApi?.replaceSelection(`${photosTemplate}\n`);
+            oneDrivePhotoApi?.setSelectionRange({ start: 2, end: 3 });
+            setOneDrivePhotoApi(null);
+          }}
+          onCancel={() => setOneDrivePhotoApi(null)}
+        />
+      )}
 
       {error && (
         <Snackbar open={error}>

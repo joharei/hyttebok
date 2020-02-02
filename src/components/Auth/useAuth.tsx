@@ -1,16 +1,11 @@
-import React, {
-  createContext,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
 import * as firebase from 'firebase/app';
+import { useLocalStorage } from '../../utils/useLocalStorage';
 
 firebase.auth().useDeviceLanguage();
 
 interface Auth {
-  signIn: () => Promise<void>;
+  signIn: () => void;
   signOut: () => Promise<void>;
   user: firebase.User | null;
   admin: boolean | null;
@@ -32,9 +27,10 @@ export const useAuth = () => {
 function useProvideAuth(): Auth {
   const [user, setUser] = useState<firebase.User | null>(null);
   const [admin, setAdmin] = useState<boolean | null>(null);
+  const [, setAdAccessToken] = useLocalStorage<string | null>('adAccessToken', null);
 
   const signIn = () => {
-    return firebase
+    firebase
       .auth()
       .signInWithRedirect(new firebase.auth.OAuthProvider('microsoft.com'))
       .then();
@@ -54,9 +50,15 @@ function useProvideAuth(): Auth {
     firebase
       .auth()
       .getRedirectResult()
-      .then()
+      .then(result => {
+        const accessToken = (result.credential as firebase.auth.OAuthCredential | null)?.accessToken ?? null;
+        if (accessToken) {
+          console.log('Setting access token from redirect result', accessToken);
+          setAdAccessToken(accessToken);
+        }
+      })
       .catch(error => {
-        console.log(error);
+        console.error(error);
         signOut().then();
       });
     const unsubscribe = firebase.auth().onAuthStateChanged(user => {
@@ -86,7 +88,7 @@ function useProvideAuth(): Auth {
             }
           });
       } else {
-        signIn().then();
+        signIn();
       }
     });
 
@@ -94,7 +96,7 @@ function useProvideAuth(): Auth {
       metadataUnsubscribe.current?.();
       unsubscribe();
     };
-  }, []);
+  }, [setAdAccessToken]);
 
   useEffect(() => {
     if (admin === false) {

@@ -16,7 +16,7 @@ import SaveIcon from '@material-ui/icons/Save';
 import * as React from 'react';
 import { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
-import ReactMde, { TextApi } from 'react-mde';
+import ReactMde, { TextApi, getDefaultToolbarCommands } from 'react-mde';
 import 'react-mde/lib/styles/css/react-mde-all.css';
 import { useHistory, useParams } from 'react-router-dom';
 import { TripDetails } from '../../models/Trip';
@@ -75,6 +75,9 @@ const EditTripPageUI = (props: Props) => {
   const handleTextChange = (value: string) => {
     setTrip(prevTrip => ({ ...prevTrip, text: value }));
   };
+
+  const toolbarCommands = getDefaultToolbarCommands();
+  toolbarCommands[1].push('oneDriveImage');
 
   return (
     <>
@@ -142,6 +145,7 @@ const EditTripPageUI = (props: Props) => {
                       },
                     },
                   }}
+                  toolbarCommands={toolbarCommands}
                 />
               </Paper>
             </Grid>

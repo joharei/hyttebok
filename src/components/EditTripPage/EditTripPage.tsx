@@ -14,7 +14,7 @@ import {
 import TextField from '@material-ui/core/TextField';
 import SaveIcon from '@material-ui/icons/Save';
 import * as React from 'react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import ReactMde, { TextApi } from 'react-mde';
 import 'react-mde/lib/styles/css/react-mde-all.css';
@@ -57,7 +57,6 @@ const EditTripPageUI = (props: Props) => {
 
   const [trip, setTrip] = useState<Partial<TripDetails>>(props.trip ?? {});
   const [selectedTab, setSelectedTab] = useState<'write' | 'preview'>('write');
-  const [commands, setCommands] = useState(ReactMde.defaultProps.commands ?? []);
   const [oneDrivePhotoApi, setOneDrivePhotoApi] = useState<TextApi | null>(null);
 
   const mobileView = useMediaQuery((theme: Theme) => theme.breakpoints.down('xs'));
@@ -66,22 +65,6 @@ const EditTripPageUI = (props: Props) => {
   const { loading, error, saveTrip } = useEditTrip(
     props.trip ? undefined : (slug: string) => history.push(`/admin/${slug}`)
   );
-
-  useEffect(() => {
-    setCommands(prevState => {
-      const commands = Array(...prevState);
-      commands[1].commands.push({
-        name: 'onedrive_image',
-        buttonProps: { 'aria-label': 'Sett inn bilde fra OneDrive' },
-        // eslint-disable-next-line react/display-name
-        icon: () => <SettingsSystemDaydreamIcon fontSize="small" />,
-        execute: (state, api) => {
-          setOneDrivePhotoApi(api);
-        },
-      });
-      return commands;
-    });
-  }, []);
 
   const handleChange = (name: 'title' | 'startDate' | 'endDate' | 'text') => (
     event: React.ChangeEvent<HTMLInputElement>
@@ -150,7 +133,15 @@ const EditTripPageUI = (props: Props) => {
                   minEditorHeight={500}
                   maxEditorHeight={Number.MAX_VALUE}
                   minPreviewHeight={0}
-                  commands={commands}
+                  commands={{
+                    oneDriveImage: {
+                      buttonProps: { 'aria-label': 'Sett inn bilde fra OneDrive' },
+                      icon: () => <SettingsSystemDaydreamIcon fontSize="small" />,
+                      execute: ({ textApi }) => {
+                        setOneDrivePhotoApi(textApi);
+                      },
+                    },
+                  }}
                 />
               </Paper>
             </Grid>

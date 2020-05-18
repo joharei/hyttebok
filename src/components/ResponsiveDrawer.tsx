@@ -56,9 +56,7 @@ const useStyles = makeStyles(({ breakpoints, spacing, mixins }: Theme) => ({
   },
 }));
 
-export const ResponsiveDrawer = ({
-  match: { path, url },
-}: RouteComponentProps) => {
+export const ResponsiveDrawer = ({ match: { path, url } }: RouteComponentProps) => {
   const classes = useStyles();
 
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -73,21 +71,18 @@ export const ResponsiveDrawer = ({
       <Grid container>
         <Grid item md={12} lg={8} xl={6}>
           <Typography paragraph>
-            Fordi vi har glemt å skrive i hytteboka (<q>analog</q> /{' '}
-            <q>manuell</q>) fra dag 1 ble denne digitale hytteboka opprinnelig
-            laget hjemme som en oppsummering av bruk av hytta på basis as
-            almanakker, bilder og andre kilder 2 år etter at vi kjøpte den.
+            Fordi vi har glemt å skrive i hytteboka (<q>analog</q> / <q>manuell</q>) fra dag 1 ble denne digitale
+            hytteboka opprinnelig laget hjemme som en oppsummering av bruk av hytta på basis as almanakker, bilder og
+            andre kilder 2 år etter at vi kjøpte den.
           </Typography>
           <Typography paragraph>
-            Ideen var at dette skulle føres inn i den analoge hytteboka med penn
-            en dag jeg hadde god tid og hadde gått dagens tur.
+            Ideen var at dette skulle føres inn i den analoge hytteboka med penn en dag jeg hadde god tid og hadde gått
+            dagens tur.
           </Typography>
           <Typography paragraph>
-            I ettertid har det vist seg at det aldri vil skje, og at det heller
-            ikke er praktisk. Derfor er denne hytteboka nå blitt til{' '}
-            <q>Faktisk hyttebok</q>, og inneholder alle turene (med et visst
-            etterslep...) vi har hatt på hytta, inkludert bilder og kart over
-            turene.
+            I ettertid har det vist seg at det aldri vil skje, og at det heller ikke er praktisk. Derfor er denne
+            hytteboka nå blitt til <q>Faktisk hyttebok</q>, og inneholder alle turene (med et visst etterslep...) vi har
+            hatt på hytta, inkludert bilder og kart over turene.
           </Typography>
         </Grid>
       </Grid>
@@ -98,30 +93,16 @@ export const ResponsiveDrawer = ({
     <div className={classes.root}>
       <AppBar position="fixed" className={classes.appBar}>
         <Toolbar>
-          <IconButton
-            color="inherit"
-            aria-label="Open drawer"
-            onClick={toggleDrawer}
-            className={classes.menuButton}
-          >
+          <IconButton color="inherit" aria-label="Open drawer" onClick={toggleDrawer} className={classes.menuButton}>
             <MenuIcon />
           </IconButton>
-          <Typography
-            variant="h6"
-            color="inherit"
-            noWrap
-            className={classes.grow}
-          >
+          <Typography variant="h6" color="inherit" noWrap className={classes.grow}>
             {title}
           </Typography>
           <div style={{ display: 'flex' }}>
             <Hidden mdUp>
               <Tooltip title="Til adminsiden">
-                <IconButton
-                  component={ReactRouterLink}
-                  color="inherit"
-                  to={ROUTES.ADMIN}
-                >
+                <IconButton component={ReactRouterLink} color="inherit" to={ROUTES.ADMIN}>
                   <EditIcon />
                 </IconButton>
               </Tooltip>
@@ -132,11 +113,7 @@ export const ResponsiveDrawer = ({
               </Tooltip>
             </Hidden>
             <Hidden smDown>
-              <Button
-                component={ReactRouterLink}
-                color="inherit"
-                to={ROUTES.ADMIN}
-              >
+              <Button component={ReactRouterLink} color="inherit" to={ROUTES.ADMIN}>
                 Til adminsiden
               </Button>
               <Button color="inherit" onClick={signOut}>
@@ -157,7 +134,7 @@ export const ResponsiveDrawer = ({
             }}
           >
             <DrawerContent
-              setTitle={title => {
+              setTitle={(title) => {
                 setTitle(title);
                 toggleDrawer();
               }}

@@ -28,10 +28,7 @@ function useProvideAuth(): Auth {
   const [, setAdAccessToken] = useLocalStorage<string | null>('adAccessToken', null);
 
   const signIn = () => {
-    firebase
-      .auth()
-      .signInWithRedirect(new firebase.auth.OAuthProvider('microsoft.com'))
-      .then();
+    firebase.auth().signInWithRedirect(new firebase.auth.OAuthProvider('microsoft.com')).then();
   };
 
   const signOut = () => {
@@ -48,17 +45,17 @@ function useProvideAuth(): Auth {
     firebase
       .auth()
       .getRedirectResult()
-      .then(result => {
+      .then((result) => {
         const accessToken = (result.credential as firebase.auth.OAuthCredential | null)?.accessToken ?? null;
         if (accessToken) {
           setAdAccessToken(accessToken);
         }
       })
-      .catch(error => {
+      .catch((error) => {
         console.error(error);
         signOut().then();
       });
-    const unsubscribe = firebase.auth().onAuthStateChanged(user => {
+    const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
       // Remove previous listener.
       metadataUnsubscribe.current?.();
       // On user login add new listener.
@@ -67,16 +64,16 @@ function useProvideAuth(): Auth {
         metadataUnsubscribe.current = firebase
           .firestore()
           .doc(`metadata/${user.uid}`)
-          .onSnapshot(snapshot => {
+          .onSnapshot((snapshot) => {
             if (snapshot.exists) {
-              user.getIdTokenResult().then(value => {
+              user.getIdTokenResult().then((value) => {
                 // Check if user is admin
                 if (value.claims.admin === true) {
                   setUser(user);
                   setAdmin(true);
                 } else {
                   // If not, force refresh the token and check again
-                  user.getIdTokenResult(true).then(value => {
+                  user.getIdTokenResult(true).then((value) => {
                     setUser(user);
                     setAdmin(value.claims.admin === true);
                   });

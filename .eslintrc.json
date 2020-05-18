@@ -70,5 +70,8 @@
         ]
       }
     }
-  ]
+  ],
+  "globals": {
+    "firebase": "readonly"
+  }
 }

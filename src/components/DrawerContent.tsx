@@ -45,7 +45,7 @@ export const DrawerContent = ({ setTitle }: Props) => {
     }
     return (
       <List>
-        {trips.map(trip => (
+        {trips.map((trip) => (
           <ListItem
             component={ReactRouterLink}
             button
@@ -54,17 +54,12 @@ export const DrawerContent = ({ setTitle }: Props) => {
             onClick={updateTitle(trip.title)}
             selected={location.pathname === `${TRIP}/${trip.slug}`}
             {...{
-              ref:
-                location.pathname === `${TRIP}/${trip.slug}`
-                  ? selectedListItemRef
-                  : undefined,
+              ref: location.pathname === `${TRIP}/${trip.slug}` ? selectedListItemRef : undefined,
             }}
           >
             <ListItemText
               primary={trip.title}
-              secondary={`${formatDateForDisplay(
-                trip.startDate
-              )} - ${formatDateForDisplay(trip.endDate)}`}
+              secondary={`${formatDateForDisplay(trip.startDate)} - ${formatDateForDisplay(trip.endDate)}`}
             />
           </ListItem>
         ))}

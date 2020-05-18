@@ -16,7 +16,7 @@ export function useTripText(slug: string | undefined) {
         .collection('trips')
         .where('slug', '==', slug)
         .onSnapshot(
-          snapshot => {
+          (snapshot) => {
             const id = snapshot.docs[0].id;
             if (id) {
               setTripId(id);
@@ -24,7 +24,7 @@ export function useTripText(slug: string | undefined) {
               setError(true);
             }
           },
-          error => {
+          (error) => {
             console.log(error);
             setError(true);
           }
@@ -41,12 +41,12 @@ export function useTripText(slug: string | undefined) {
         .firestore()
         .doc(`tripTexts/${tripId}`)
         .onSnapshot(
-          snapshot => {
+          (snapshot) => {
             setLoading(false);
             setError(false);
             setTripText(snapshot.data()?.['text']);
           },
-          error => {
+          (error) => {
             console.log(error);
             setError(true);
           }

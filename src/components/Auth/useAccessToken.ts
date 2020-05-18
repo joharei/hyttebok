@@ -22,7 +22,7 @@ export const useAccessToken = () => {
       const provider = new firebase.auth.OAuthProvider('microsoft.com').setCustomParameters({ login_hint: user.email });
       user
         .reauthenticateWithPopup(provider)
-        .then(credentials => {
+        .then((credentials) => {
           const accessToken = (credentials.credential as auth.OAuthCredential | null)?.accessToken ?? null;
 
           if (!accessToken) {
@@ -33,7 +33,7 @@ export const useAccessToken = () => {
           setAdAccessToken(accessToken);
           return accessToken;
         })
-        .catch(e => console.error(e));
+        .catch((e) => console.error(e));
     };
 
     if (reauthenticating) {
@@ -43,13 +43,13 @@ export const useAccessToken = () => {
         method: 'GET',
         headers: { authorization: `Bearer ${adAccessToken}` },
       })
-        .then(response => {
+        .then((response) => {
           if (!response.ok) {
             console.log('Graph check not ok. Re-authenticating');
             reauthenticate();
           }
         })
-        .catch(e => {
+        .catch((e) => {
           console.error('Failed checking graph api. Re-authenticating', e);
           reauthenticate();
         });

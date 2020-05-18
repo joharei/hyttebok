@@ -10,10 +10,7 @@ export function useEditTrip(onSaveSuccess?: (slug: string) => void) {
   return {
     loading,
     error,
-    saveTrip: async (
-      tripDetails: Omit<TripDetails, 'id' | 'slug'> &
-        Partial<Pick<TripDetails, 'id' | 'slug'>>
-    ) => {
+    saveTrip: async (tripDetails: Omit<TripDetails, 'id' | 'slug'> & Partial<Pick<TripDetails, 'id' | 'slug'>>) => {
       setLoading(true);
       setError(false);
 
@@ -25,31 +22,12 @@ export function useEditTrip(onSaveSuccess?: (slug: string) => void) {
         startDate: tripDetails.startDate,
         endDate: tripDetails.endDate,
       };
-      const id =
-        tripDetails.id ??
-        (
-          await firebase
-            .firestore()
-            .collection('trips')
-            .add(trip)
-        ).id;
+      const id = tripDetails.id ?? (await firebase.firestore().collection('trips').add(trip)).id;
       if (tripDetails.id) {
-        batch.set(
-          firebase
-            .firestore()
-            .collection('trips')
-            .doc(tripDetails.id),
-          trip
-        );
+        batch.set(firebase.firestore().collection('trips').doc(tripDetails.id), trip);
       }
 
-      batch.set(
-        firebase
-          .firestore()
-          .collection('tripTexts')
-          .doc(id),
-        { text: tripDetails.text }
-      );
+      batch.set(firebase.firestore().collection('tripTexts').doc(id), { text: tripDetails.text });
 
       batch
         .commit()

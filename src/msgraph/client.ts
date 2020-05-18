@@ -2,7 +2,7 @@ import { Client } from '@microsoft/microsoft-graph-client';
 
 const getClient = (accessToken: string) => {
   return Client.init({
-    authProvider: async done => {
+    authProvider: async (done) => {
       try {
         done(null, accessToken);
       } catch (e) {
@@ -21,12 +21,9 @@ export const getSharingUrls = async (accessToken: string, itemId: string): Promi
   return getClient(accessToken)
     .api(`/me/drive/items/${itemId}/createLink`)
     .post({ type: 'embed', scope: 'anonymous' })
-    .then(result => {
+    .then((result) => {
       console.log('Got result:', result);
-      const base64Value = btoa(result.link.webUrl)
-        .replace(/=$/i, '')
-        .replace('/', '_')
-        .replace('+', '-');
+      const base64Value = btoa(result.link.webUrl).replace(/=$/i, '').replace('/', '_').replace('+', '-');
 
       return {
         original: `https://api.onedrive.com/v1.0/shares/u!${base64Value}/root/content`,

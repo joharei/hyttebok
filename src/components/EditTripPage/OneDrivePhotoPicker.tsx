@@ -23,12 +23,12 @@ export const OneDrivePhotoPicker = ({ onSuccess, onCancel }: Props) => {
             getAuthenticationToken={async () => accessToken}
             itemMode="files"
             selectionMode="multiple"
-            onSuccess={keys => {
+            onSuccess={(keys) => {
               setLoading(true);
-              const urlPromises = keys.map(key => getSharingUrls(accessToken, Object.values(key)[0][2]));
+              const urlPromises = keys.map((key) => getSharingUrls(accessToken, Object.values(key)[0][2]));
               Promise.all(urlPromises)
-                .then(result => onSuccess(result))
-                .catch(e => {
+                .then((result) => onSuccess(result))
+                .catch((e) => {
                   console.error('Error getting photo urls', e);
                   onCancel();
                 })

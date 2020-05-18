@@ -23,7 +23,7 @@ export function useTripDetails(slug: string | undefined) {
       .collection('trips')
       .where('slug', '==', slug)
       .onSnapshot(
-        snapshot => {
+        (snapshot) => {
           const id = snapshot.docs[0].id;
           if (id) {
             setTripId(id);
@@ -31,7 +31,7 @@ export function useTripDetails(slug: string | undefined) {
             setError(true);
           }
         },
-        error => {
+        (error) => {
           console.log(error);
           setError(true);
         }
@@ -46,7 +46,7 @@ export function useTripDetails(slug: string | undefined) {
         .firestore()
         .doc(`trips/${tripId}`)
         .withConverter({
-          fromFirestore: snapshot => ({
+          fromFirestore: (snapshot) => ({
             title: snapshot.data().title,
             slug: snapshot.data().slug,
             startDate: new Date(snapshot.data().startDate.seconds * 1000),
@@ -55,11 +55,11 @@ export function useTripDetails(slug: string | undefined) {
           toFirestore: (modelObject: Trip) => modelObject,
         })
         .onSnapshot(
-          snapshot => {
+          (snapshot) => {
             const trip = snapshot.data();
             trip && setTrip(trip);
           },
-          error => {
+          (error) => {
             console.log(error);
             setError(true);
           }

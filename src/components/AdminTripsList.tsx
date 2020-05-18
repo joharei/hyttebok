@@ -58,7 +58,7 @@ export const AdminTripsList = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {trips.map(trip => (
+              {trips.map((trip) => (
                 <TableRow
                   key={trip.slug}
                   hover
@@ -68,12 +68,8 @@ export const AdminTripsList = () => {
                   <TableCell component="th" scope="row">
                     {trip.title}
                   </TableCell>
-                  <TableCell align="right">
-                    {formatDateForDisplay(trip.startDate)}
-                  </TableCell>
-                  <TableCell align="right">
-                    {formatDateForDisplay(trip.endDate)}
-                  </TableCell>
+                  <TableCell align="right">{formatDateForDisplay(trip.startDate)}</TableCell>
+                  <TableCell align="right">{formatDateForDisplay(trip.endDate)}</TableCell>
                 </TableRow>
               ))}
             </TableBody>

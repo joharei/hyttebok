@@ -70,10 +70,10 @@ const EditTripPageUI = (props: Props) => {
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     const value = name === 'startDate' || name === 'endDate' ? new Date(event.target.value) : event.target.value;
-    setTrip(prevTrip => ({ ...prevTrip, [name]: value }));
+    setTrip((prevTrip) => ({ ...prevTrip, [name]: value }));
   };
   const handleTextChange = (value: string) => {
-    setTrip(prevTrip => ({ ...prevTrip, text: value }));
+    setTrip((prevTrip) => ({ ...prevTrip, text: value }));
   };
 
   const toolbarCommands = getDefaultToolbarCommands();
@@ -130,7 +130,7 @@ const EditTripPageUI = (props: Props) => {
                   value={text}
                   onChange={handleTextChange}
                   disablePreview={!mobileView}
-                  generateMarkdownPreview={async markdown => <ReactMarkdown source={markdown} />}
+                  generateMarkdownPreview={async (markdown) => <ReactMarkdown source={markdown} />}
                   selectedTab={selectedTab}
                   onTabChange={setSelectedTab}
                   minEditorHeight={500}
@@ -139,6 +139,7 @@ const EditTripPageUI = (props: Props) => {
                   commands={{
                     oneDriveImage: {
                       buttonProps: { 'aria-label': 'Sett inn bilde fra OneDrive' },
+                      // eslint-disable-next-line react/display-name
                       icon: () => <SettingsSystemDaydreamIcon fontSize="small" />,
                       execute: ({ textApi }) => {
                         setOneDrivePhotoApi(textApi);
@@ -187,7 +188,7 @@ const EditTripPageUI = (props: Props) => {
 
       {oneDrivePhotoApi && (
         <OneDrivePhotoPicker
-          onSuccess={photos => {
+          onSuccess={(photos) => {
             const photosTemplate = photos
               .map(({ original, thumbnail }) => `[![](${thumbnail})](${original})`)
               .join('\n');

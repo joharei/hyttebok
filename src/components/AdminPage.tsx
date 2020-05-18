@@ -1,12 +1,4 @@
-import {
-  AppBar,
-  Button,
-  Grid,
-  makeStyles,
-  Theme,
-  Toolbar,
-  Typography,
-} from '@material-ui/core';
+import { AppBar, Button, Grid, makeStyles, Theme, Toolbar, Typography } from '@material-ui/core';
 import React from 'react';
 import { Route, Switch, useRouteMatch } from 'react-router-dom';
 import * as ROUTES from '../constants/routes';
@@ -33,20 +25,11 @@ export const AdminPage = () => {
     <div>
       <AppBar position="fixed">
         <Toolbar>
-          <Typography
-            variant="h6"
-            color="inherit"
-            noWrap
-            className={classes.grow}
-          >
+          <Typography variant="h6" color="inherit" noWrap className={classes.grow}>
             Admin
           </Typography>
 
-          <Button
-            component={ReactRouterLink}
-            color="inherit"
-            to={ROUTES.LANDING}
-          >
+          <Button component={ReactRouterLink} color="inherit" to={ROUTES.LANDING}>
             Til forsiden
           </Button>
         </Toolbar>

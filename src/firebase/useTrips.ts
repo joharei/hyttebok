@@ -12,7 +12,7 @@ export function useTrips() {
       .collection('trips')
       .orderBy('endDate', 'desc')
       .withConverter({
-        fromFirestore: snapshot => ({
+        fromFirestore: (snapshot) => ({
           title: snapshot.data().title,
           slug: snapshot.data().slug,
           startDate: new Date(snapshot.data().startDate.seconds * 1000),
@@ -21,12 +21,12 @@ export function useTrips() {
         toFirestore: (modelObject: Trip) => modelObject,
       })
       .onSnapshot(
-        snapshot => {
+        (snapshot) => {
           setLoading(false);
           setError(false);
-          setTrips(snapshot.docs.map(doc => doc.data()));
+          setTrips(snapshot.docs.map((doc) => doc.data()));
         },
-        error => {
+        (error) => {
           console.log(error);
           setError(true);
         }

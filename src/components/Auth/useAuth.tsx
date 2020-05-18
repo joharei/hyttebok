@@ -51,7 +51,6 @@ function useProvideAuth(): Auth {
       .then(result => {
         const accessToken = (result.credential as firebase.auth.OAuthCredential | null)?.accessToken ?? null;
         if (accessToken) {
-          console.log('Setting access token from redirect result', accessToken);
           setAdAccessToken(accessToken);
         }
       })

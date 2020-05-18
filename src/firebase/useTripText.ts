@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import * as firebase from 'firebase/app';
 
 export function useTripText(slug: string | undefined) {
   const [error, setError] = React.useState(false);

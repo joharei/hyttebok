@@ -48,3 +48,4 @@ yarn-error.log*
 
 # Project specific
 secrets.sh
+/firebase-debug.log

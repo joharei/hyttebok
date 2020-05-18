@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import * as firebase from 'firebase/app';
 import { Trip, TripDetails } from '../models/Trip';
 import { useTripText } from './useTripText';
 
@@ -7,9 +6,7 @@ export function useTripDetails(slug: string | undefined) {
   const [error, setError] = React.useState(false);
   const [loading, setLoading] = React.useState(true);
   const [trip, setTrip] = React.useState<Trip | null>(null);
-  const [tripDetails, setTripDetails] = React.useState<TripDetails | null>(
-    null
-  );
+  const [tripDetails, setTripDetails] = React.useState<TripDetails | null>(null);
 
   const [tripId, setTripId] = React.useState<string | null>(null);
 

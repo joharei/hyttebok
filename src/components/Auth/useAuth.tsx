@@ -1,13 +1,11 @@
 import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
-import * as firebase from 'firebase/app';
 import { useLocalStorage } from '../../utils/useLocalStorage';
-
-firebase.auth().useDeviceLanguage();
+import { User } from 'firebase';
 
 interface Auth {
   signIn: () => void;
   signOut: () => Promise<void>;
-  user: firebase.User | null;
+  user: User | null;
   admin: boolean | null;
 }
 

@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import * as firebase from 'firebase/app';
 import { Trip } from '../models/Trip';
 
 export function useTrips() {

@@ -20,7 +20,12 @@ export const Paragraph = (props: ParagraphProps) => {
       >
         {imageChildren.map((child: ReactElement<AnchorHTMLAttributes<HTMLAnchorElement>>) => (
           <GridListTile key={child.props.href}>
-            <Photo href={child.props.href ?? ''} src={child.props.children?.[0]?.props?.src} height={cellHeight} />
+            <Photo
+              href={child.props.href ?? ''}
+              src={child.props.children?.[0]?.props?.src}
+              alt={child.props.children?.[0]?.props?.alt}
+              height={cellHeight}
+            />
           </GridListTile>
         ))}
       </GridList>

@@ -12,9 +12,9 @@
     "office-ui-fabric-react": "^5.123.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
-    "react-lazy-images": "^1.1.0",
     "react-markdown": "^4.3.1",
     "react-mde": "^10.0.3",
+    "react-progressive-graceful-image": "^0.6.11",
     "react-router-dom": "^5.2.0",
     "react-scripts": "3.4.1",
     "slugify": "^1.4.0"

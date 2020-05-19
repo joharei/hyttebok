@@ -1,7 +1,8 @@
 import { default as React, useState } from 'react';
-import { LazyImage } from 'react-lazy-images';
 import { Skeleton } from '@material-ui/lab';
-import { Backdrop, makeStyles, Theme, Typography } from '@material-ui/core';
+import { Backdrop, makeStyles, Theme } from '@material-ui/core';
+import ProgressiveImage from 'react-progressive-graceful-image';
+import clsx from 'clsx';
 
 const usePhotoStyles = makeStyles((theme: Theme) => ({
   image: {
@@ -23,19 +24,36 @@ const usePhotoStyles = makeStyles((theme: Theme) => ({
     width: '90vw',
     objectFit: 'contain',
   },
+
+  animated: {
+    'animation-duration': '0.4s',
+    'animation-fill-mode': 'both',
+  },
+  '@keyframes fadeIn': {
+    from: {
+      opacity: 0,
+    },
+    to: {
+      opacity: 1,
+    },
+  },
+  fadeIn: {
+    'animation-name': '$fadeIn',
+  },
 }));
 
 interface PhotoProps {
-  src: string;
+  src: string | undefined;
   href: string;
+  alt: string | undefined;
   height: number;
 }
 
-export const Photo = ({ href, src, height, ...props }: PhotoProps) => {
+export const Photo = ({ href, src, height, alt }: PhotoProps) => {
   const classes = usePhotoStyles();
   const [open, setOpen] = useState(false);
 
-  if (!href.includes('MEDIA_URL')) {
+  if (src && !href.includes('MEDIA_URL')) {
     return (
       <>
         <a
@@ -45,41 +63,33 @@ export const Photo = ({ href, src, height, ...props }: PhotoProps) => {
             setOpen(true);
           }}
         >
-          <LazyImage
-            src={src}
-            alt="Bilde"
-            observerProps={{
-              rootMargin: '500px 0px',
+          <ProgressiveImage src={src} placeholder="">
+            {(src: string, loading: boolean) => {
+              return loading ? (
+                <Skeleton variant="rect" height={height} width={(3 / 2) * height} />
+              ) : (
+                <img
+                  src={src}
+                  alt={alt}
+                  className={clsx(classes.image, classes.animated, classes.fadeIn)}
+                  height={height}
+                />
+              );
             }}
-            placeholder={({ ref }) => <Skeleton ref={ref} variant="rect" height={height} width={(3 / 2) * height} />}
-            actual={({ imageProps: { alt, ...rest } }) => (
-              <img className={classes.image} height={height} width="auto" alt={alt} {...rest} />
-            )}
-            error={() => <Typography>Klarte ikke å laste bildet</Typography>}
-          />
+          </ProgressiveImage>
         </a>
 
         {open && (
           <Backdrop className={classes.backdrop} open={open} onClick={() => setOpen(false)}>
-            <LazyImage
-              src={href}
-              alt="Bilde"
-              placeholder={({ ref, imageProps: { alt } }) => (
-                <img className={classes.fullscreenImage} alt={alt} ref={ref} src={src} />
-              )}
-              actual={({ imageProps: { alt, ...rest } }) => (
-                <img className={classes.fullscreenImage} alt={alt} {...rest} />
-              )}
-              error={() => <Typography>Klarte ikke å laste bildet</Typography>}
-            />
+            <ProgressiveImage src={href} placeholder={src}>
+              {(src: string) => {
+                return <img className={classes.fullscreenImage} alt={alt} src={src} />;
+              }}
+            </ProgressiveImage>
           </Backdrop>
         )}
       </>
     );
   }
-  return (
-    <a href={href} {...props}>
-      {href}
-    </a>
-  );
+  return <a href={href}>{alt}</a>;
 };

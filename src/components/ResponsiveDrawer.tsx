@@ -1,4 +1,4 @@
-import { Grid, makeStyles, Theme, Tooltip } from '@material-ui/core';
+import { Container, makeStyles, Theme, Tooltip } from '@material-ui/core';
 import AppBar from '@material-ui/core/AppBar';
 import Button from '@material-ui/core/Button';
 import Drawer from '@material-ui/core/Drawer';
@@ -27,10 +27,8 @@ const useStyles = makeStyles(({ breakpoints, spacing, mixins }: Theme) => ({
       width: `calc(100% - ${drawerWidth}px)`,
     },
   },
-  content: {
-    flexGrow: 1,
-    padding: spacing(3),
-    maxWidth: '100%',
+  firstParagraph: {
+    marginTop: spacing(3),
   },
   drawer: {
     [breakpoints.up('md')]: {
@@ -68,24 +66,22 @@ export const ResponsiveDrawer = ({ match: { path, url } }: RouteComponentProps) 
 
   function renderRootPage() {
     return (
-      <Grid container>
-        <Grid item md={12} lg={8} xl={6}>
-          <Typography paragraph>
-            Fordi vi har glemt å skrive i hytteboka (<q>analog</q> / <q>manuell</q>) fra dag 1 ble denne digitale
-            hytteboka opprinnelig laget hjemme som en oppsummering av bruk av hytta på basis as almanakker, bilder og
-            andre kilder 2 år etter at vi kjøpte den.
-          </Typography>
-          <Typography paragraph>
-            Ideen var at dette skulle føres inn i den analoge hytteboka med penn en dag jeg hadde god tid og hadde gått
-            dagens tur.
-          </Typography>
-          <Typography paragraph>
-            I ettertid har det vist seg at det aldri vil skje, og at det heller ikke er praktisk. Derfor er denne
-            hytteboka nå blitt til <q>Faktisk hyttebok</q>, og inneholder alle turene (med et visst etterslep...) vi har
-            hatt på hytta, inkludert bilder og kart over turene.
-          </Typography>
-        </Grid>
-      </Grid>
+      <>
+        <Typography paragraph className={classes.firstParagraph}>
+          Fordi vi har glemt å skrive i hytteboka (<q>analog</q> / <q>manuell</q>) fra dag 1 ble denne digitale
+          hytteboka opprinnelig laget hjemme som en oppsummering av bruk av hytta på basis as almanakker, bilder og
+          andre kilder 2 år etter at vi kjøpte den.
+        </Typography>
+        <Typography paragraph>
+          Ideen var at dette skulle føres inn i den analoge hytteboka med penn en dag jeg hadde god tid og hadde gått
+          dagens tur.
+        </Typography>
+        <Typography paragraph>
+          I ettertid har det vist seg at det aldri vil skje, og at det heller ikke er praktisk. Derfor er denne
+          hytteboka nå blitt til <q>Faktisk hyttebok</q>, og inneholder alle turene (med et visst etterslep...) vi har
+          hatt på hytta, inkludert bilder og kart over turene.
+        </Typography>
+      </>
     );
   }
 
@@ -153,11 +149,11 @@ export const ResponsiveDrawer = ({ match: { path, url } }: RouteComponentProps) 
           </Drawer>
         </Hidden>
       </nav>
-      <main className={classes.content}>
+      <Container component="main" maxWidth="lg">
         <div className={classes.toolbar} />
         <Route path={`${path}/:slug`} component={TripPage} />
         <Route path={`${url}/`} exact render={renderRootPage} />
-      </main>
+      </Container>
     </div>
   );
 };

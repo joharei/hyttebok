@@ -1,4 +1,3 @@
-import { Grid } from '@material-ui/core';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import * as React from 'react';
 import ReactMarkdown from 'react-markdown';
@@ -18,11 +17,5 @@ export const TripPage = () => {
     return <p>Error</p>;
   }
 
-  return (
-    <Grid container>
-      <Grid md={12} lg={8} xl={6} item style={{ maxWidth: '100%' }}>
-        <ReactMarkdown source={tripText} renderers={{ paragraph: Paragraph }} />
-      </Grid>
-    </Grid>
-  );
+  return <ReactMarkdown source={tripText} renderers={{ paragraph: Paragraph }} />;
 };

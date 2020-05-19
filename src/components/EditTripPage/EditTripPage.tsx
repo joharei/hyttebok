@@ -6,7 +6,6 @@ import {
   makeStyles,
   Paper,
   Snackbar,
-  SnackbarContent,
   Theme,
   Typography,
   useMediaQuery,
@@ -16,7 +15,7 @@ import SaveIcon from '@material-ui/icons/Save';
 import * as React from 'react';
 import { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
-import ReactMde, { TextApi, getDefaultToolbarCommands } from 'react-mde';
+import ReactMde, { getDefaultToolbarCommands, TextApi } from 'react-mde';
 import 'react-mde/lib/styles/css/react-mde-all.css';
 import { useHistory, useParams } from 'react-router-dom';
 import { TripDetails } from '../../models/Trip';
@@ -25,6 +24,7 @@ import { formatDateForInput } from '../../utils/date';
 import { useEditTrip } from '../../firebase/useEditTrip';
 import { OneDrivePhotoPicker } from './OneDrivePhotoPicker';
 import SettingsSystemDaydreamIcon from '@material-ui/icons/SettingsSystemDaydream';
+import { Alert } from '@material-ui/lab';
 
 interface Props {
   trip: TripDetails | null;
@@ -58,13 +58,17 @@ const EditTripPageUI = (props: Props) => {
   const [trip, setTrip] = useState<Partial<TripDetails>>(props.trip ?? {});
   const [selectedTab, setSelectedTab] = useState<'write' | 'preview'>('write');
   const [oneDrivePhotoApi, setOneDrivePhotoApi] = useState<TextApi | null>(null);
+  const [savedSuccessfully, setSavedSuccessfully] = useState(false);
 
   const mobileView = useMediaQuery((theme: Theme) => theme.breakpoints.down('xs'));
 
   const { title, startDate, endDate, text }: Partial<TripDetails> = trip;
-  const { loading, error, saveTrip } = useEditTrip(
-    props.trip ? undefined : (slug: string) => history.push(`/admin/${slug}`)
-  );
+  const { loading, error, saveTrip } = useEditTrip((slug: string) => {
+    if (!props.trip) {
+      history.push(`/admin/${slug}`);
+    }
+    setSavedSuccessfully(true);
+  });
 
   const handleChange = (name: 'title' | 'startDate' | 'endDate' | 'text') => (
     event: React.ChangeEvent<HTMLInputElement>
@@ -182,7 +186,11 @@ const EditTripPageUI = (props: Props) => {
           });
         }}
       >
-        {loading ? <CircularProgress /> : <SaveIcon className={classes.fabIcon} />}
+        {loading ? (
+          <CircularProgress className={classes.fabIcon} color="inherit" size={24} />
+        ) : (
+          <SaveIcon className={classes.fabIcon} />
+        )}
         Lagre
       </Fab>
 
@@ -202,7 +210,17 @@ const EditTripPageUI = (props: Props) => {
 
       {error && (
         <Snackbar open={error}>
-          <SnackbarContent message={'Lagring feilet!'} />
+          <Alert severity="error" variant="filled">
+            Lagring feilet!
+          </Alert>
+        </Snackbar>
+      )}
+
+      {savedSuccessfully && (
+        <Snackbar open={savedSuccessfully} autoHideDuration={6000} onClose={() => setSavedSuccessfully(false)}>
+          <Alert severity="success" variant="filled" onClose={() => setSavedSuccessfully(false)}>
+            Turen ble lagret
+          </Alert>
         </Snackbar>
       )}
     </>

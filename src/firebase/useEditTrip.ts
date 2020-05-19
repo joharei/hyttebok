@@ -1,5 +1,4 @@
 import React from 'react';
-import * as firebase from 'firebase/app';
 import { Trip, TripDetails } from '../models/Trip';
 import slugify from 'slugify';
 

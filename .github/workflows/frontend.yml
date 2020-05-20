@@ -6,6 +6,7 @@ on:
       - master
     paths-ignore:
       - 'functions/**'
+      - '.github/workflows/functions.yml'
 
 jobs:
   build:

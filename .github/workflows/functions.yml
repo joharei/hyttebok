@@ -6,6 +6,7 @@ on:
       - master
     paths:
       - 'functions/**'
+      - '.github/workflows/functions.yml'
 
 jobs:
   deploy:

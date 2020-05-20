@@ -1,5 +1,4 @@
 import { ListItem, makeStyles, Theme } from '@material-ui/core';
-import CircularProgress from '@material-ui/core/CircularProgress';
 import Divider from '@material-ui/core/Divider';
 import List from '@material-ui/core/List';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -10,6 +9,7 @@ import { ReactRouterLink } from './router_links';
 import { useLocation } from 'react-router-dom';
 import { useTrips } from '../firebase/useTrips';
 import { formatDateForDisplay } from '../utils/date';
+import { Skeleton } from '@material-ui/lab';
 
 const useStyles = makeStyles(({ mixins }: Theme) => ({
   toolbar: mixins.toolbar,
@@ -38,8 +38,17 @@ export const DrawerContent = ({ setTitle }: Props) => {
 
   const content = () => {
     if (loading) {
-      return <CircularProgress />;
+      return (
+        <List>
+          {[...Array(50)].map((_, i) => (
+            <ListItem key={i}>
+              <ListItemText primary={<Skeleton />} secondary={<Skeleton width="80%" />} />
+            </ListItem>
+          ))}
+        </List>
+      );
     }
+
     if (error || !trips) {
       return <p>Error</p>;
     }

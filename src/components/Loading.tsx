@@ -7,6 +7,7 @@ const useStyles = makeStyles({
     alignItems: 'center',
     justifyContent: 'center',
     height: height ?? '100vh',
+    width: '100%',
   }),
 });
 

@@ -91,5 +91,5 @@ export const Photo = ({ href, src, height, alt }: PhotoProps) => {
       </>
     );
   }
-  return <a href={href}>{alt}</a>;
+  return <a href={href}>{alt && alt.length ? alt : 'Det er noe feil med linken til dette bildet!'}</a>;
 };

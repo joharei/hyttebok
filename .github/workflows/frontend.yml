@@ -1,9 +1,11 @@
-name: Hyttebok CI
+name: Hyttebok frontend build & deploy
 
 on:
   push:
     branches:
       - master
+    paths-ignore:
+      - 'functions/**'
 
 jobs:
   build:
@@ -52,7 +54,7 @@ jobs:
           path: build
           
       - name: Deploy to Firebase
-        uses: w9jds/firebase-action@v1.2.0
+        uses: w9jds/firebase-action@v1.3.0
         with:
           args: deploy --only hosting
         env:

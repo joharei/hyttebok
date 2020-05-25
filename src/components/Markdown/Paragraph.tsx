@@ -40,6 +40,7 @@ export const Paragraph = ({ children, slideShowImages, photoDimensions }: Paragr
           photos={photos}
           renderImage={({ photo, margin }) => (
             <Photo
+              key={photo.src}
               src={photo.src}
               href={(photo as PhotoProps<{ href: string }>).href}
               alt={photo.alt}

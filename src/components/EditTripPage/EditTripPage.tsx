@@ -159,7 +159,7 @@ const EditTripPageUI = (props: Props) => {
             <Hidden xsDown>
               <Grid item xs={6}>
                 <Paper className={`${classes.paper} ${classes.scroll}`}>
-                  <Markdown tripText={text} />
+                  <Markdown tripText={text} loading={!text} />
                 </Paper>
               </Grid>
             </Hidden>

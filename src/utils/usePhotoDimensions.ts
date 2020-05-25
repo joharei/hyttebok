@@ -13,6 +13,7 @@ export function usePhotoDimensions(urls: Urls[] | null): PhotoDimensions | null 
   const [photoDimensions, setPhotoDimensions] = React.useState<PhotoDimensions | null>(null);
 
   useEffect(() => {
+    setPhotoDimensions(null);
     if (!urls) {
       return;
     }

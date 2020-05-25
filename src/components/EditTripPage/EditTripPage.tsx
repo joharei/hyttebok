@@ -25,6 +25,7 @@ import { useEditTrip } from '../../firebase/useEditTrip';
 import { OneDrivePhotoPicker } from './OneDrivePhotoPicker';
 import SettingsSystemDaydreamIcon from '@material-ui/icons/SettingsSystemDaydream';
 import { Alert } from '@material-ui/lab';
+import { Markdown } from '../Markdown';
 
 interface Props {
   trip: TripDetails | null;
@@ -158,7 +159,7 @@ const EditTripPageUI = (props: Props) => {
             <Hidden xsDown>
               <Grid item xs={6}>
                 <Paper className={`${classes.paper} ${classes.scroll}`}>
-                  <ReactMarkdown source={text} />
+                  <Markdown tripText={text} />
                 </Paper>
               </Grid>
             </Hidden>

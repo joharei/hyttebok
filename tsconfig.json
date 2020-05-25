@@ -5,8 +5,10 @@
     "target": "es5",
     "lib": [
       "es6",
-      "dom"
+      "dom",
+      "es2020.string"
     ],
+    "downlevelIteration": true,
     "sourceMap": true,
     "allowJs": true,
     "jsx": "preserve",

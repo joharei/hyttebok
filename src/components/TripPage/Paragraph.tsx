@@ -1,9 +1,11 @@
 import { AnchorHTMLAttributes, default as React, ReactElement } from 'react';
 import { GridList, GridListTile, Theme, useMediaQuery } from '@material-ui/core';
 import { Photo } from './Photo';
+import { ReactImageGalleryItem } from 'react-image-gallery';
 
 interface ParagraphProps {
   children: ReactElement[];
+  images: ReactImageGalleryItem[];
 }
 
 export const Paragraph = (props: ParagraphProps) => {
@@ -25,6 +27,7 @@ export const Paragraph = (props: ParagraphProps) => {
               src={child.props.children?.[0]?.props?.src}
               alt={child.props.children?.[0]?.props?.alt}
               height={cellHeight}
+              images={props.images}
             />
           </GridListTile>
         ))}

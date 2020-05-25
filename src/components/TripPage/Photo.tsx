@@ -1,8 +1,11 @@
 import { default as React, useState } from 'react';
 import { Skeleton } from '@material-ui/lab';
-import { Backdrop, makeStyles, Theme } from '@material-ui/core';
+import { Backdrop, Fade, makeStyles, Modal, Theme } from '@material-ui/core';
 import ProgressiveImage from 'react-progressive-graceful-image';
 import clsx from 'clsx';
+import ImageGallery, { ReactImageGalleryItem } from 'react-image-gallery';
+
+import 'react-image-gallery/styles/css/image-gallery.css';
 
 const usePhotoStyles = makeStyles((theme: Theme) => ({
   image: {
@@ -15,13 +18,15 @@ const usePhotoStyles = makeStyles((theme: Theme) => ({
     '-ms-transform': 'translate(-50%,-50%)',
     transform: 'translate(-50%,-50%)',
   },
-  backdrop: {
-    zIndex: theme.zIndex.drawer + 1,
-    color: '#fff',
+  gallerySlides: {
+    padding: theme.spacing(2),
+    [theme.breakpoints.down('sm')]: {
+      padding: 0,
+    },
   },
   fullscreenImage: {
-    height: '90vh',
-    width: '90vw',
+    width: '100%',
+    maxHeight: 'calc(100vh - 80px)',
     objectFit: 'contain',
   },
 
@@ -47,9 +52,10 @@ interface PhotoProps {
   href: string;
   alt: string | undefined;
   height: number;
+  images: ReactImageGalleryItem[];
 }
 
-export const Photo = ({ href, src, height, alt }: PhotoProps) => {
+export const Photo = ({ href, src, height, alt, images }: PhotoProps) => {
   const classes = usePhotoStyles();
   const [open, setOpen] = useState(false);
 
@@ -80,13 +86,30 @@ export const Photo = ({ href, src, height, alt }: PhotoProps) => {
         </a>
 
         {open && (
-          <Backdrop className={classes.backdrop} open={open} onClick={() => setOpen(false)}>
-            <ProgressiveImage src={href} placeholder={src}>
-              {(src: string) => {
-                return <img className={classes.fullscreenImage} alt={alt} src={src} />;
-              }}
-            </ProgressiveImage>
-          </Backdrop>
+          <Modal
+            open={open}
+            onClose={() => setOpen(false)}
+            closeAfterTransition
+            BackdropComponent={Backdrop}
+            BackdropProps={{ timeout: 500 }}
+          >
+            <Fade in={open}>
+              <ImageGallery
+                additionalClass={classes.gallerySlides}
+                items={images}
+                startIndex={images.findIndex((value) => value.original === href)}
+                onClick={() => setOpen(false)}
+                lazyLoad
+                renderItem={(item) => (
+                  <ProgressiveImage src={item.original ?? ''} placeholder={item.thumbnail ?? ''}>
+                    {(src: string) => {
+                      return <img className={classes.fullscreenImage} alt={alt} src={src} />;
+                    }}
+                  </ProgressiveImage>
+                )}
+              />
+            </Fade>
+          </Modal>
         )}
       </>
     );

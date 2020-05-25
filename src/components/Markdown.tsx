@@ -1,11 +1,13 @@
 import ReactMarkdown from 'react-markdown';
 import { Paragraph } from './TripPage/Paragraph';
 import * as React from 'react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ReactImageGalleryItem } from 'react-image-gallery';
 import { makeStyles } from '@material-ui/core/styles';
 import { Grid, Theme, Typography } from '@material-ui/core';
 import { Skeleton } from '@material-ui/lab';
+import { extractUrls, Urls } from '../utils/extractUrls';
+import { usePhotoDimensions } from '../utils/usePhotoDimensions';
 
 function randomIntFromInterval(min: number, max: number) {
   // min and max included
@@ -30,16 +32,25 @@ const useStyles = makeStyles((theme: Theme) => ({
 export const Markdown = ({ tripText }: { tripText?: string }) => {
   const classes = useStyles();
   const [images, setImages] = useState<ReactImageGalleryItem[]>([]);
+  const [urls, setUrls] = useState<Urls[] | null>(null);
+
+  const skeletonWidths = useRef<number[]>([]);
+  if (skeletonWidths.current.length === 0) {
+    skeletonWidths.current = [...Array(5)].map(() => randomIntFromInterval(20, 100));
+  }
+
+  const photoDimensions = usePhotoDimensions(urls);
 
   useEffect(() => {
     if (tripText) {
-      const matches = tripText.matchAll(
-        /\[\[?(?:!)\[([^\][]*\[?[^\][]*]?[^\][]*)]\(([^\s]+?)(\s+(["'])(.*?)\4)?\)]\(([^ ]+?)(?: "(.+)")?\)/g
-      );
-      const images: ReactImageGalleryItem[] = [];
-      for (const match of matches) {
-        const [, alt, thumbnail, , , title, original] = match;
-        images.push({
+      setUrls(extractUrls(tripText));
+    }
+  }, [tripText]);
+
+  useEffect(() => {
+    if (urls) {
+      setImages(
+        urls.map(({ original, thumbnail, alt, title }) => ({
           original,
           thumbnail,
           originalAlt: alt,
@@ -49,13 +60,12 @@ export const Markdown = ({ tripText }: { tripText?: string }) => {
           description: title,
           originalClass: classes.original,
           thumbnailClass: classes.thumbnail,
-        });
-      }
-      setImages(images);
+        }))
+      );
     }
-  }, [tripText, classes]);
+  }, [urls, classes]);
 
-  if (!tripText) {
+  if (!tripText || !photoDimensions) {
     return (
       <Grid container direction="column">
         <Grid item>
@@ -82,10 +92,10 @@ export const Markdown = ({ tripText }: { tripText?: string }) => {
           </Grid>
         </Grid>
 
-        {[...Array(5)].map((_, i) => (
+        {skeletonWidths.current.map((width, i) => (
           <Grid item key={i}>
             <Typography variant="body1">
-              <Skeleton width={`${randomIntFromInterval(20, 100)}%`} />
+              <Skeleton width={`${width}%`} />
             </Typography>
           </Grid>
         ))}
@@ -93,12 +103,17 @@ export const Markdown = ({ tripText }: { tripText?: string }) => {
     );
   }
 
-  // noinspection RequiredAttributes
   return (
     <ReactMarkdown
       source={tripText}
-      // eslint-disable-next-line react/display-name
-      renderers={{ paragraph: (props) => <Paragraph images={images} {...props} /> }}
+      renderers={{
+        // eslint-disable-next-line react/display-name
+        paragraph: (props: { children: React.ReactElement[] }) => (
+          <Paragraph slideShowImages={images} photoDimensions={photoDimensions}>
+            {props.children}
+          </Paragraph>
+        ),
+      }}
     />
   );
 };

@@ -6,15 +6,11 @@ import { Markdown } from '../Markdown';
 export const TripPage = () => {
   const { slug } = useParams<{ slug: string }>();
 
-  const { tripText, loading, error } = useTripText(slug);
+  const { tripText, error } = useTripText(slug);
 
-  if (loading) {
-    return <Markdown />;
-  }
-
-  if (error || !tripText) {
+  if (error) {
     return <p>Error</p>;
   }
 
-  return <Markdown tripText={tripText} />;
+  return <Markdown tripText={tripText ?? undefined} />;
 };

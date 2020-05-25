@@ -8,16 +8,6 @@ import ImageGallery, { ReactImageGalleryItem } from 'react-image-gallery';
 import 'react-image-gallery/styles/css/image-gallery.css';
 
 const usePhotoStyles = makeStyles((theme: Theme) => ({
-  image: {
-    position: 'absolute',
-    left: '50%',
-    top: '50%',
-    height: '100%',
-    width: 'auto',
-    '-webkit-transform': 'translate(-50%,-50%)',
-    '-ms-transform': 'translate(-50%,-50%)',
-    transform: 'translate(-50%,-50%)',
-  },
   gallerySlides: {
     padding: theme.spacing(2),
     [theme.breakpoints.down('sm')]: {
@@ -51,11 +41,13 @@ interface PhotoProps {
   src: string | undefined;
   href: string;
   alt: string | undefined;
+  width: number;
   height: number;
+  margin?: string;
   images: ReactImageGalleryItem[];
 }
 
-export const Photo = ({ href, src, height, alt, images }: PhotoProps) => {
+export const Photo = ({ href, src, width, height, margin, alt, images }: PhotoProps) => {
   const classes = usePhotoStyles();
   const [open, setOpen] = useState(false);
 
@@ -68,17 +60,23 @@ export const Photo = ({ href, src, height, alt, images }: PhotoProps) => {
             event.preventDefault();
             setOpen(true);
           }}
+          style={{
+            width,
+            height,
+            margin,
+          }}
         >
           <ProgressiveImage src={src} placeholder="">
             {(src: string, loading: boolean) => {
               return loading ? (
-                <Skeleton variant="rect" height={height} width={(3 / 2) * height} />
+                <Skeleton variant="rect" height={height} width={width} />
               ) : (
                 <img
                   src={src}
                   alt={alt}
-                  className={clsx(classes.image, classes.animated, classes.fadeIn)}
+                  className={clsx(classes.animated, classes.fadeIn)}
                   height={height}
+                  width={width}
                 />
               );
             }}

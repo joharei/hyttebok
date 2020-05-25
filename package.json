@@ -15,6 +15,7 @@
     "react-image-gallery": "^1.0.7",
     "react-markdown": "^4.3.1",
     "react-mde": "^10.0.3",
+    "react-photo-gallery": "^8.0.0",
     "react-progressive-graceful-image": "^0.6.11",
     "react-router-dom": "^5.2.0",
     "react-scripts": "3.4.1",

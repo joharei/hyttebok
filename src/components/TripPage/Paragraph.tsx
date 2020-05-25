@@ -1,38 +1,72 @@
 import { AnchorHTMLAttributes, default as React, ReactElement } from 'react';
-import { GridList, GridListTile, Theme, useMediaQuery } from '@material-ui/core';
-import { Photo } from './Photo';
 import { ReactImageGalleryItem } from 'react-image-gallery';
+import Gallery, { PhotoProps } from 'react-photo-gallery';
+import { PhotoDimensions } from '../../utils/usePhotoDimensions';
+import { Photo } from './Photo';
+import { makeStyles } from '@material-ui/core/styles';
+
+const useStyles = makeStyles({
+  singlePhotoContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+  },
+});
 
 interface ParagraphProps {
   children: ReactElement[];
-  images: ReactImageGalleryItem[];
+  slideShowImages: ReactImageGalleryItem[];
+  photoDimensions: PhotoDimensions;
 }
 
-export const Paragraph = (props: ParagraphProps) => {
-  const singleCol = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
+export const Paragraph = ({ children, slideShowImages, photoDimensions }: ParagraphProps) => {
+  const classes = useStyles();
 
-  if (props.children?.[0]?.props?.children?.[0]?.props?.src) {
-    const imageChildren = props.children.filter((child) => child.props.children?.[0]?.props?.src);
-    const cellHeight = imageChildren.length > 2 ? 300 : 400;
-    return (
-      <GridList
-        cellHeight={cellHeight}
-        cols={singleCol ? 1 : imageChildren.length > 2 ? 3 : 2}
-        style={{ maxWidth: '100%' }}
-      >
-        {imageChildren.map((child: ReactElement<AnchorHTMLAttributes<HTMLAnchorElement>>) => (
-          <GridListTile key={child.props.href}>
+  if (children?.[0]?.props?.children?.[0]?.props?.src) {
+    const imageChildren = children.filter((child) => child.props.children?.[0]?.props?.src);
+
+    if (imageChildren.length > 1) {
+      const photos: PhotoProps<{ href: string }>[] = imageChildren.map(
+        (child: ReactElement<AnchorHTMLAttributes<HTMLAnchorElement>>) => ({
+          href: child.props.href ?? '',
+          src: child.props.children?.[0]?.props?.src,
+          alt: child.props.children?.[0]?.props?.alt,
+          width: photoDimensions[child.props.href ?? '']?.width ?? 400,
+          height: photoDimensions[child.props.href ?? '']?.height ?? 300,
+        })
+      );
+
+      return (
+        <Gallery
+          photos={photos}
+          renderImage={({ photo, margin }) => (
             <Photo
-              href={child.props.href ?? ''}
-              src={child.props.children?.[0]?.props?.src}
-              alt={child.props.children?.[0]?.props?.alt}
-              height={cellHeight}
-              images={props.images}
+              src={photo.src}
+              href={(photo as PhotoProps<{ href: string }>).href}
+              alt={photo.alt}
+              width={photo.width}
+              height={photo.height}
+              margin={margin}
+              images={slideShowImages}
             />
-          </GridListTile>
-        ))}
-      </GridList>
-    );
+          )}
+        />
+      );
+    } else {
+      const dimensions = photoDimensions[imageChildren[0].props.href ?? ''] ?? { width: 400, height: 300 };
+      const width = (300 / dimensions.height) * dimensions.width;
+      return (
+        <div className={classes.singlePhotoContainer}>
+          <Photo
+            href={imageChildren[0].props.href ?? ''}
+            src={imageChildren[0].props.children?.[0]?.props?.src}
+            alt={imageChildren[0].props.children?.[0]?.props?.alt}
+            width={width}
+            height={300}
+            images={slideShowImages}
+          />
+        </div>
+      );
+    }
   }
-  return <p>{props.children}</p>;
+  return <p>{children}</p>;
 };

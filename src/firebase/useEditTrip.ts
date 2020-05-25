@@ -28,10 +28,12 @@ export function useEditTrip(onSaveSuccess?: (slug: string) => void) {
 
       batch.set(firebase.firestore().collection('tripTexts').doc(id), { text: tripDetails.text });
 
-      batch
-        .commit()
-        .then(() => setLoading(false))
-        .catch(() => setError(true));
+      try {
+        await batch.commit();
+        setLoading(false);
+      } catch {
+        setError(true);
+      }
 
       onSaveSuccess?.(trip.slug);
     },

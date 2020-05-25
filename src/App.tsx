@@ -9,7 +9,7 @@ import { Loading } from './components/Loading';
 export const App = () => {
   const { user, admin } = useAuth();
 
-  if (!user) {
+  if (!user || admin == null) {
     return <Loading />;
   }
 

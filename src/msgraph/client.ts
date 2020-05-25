@@ -13,6 +13,7 @@ const getClient = (accessToken: string) => {
 };
 
 export interface Photo {
+  data: string;
   original: string;
   thumbnail: string;
 }
@@ -22,10 +23,10 @@ export const getSharingUrls = async (accessToken: string, itemId: string): Promi
     .api(`/me/drive/items/${itemId}/createLink`)
     .post({ type: 'embed', scope: 'anonymous' })
     .then((result) => {
-      console.log('Got result:', result);
       const base64Value = btoa(result.link.webUrl).replace(/=$/i, '').replace('/', '_').replace('+', '-');
 
       return {
+        data: `https://api.onedrive.com/v1.0/shares/u!${base64Value}/root?$expand=thumbnails`,
         original: `https://api.onedrive.com/v1.0/shares/u!${base64Value}/root/content`,
         thumbnail: `https://api.onedrive.com/v1.0/shares/u!${base64Value}/root/thumbnails/0/large/content`,
       };

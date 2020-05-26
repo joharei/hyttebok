@@ -3,7 +3,7 @@ import Divider from '@material-ui/core/Divider';
 import List from '@material-ui/core/List';
 import ListItemText from '@material-ui/core/ListItemText';
 import * as React from 'react';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback } from 'react';
 import { TRIP } from '../constants/routes';
 import { ReactRouterLink } from './router_links';
 import { useLocation } from 'react-router-dom';
@@ -22,19 +22,15 @@ interface Props {
 export const DrawerContent = ({ setTitle }: Props) => {
   const classes = useStyles();
   const location = useLocation();
-  const selectedListItemRef = useRef<HTMLAnchorElement>(null);
-  const [scrollToItem, setScrollToItem] = useState(true);
+  const selectedListItemRef = useCallback((node: HTMLElement | null) => {
+    if (node !== null) {
+      node.scrollIntoView({ block: 'center' });
+    }
+  }, []);
 
   const updateTitle = (title: string) => () => setTitle(title);
 
   const { trips, loading, error } = useTrips();
-
-  useEffect(() => {
-    if (scrollToItem && selectedListItemRef && selectedListItemRef.current) {
-      selectedListItemRef.current.scrollIntoView({ block: 'center' });
-      setScrollToItem(false);
-    }
-  }, [scrollToItem, selectedListItemRef]);
 
   const content = () => {
     if (loading) {
@@ -62,9 +58,7 @@ export const DrawerContent = ({ setTitle }: Props) => {
             to={`${TRIP}/${trip.slug}`}
             onClick={updateTitle(trip.title)}
             selected={location.pathname === `${TRIP}/${trip.slug}`}
-            {...{
-              ref: location.pathname === `${TRIP}/${trip.slug}` ? selectedListItemRef : undefined,
-            }}
+            ref={location.pathname === `${TRIP}/${trip.slug}` ? selectedListItemRef : undefined}
           >
             <ListItemText
               primary={trip.title}

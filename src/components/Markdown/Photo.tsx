@@ -1,11 +1,11 @@
 import { default as React, useState } from 'react';
 import { Skeleton } from '@material-ui/lab';
-import { Backdrop, Fade, makeStyles, Modal, Theme } from '@material-ui/core';
+import { makeStyles, Theme, useTheme } from '@material-ui/core';
 import ProgressiveImage from 'react-progressive-graceful-image';
 import clsx from 'clsx';
-import ImageGallery, { ReactImageGalleryItem } from 'react-image-gallery';
 
-import 'react-image-gallery/styles/css/image-gallery.css';
+import Carousel, { CommonProps, Modal, ModalGateway, ViewType } from 'react-images';
+import { PhotoDimensions } from '../../utils/usePhotoDimensions';
 
 const usePhotoStyles = makeStyles((theme: Theme) => ({
   gallerySlides: {
@@ -17,6 +17,7 @@ const usePhotoStyles = makeStyles((theme: Theme) => ({
   fullscreenImage: {
     width: '100%',
     maxHeight: 'calc(100vh - 80px)',
+    // maxHeight: '100vh',
     objectFit: 'contain',
   },
 
@@ -44,12 +45,38 @@ interface PhotoProps {
   width: number;
   height: number;
   margin?: string;
-  images: ReactImageGalleryItem[];
+  images: ViewType[];
+  photoDimensions: PhotoDimensions;
 }
 
-export const Photo = ({ href, src, width, height, margin, alt, images }: PhotoProps) => {
+const View = (props: CommonProps & { photoDimensions: PhotoDimensions }) => {
+  const classes = usePhotoStyles();
+  const { data, photoDimensions } = props as {
+    data: { source: { regular: string; thumbnail: string }; alt: string };
+    photoDimensions: PhotoDimensions;
+  };
+
+  return (
+    <ProgressiveImage src={data.source.regular ?? ''} placeholder={data.source.thumbnail ?? ''}>
+      {(src: string) => {
+        return (
+          <img
+            className={classes.fullscreenImage}
+            alt={data.alt}
+            src={src}
+            width={photoDimensions[data.source.regular]?.width ?? 400}
+            height={photoDimensions[data.source.regular]?.height ?? 300}
+          />
+        );
+      }}
+    </ProgressiveImage>
+  );
+};
+
+export const Photo = ({ href, src, width, height, margin, alt, images, photoDimensions }: PhotoProps) => {
   const classes = usePhotoStyles();
   const [open, setOpen] = useState(false);
+  const theme = useTheme();
 
   if (src && !href.includes('MEDIA_URL')) {
     return (
@@ -83,32 +110,26 @@ export const Photo = ({ href, src, width, height, margin, alt, images }: PhotoPr
           </ProgressiveImage>
         </a>
 
-        {open && (
-          <Modal
-            open={open}
-            onClose={() => setOpen(false)}
-            closeAfterTransition
-            BackdropComponent={Backdrop}
-            BackdropProps={{ timeout: 500 }}
-          >
-            <Fade in={open}>
-              <ImageGallery
-                additionalClass={classes.gallerySlides}
-                items={images}
-                startIndex={images.findIndex((value) => value.original === href)}
-                onClick={() => setOpen(false)}
-                lazyLoad
-                renderItem={(item) => (
-                  <ProgressiveImage src={item.original ?? ''} placeholder={item.thumbnail ?? ''}>
-                    {(src: string) => {
-                      return <img className={classes.fullscreenImage} alt={alt} src={src} />;
-                    }}
-                  </ProgressiveImage>
+        <ModalGateway>
+          {open && (
+            <Modal
+              onClose={() => setOpen(false)}
+              styles={{
+                blanket: (base) => ({ ...base, zIndex: theme.zIndex.drawer + 10 }),
+                positioner: (base) => ({ ...base, zIndex: theme.zIndex.modal }),
+              }}
+            >
+              <Carousel
+                views={images}
+                currentIndex={images.findIndex(
+                  (value) => typeof value.source !== 'string' && value.source.regular === href
                 )}
+                // eslint-disable-next-line react/display-name
+                components={{ View: (props) => <View photoDimensions={photoDimensions} {...props} /> }}
               />
-            </Fade>
-          </Modal>
-        )}
+            </Modal>
+          )}
+        </ModalGateway>
       </>
     );
   }

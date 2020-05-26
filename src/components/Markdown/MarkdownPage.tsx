@@ -1,13 +1,13 @@
 import { PhotoDimensions } from '../../utils/usePhotoDimensions';
 import ReactMarkdown from 'react-markdown';
 import * as React from 'react';
-import { ReactImageGalleryItem } from 'react-image-gallery';
 import { Paragraph } from './Paragraph';
+import { ViewType } from 'react-images';
 
 type Props = {
   tripText: string;
   photoDimensions: PhotoDimensions;
-  images: ReactImageGalleryItem[];
+  images: ViewType[];
 };
 
 export const MarkdownPage = ({ tripText, photoDimensions, images }: Props) => {

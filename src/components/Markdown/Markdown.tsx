@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { ReactImageGalleryItem } from 'react-image-gallery';
 import { makeStyles } from '@material-ui/core/styles';
 import { Theme } from '@material-ui/core';
 import { extractUrls, Urls } from '../../utils/extractUrls';
 import { usePhotoDimensions } from '../../utils/usePhotoDimensions';
 import { MarkdownPage } from './MarkdownPage';
 import { LoadingSkeletons } from './LoadingSkeletons';
+import { ViewType } from 'react-images';
 
 const useStyles = makeStyles((theme: Theme) => ({
   original: {
@@ -25,7 +25,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 export const Markdown = ({ tripText, loading }: { tripText?: string; loading: boolean }) => {
   const classes = useStyles();
-  const [images, setImages] = useState<ReactImageGalleryItem[] | null>(null);
+  const [images, setImages] = useState<ViewType[] | null>(null);
   const [urls, setUrls] = useState<Urls[] | null>(null);
 
   const photoDimensions = usePhotoDimensions(urls);
@@ -47,15 +47,13 @@ export const Markdown = ({ tripText, loading }: { tripText?: string; loading: bo
     if (urls) {
       setImages(
         urls.map(({ original, thumbnail, alt, title }) => ({
-          original,
-          thumbnail,
-          originalAlt: alt,
-          thumbnailAlt: alt,
-          originalTitle: title,
-          thumbnailTitle: title,
-          description: title,
-          originalClass: classes.original,
-          thumbnailClass: classes.thumbnail,
+          source: {
+            regular: original,
+            download: original,
+            thumbnail,
+          },
+          caption: [title, alt].filter((value) => value && value.length > 0).join(' - '),
+          alt,
         }))
       );
     }

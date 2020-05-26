@@ -1,8 +1,8 @@
 export type Urls = {
   original: string;
   thumbnail: string;
-  alt: string;
-  title: string;
+  alt?: string;
+  title?: string;
 };
 
 export function extractUrls(markdown: string): Urls[] {

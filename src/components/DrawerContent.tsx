@@ -3,7 +3,7 @@ import Divider from '@material-ui/core/Divider';
 import List from '@material-ui/core/List';
 import ListItemText from '@material-ui/core/ListItemText';
 import * as React from 'react';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { TRIP } from '../constants/routes';
 import { ReactRouterLink } from './router_links';
 import { useLocation } from 'react-router-dom';
@@ -22,11 +22,16 @@ interface Props {
 export const DrawerContent = ({ setTitle }: Props) => {
   const classes = useStyles();
   const location = useLocation();
-  const selectedListItemRef = useCallback((node: HTMLElement | null) => {
-    if (node !== null) {
-      node.scrollIntoView({ block: 'center' });
-    }
-  }, []);
+  const [scrolled, setScrolled] = useState(false);
+  const selectedListItemRef = useCallback(
+    (node: HTMLElement | null) => {
+      if (node !== null && !scrolled) {
+        node.scrollIntoView({ block: 'center' });
+        setScrolled(true);
+      }
+    },
+    [scrolled]
+  );
 
   const updateTitle = (title: string) => () => setTitle(title);
 

@@ -1,23 +1,16 @@
 import { default as React, useState } from 'react';
 import { Skeleton } from '@material-ui/lab';
-import { makeStyles, Theme, useTheme } from '@material-ui/core';
+import { makeStyles, useTheme } from '@material-ui/core';
 import ProgressiveImage from 'react-progressive-graceful-image';
 import clsx from 'clsx';
 
 import Carousel, { CommonProps, Modal, ModalGateway, ViewType } from 'react-images';
 import { PhotoDimensions } from '../../utils/usePhotoDimensions';
 
-const usePhotoStyles = makeStyles((theme: Theme) => ({
-  gallerySlides: {
-    padding: theme.spacing(2),
-    [theme.breakpoints.down('sm')]: {
-      padding: 0,
-    },
-  },
+const usePhotoStyles = makeStyles({
   fullscreenImage: {
     width: '100%',
-    maxHeight: 'calc(100vh - 80px)',
-    // maxHeight: '100vh',
+    maxHeight: '100vh',
     objectFit: 'contain',
   },
 
@@ -36,7 +29,7 @@ const usePhotoStyles = makeStyles((theme: Theme) => ({
   fadeIn: {
     'animation-name': '$fadeIn',
   },
-}));
+});
 
 interface PhotoProps {
   src: string | undefined;
@@ -118,6 +111,7 @@ export const Photo = ({ href, src, width, height, margin, alt, images, photoDime
                 blanket: (base) => ({ ...base, zIndex: theme.zIndex.drawer + 10 }),
                 positioner: (base) => ({ ...base, zIndex: theme.zIndex.modal }),
               }}
+              allowFullscreen
             >
               <Carousel
                 views={images}

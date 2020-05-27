@@ -1,4 +1,4 @@
-import { PhotoDimensions } from '../../utils/usePhotoDimensions';
+import { PhotosDetails } from '../../utils/photosDetails';
 import ReactMarkdown from 'react-markdown';
 import * as React from 'react';
 import { Paragraph } from './Paragraph';
@@ -6,7 +6,7 @@ import { ViewType } from 'react-images';
 
 type Props = {
   tripText: string;
-  photoDimensions: PhotoDimensions;
+  photoDimensions: PhotosDetails;
   images: ViewType[];
 };
 

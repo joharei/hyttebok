@@ -26,6 +26,7 @@ import { OneDrivePhotoPicker } from './OneDrivePhotoPicker';
 import SettingsSystemDaydreamIcon from '@material-ui/icons/SettingsSystemDaydream';
 import { Alert } from '@material-ui/lab';
 import { Markdown } from '../Markdown';
+import { useTripPhotos } from '../../firebase/useTripPhotos';
 
 interface Props {
   trip: TripDetails | null;
@@ -63,13 +64,15 @@ const EditTripPageUI = (props: Props) => {
 
   const mobileView = useMediaQuery((theme: Theme) => theme.breakpoints.down('xs'));
 
-  const { title, startDate, endDate, text }: Partial<TripDetails> = trip;
+  const { title, startDate, endDate, text, slug }: Partial<TripDetails> = trip;
   const { loading, error, saveTrip } = useEditTrip((slug: string) => {
     if (!props.trip) {
       history.push(`/admin/${slug}`);
     }
     setSavedSuccessfully(true);
   });
+
+  const { tripPhotos, loading: tripPhotosLoading } = useTripPhotos(slug);
 
   const handleChange = (name: 'title' | 'startDate' | 'endDate' | 'text') => (
     event: React.ChangeEvent<HTMLInputElement>
@@ -159,7 +162,7 @@ const EditTripPageUI = (props: Props) => {
             <Hidden xsDown>
               <Grid item xs={6}>
                 <Paper className={`${classes.paper} ${classes.scroll}`}>
-                  <Markdown tripText={text} loading={!text} />
+                  <Markdown tripText={text} tripPhotos={tripPhotos ?? undefined} loading={!text || tripPhotosLoading} />
                 </Paper>
               </Grid>
             </Hidden>

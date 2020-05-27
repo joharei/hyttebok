@@ -1,27 +1,33 @@
 import React, { useEffect } from 'react';
 import { useTripId } from './useTripId';
 
-export function useTripText(slug: string | undefined) {
+type TripPhotos = {
+  [original: string]: {
+    thumbnail: string;
+    height: number;
+    width: number;
+    title?: string;
+    alt?: string;
+  };
+};
+
+export function useTripPhotos(slug: string | undefined) {
   const [error, setError] = React.useState(false);
   const [loading, setLoading] = React.useState(true);
-  const [tripText, setTripText] = React.useState<string | null>(null);
+  const [tripPhotos, setTripPhotos] = React.useState<TripPhotos | null>(null);
 
   const { tripId } = useTripId(slug);
-
-  useEffect(() => {
-    setLoading(true);
-  }, [slug]);
 
   useEffect(() => {
     if (tripId) {
       const unsubscribe = firebase
         .firestore()
-        .doc(`tripTexts/${tripId}`)
+        .doc(`tripPhotos/${tripId}`)
         .onSnapshot(
           (snapshot) => {
             setLoading(false);
             setError(false);
-            setTripText(snapshot.data()?.['text']);
+            setTripPhotos(snapshot.data() ?? null);
           },
           (error) => {
             console.log(error);
@@ -37,6 +43,6 @@ export function useTripText(slug: string | undefined) {
   return {
     error,
     loading,
-    tripText,
+    tripPhotos,
   };
 }

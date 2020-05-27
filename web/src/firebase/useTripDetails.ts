@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { Trip, TripDetails } from '../models/Trip';
 import { useTripText } from './useTripText';
+import { useTripId } from './useTripId';
 
 export function useTripDetails(slug: string | undefined) {
   const [error, setError] = React.useState(false);
@@ -8,7 +9,7 @@ export function useTripDetails(slug: string | undefined) {
   const [trip, setTrip] = React.useState<Trip | null>(null);
   const [tripDetails, setTripDetails] = React.useState<TripDetails | null>(null);
 
-  const [tripId, setTripId] = React.useState<string | null>(null);
+  const { tripId } = useTripId(slug);
 
   useEffect(() => {
     if (!slug) {
@@ -17,27 +18,6 @@ export function useTripDetails(slug: string | undefined) {
     } else {
       setLoading(true);
     }
-
-    const unsubscribe = firebase
-      .firestore()
-      .collection('trips')
-      .where('slug', '==', slug)
-      .onSnapshot(
-        (snapshot) => {
-          const id = snapshot.docs[0].id;
-          if (id) {
-            setTripId(id);
-          } else {
-            setError(true);
-          }
-        },
-        (error) => {
-          console.log(error);
-          setError(true);
-        }
-      );
-
-    return () => unsubscribe();
   }, [slug]);
 
   useEffect(() => {

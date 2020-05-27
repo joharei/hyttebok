@@ -5,7 +5,7 @@ import ProgressiveImage from 'react-progressive-graceful-image';
 import clsx from 'clsx';
 
 import Carousel, { CommonProps, Modal, ModalGateway, ViewType } from 'react-images';
-import { PhotoDimensions } from '../../utils/usePhotoDimensions';
+import { PhotosDetails } from '../../utils/photosDetails';
 
 const usePhotoStyles = makeStyles({
   fullscreenImage: {
@@ -39,14 +39,14 @@ interface PhotoProps {
   height: number;
   margin?: string;
   images: ViewType[];
-  photoDimensions: PhotoDimensions;
+  photoDimensions: PhotosDetails;
 }
 
-const View = (props: CommonProps & { photoDimensions: PhotoDimensions }) => {
+const View = (props: CommonProps & { photoDimensions: PhotosDetails }) => {
   const classes = usePhotoStyles();
   const { data, photoDimensions } = props as {
     data: { source: { regular: string; thumbnail: string }; alt: string };
-    photoDimensions: PhotoDimensions;
+    photoDimensions: PhotosDetails;
   };
 
   return (

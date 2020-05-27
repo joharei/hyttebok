@@ -1,16 +1,20 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { extractUrls, Urls } from '../../utils/extractUrls';
-import { usePhotoDimensions } from '../../utils/usePhotoDimensions';
+import { PhotosDetails } from '../../utils/photosDetails';
 import { MarkdownPage } from './MarkdownPage';
 import { LoadingSkeletons } from './LoadingSkeletons';
 import { ViewType } from 'react-images';
 
-export const Markdown = ({ tripText, loading }: { tripText?: string; loading: boolean }) => {
+type Props = {
+  tripText?: string;
+  tripPhotos?: PhotosDetails;
+  loading: boolean;
+};
+
+export const Markdown = ({ tripText, tripPhotos, loading }: Props) => {
   const [images, setImages] = useState<ViewType[] | null>(null);
   const [urls, setUrls] = useState<Urls[] | null>(null);
-
-  const photoDimensions = usePhotoDimensions(urls);
 
   useEffect(() => {
     if (loading) {
@@ -41,8 +45,8 @@ export const Markdown = ({ tripText, loading }: { tripText?: string; loading: bo
     }
   }, [urls]);
 
-  if (!loading && tripText && photoDimensions && images) {
-    return <MarkdownPage tripText={tripText} photoDimensions={photoDimensions} images={images} />;
+  if (!loading && tripText && tripPhotos && images) {
+    return <MarkdownPage tripText={tripText} photoDimensions={tripPhotos} images={images} />;
   } else {
     return <LoadingSkeletons />;
   }

@@ -1,6 +1,8 @@
 import React from 'react';
 import { Trip, TripDetails } from '../models/Trip';
 import slugify from 'slugify';
+import { extractUrls } from '../utils/extractUrls';
+import { notEmpty } from '../utils/notEmpty';
 
 export function useEditTrip(onSaveSuccess?: (slug: string) => void) {
   const [loading, setLoading] = React.useState(false);
@@ -28,10 +30,50 @@ export function useEditTrip(onSaveSuccess?: (slug: string) => void) {
 
       batch.set(firebase.firestore().collection('tripTexts').doc(id), { text: tripDetails.text });
 
+      const photoUrls = extractUrls(tripDetails.text);
+      const promises = photoUrls
+        .filter(({ original }) => original.includes('/root/content'))
+        .map(({ original, thumbnail, title, alt }) =>
+          fetch(original.replace('/content', '?$select=image,file'))
+            .then((value) => value.json())
+            .then((value) => ({
+              url: original,
+              thumbnail,
+              height: value.image.height,
+              width: value.image.width,
+              title,
+              alt,
+            }))
+            .catch(() => null)
+        );
+      const allPromises = Promise.all(promises).then((value) =>
+        value.filter(notEmpty).reduce((previousValue, { url, ...rest }) => {
+          if (!rest.alt) {
+            delete rest.alt;
+          }
+          if (!rest.title) {
+            delete rest.title;
+          }
+          return {
+            ...previousValue,
+            [url]: rest,
+          };
+        }, {})
+      );
+
+      try {
+        const photos = await allPromises;
+        batch.set(firebase.firestore().collection('tripPhotos').doc(id), photos);
+      } catch (e) {
+        console.error(e);
+        setError(true);
+      }
+
       try {
         await batch.commit();
         setLoading(false);
-      } catch {
+      } catch (e) {
+        console.error(e);
         setError(true);
       }
 

@@ -1,42 +1,44 @@
 import React, { useEffect } from 'react';
-import { useTripId } from './useTripId';
 
-export function useTripText(slug: string | undefined) {
+export function useTripId(slug: string | undefined) {
   const [error, setError] = React.useState(false);
   const [loading, setLoading] = React.useState(true);
-  const [tripText, setTripText] = React.useState<string | null>(null);
-
-  const { tripId } = useTripId(slug);
+  const [tripId, setTripId] = React.useState<string | null>(null);
 
   useEffect(() => {
     setLoading(true);
-  }, [slug]);
+    setTripId(null);
 
-  useEffect(() => {
-    if (tripId) {
+    if (slug) {
       const unsubscribe = firebase
         .firestore()
-        .doc(`tripTexts/${tripId}`)
+        .collection('trips')
+        .where('slug', '==', slug)
         .onSnapshot(
           (snapshot) => {
+            const id = snapshot.docs[0].id;
+            if (id) {
+              setTripId(id);
+            } else {
+              setError(true);
+            }
             setLoading(false);
-            setError(false);
-            setTripText(snapshot.data()?.['text']);
           },
           (error) => {
             console.log(error);
             setError(true);
+            setLoading(false);
           }
         );
 
       return () => unsubscribe();
     }
     return;
-  }, [tripId]);
+  }, [slug]);
 
   return {
     error,
     loading,
-    tripText,
+    tripId,
   };
 }

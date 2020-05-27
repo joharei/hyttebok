@@ -9,6 +9,10 @@ const useStyles = makeStyles({
   singlePhotoContainer: {
     display: 'flex',
     justifyContent: 'center',
+    '& img': {
+      objectFit: 'scale-down',
+      maxWidth: '100%',
+    },
   },
 });
 

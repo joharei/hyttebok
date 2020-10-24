@@ -1,9 +1,8 @@
 import { AnchorHTMLAttributes, default as React, ReactElement } from 'react';
 import Gallery, { PhotoProps } from 'react-photo-gallery';
 import { PhotosDetails } from '../../utils/photosDetails';
-import { Photo } from './Photo';
+import { Photo, PhotoDetails } from './Photo';
 import { makeStyles } from '@material-ui/core/styles';
-import { ViewType } from 'react-images';
 
 const useStyles = makeStyles({
   singlePhotoContainer: {
@@ -18,7 +17,7 @@ const useStyles = makeStyles({
 
 interface ParagraphProps {
   children: ReactElement[];
-  slideShowImages: ViewType[];
+  slideShowImages: PhotoDetails[];
   photoDimensions: PhotosDetails;
 }
 

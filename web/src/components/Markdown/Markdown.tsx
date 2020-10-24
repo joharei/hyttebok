@@ -4,7 +4,7 @@ import { extractUrls, Urls } from '../../utils/extractUrls';
 import { PhotosDetails } from '../../utils/photosDetails';
 import { MarkdownPage } from './MarkdownPage';
 import { LoadingSkeletons } from './LoadingSkeletons';
-import { ViewType } from 'react-images';
+import { PhotoDetails } from './Photo';
 
 type Props = {
   tripText?: string;
@@ -13,7 +13,7 @@ type Props = {
 };
 
 export const Markdown = ({ tripText, tripPhotos, loading }: Props) => {
-  const [images, setImages] = useState<ViewType[] | null>(null);
+  const [images, setImages] = useState<PhotoDetails[] | null>(null);
   const [urls, setUrls] = useState<Urls[] | null>(null);
 
   useEffect(() => {
@@ -33,11 +33,8 @@ export const Markdown = ({ tripText, tripPhotos, loading }: Props) => {
     if (urls) {
       setImages(
         urls.map(({ original, thumbnail, alt, title }) => ({
-          source: {
-            regular: original,
-            download: original,
-            thumbnail,
-          },
+          src: original,
+          placeholder: thumbnail,
           caption: [title, alt].filter((value) => value && value.length > 0).join(' - '),
           alt,
         }))

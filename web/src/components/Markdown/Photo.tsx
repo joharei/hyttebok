@@ -1,17 +1,47 @@
-import { default as React, useState } from 'react';
+import { default as React, useRef, useState } from 'react';
 import { Skeleton } from '@material-ui/lab';
-import { makeStyles, useTheme } from '@material-ui/core';
+import { Backdrop, Fab, Fade, makeStyles, Modal, Theme, Typography } from '@material-ui/core';
+import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import ProgressiveImage from 'react-progressive-graceful-image';
 import clsx from 'clsx';
 
-import Carousel, { CommonProps, Modal, ModalGateway, ViewType } from 'react-images';
 import { PhotosDetails } from '../../utils/photosDetails';
+import 'react-responsive-carousel/lib/styles/carousel.min.css';
+import { Carousel } from 'react-responsive-carousel';
+import useFullscreen from '../../utils/useFullscreen';
 
-const usePhotoStyles = makeStyles({
+const usePhotoStyles = makeStyles((theme: Theme) => ({
+  carousel: {
+    '& .slide': {
+      background: 'none',
+    },
+    '& .carousel-slider': {
+      height: '100vh',
+    },
+  },
+  arrowButton: {
+    position: 'absolute',
+    zIndex: 2,
+    top: 'calc(50% - 24px)',
+  },
+  leftArrowButton: {
+    left: theme.spacing(2),
+  },
+  rightArrowButton: {
+    right: theme.spacing(2),
+  },
+
   fullscreenImage: {
     width: '100%',
+    height: '100%',
     maxHeight: '100vh',
     objectFit: 'contain',
+    userSelect: 'none',
+    '-moz-user-select': 'none',
+    '-webkit-user-drag': 'none',
+    '-webkit-user-select': 'none',
+    '-ms-user-select': 'none',
   },
 
   animated: {
@@ -29,7 +59,14 @@ const usePhotoStyles = makeStyles({
   fadeIn: {
     'animation-name': '$fadeIn',
   },
-});
+}));
+
+export interface PhotoDetails {
+  src: string;
+  placeholder: string;
+  caption?: string;
+  alt?: string;
+}
 
 interface PhotoProps {
   src: string | undefined;
@@ -38,38 +75,39 @@ interface PhotoProps {
   width: number;
   height: number;
   margin?: string;
-  images: ViewType[];
+  images: PhotoDetails[];
   photoDimensions: PhotosDetails;
 }
 
-const View = (props: CommonProps & { photoDimensions: PhotosDetails }) => {
+const View = (props: { photo: PhotoDetails; photoDimensions: PhotosDetails }) => {
   const classes = usePhotoStyles();
-  const { data, photoDimensions } = props as {
-    data: { source: { regular: string; thumbnail: string }; alt: string };
-    photoDimensions: PhotosDetails;
-  };
+  const { photo, photoDimensions } = props;
 
   return (
-    <ProgressiveImage src={data.source.regular ?? ''} placeholder={data.source.thumbnail ?? ''}>
-      {(src: string) => {
-        return (
-          <img
-            className={classes.fullscreenImage}
-            alt={data.alt}
-            src={src}
-            width={photoDimensions[data.source.regular]?.width ?? 400}
-            height={photoDimensions[data.source.regular]?.height ?? 300}
-          />
-        );
-      }}
-    </ProgressiveImage>
+    <div>
+      <ProgressiveImage src={photo.src} placeholder={photo.placeholder}>
+        {(src: string) => {
+          return (
+            <img
+              className={classes.fullscreenImage}
+              alt={photo.alt}
+              src={src}
+              width={photoDimensions[photo.src]?.width ?? 400}
+              height={photoDimensions[photo.src]?.height ?? 300}
+            />
+          );
+        }}
+      </ProgressiveImage>
+      {photo.caption && <Typography className="legend">{photo.caption}</Typography>}
+    </div>
   );
 };
 
 export const Photo = ({ href, src, width, height, margin, alt, images, photoDimensions }: PhotoProps) => {
   const classes = usePhotoStyles();
   const [open, setOpen] = useState(false);
-  const theme = useTheme();
+  const ref = useRef<HTMLDivElement | null>(null);
+  const [, setFullscreen] = useFullscreen(ref);
 
   if (src && !href.includes('MEDIA_URL')) {
     return (
@@ -103,27 +141,51 @@ export const Photo = ({ href, src, width, height, margin, alt, images, photoDime
           </ProgressiveImage>
         </a>
 
-        <ModalGateway>
-          {open && (
-            <Modal
-              onClose={() => setOpen(false)}
-              styles={{
-                blanket: (base) => ({ ...base, zIndex: theme.zIndex.drawer + 10 }),
-                positioner: (base) => ({ ...base, zIndex: theme.zIndex.modal }),
-              }}
-              allowFullscreen
-            >
+        <Modal
+          open={open}
+          onClose={() => setOpen(false)}
+          closeAfterTransition
+          BackdropComponent={Backdrop}
+          BackdropProps={{
+            timeout: 500,
+          }}
+        >
+          <Fade in={open}>
+            <div ref={ref} onDoubleClick={() => setFullscreen()}>
               <Carousel
-                views={images}
-                currentIndex={images.findIndex(
-                  (value) => typeof value.source !== 'string' && value.source.regular === href
+                className={classes.carousel}
+                useKeyboardArrows
+                dynamicHeight
+                showThumbs={false}
+                selectedItem={images.findIndex((value) => value.src === href)}
+                renderArrowNext={(clickHandler, hasNext, label) => (
+                  <Fab
+                    className={clsx(classes.arrowButton, classes.rightArrowButton)}
+                    onClick={clickHandler}
+                    disabled={!hasNext}
+                    aria-label={label}
+                  >
+                    <ArrowForwardIcon />
+                  </Fab>
                 )}
-                // eslint-disable-next-line react/display-name
-                components={{ View: (props) => <View photoDimensions={photoDimensions} {...props} /> }}
-              />
-            </Modal>
-          )}
-        </ModalGateway>
+                renderArrowPrev={(clickHandler, hasPrev, label) => (
+                  <Fab
+                    className={clsx(classes.arrowButton, classes.leftArrowButton)}
+                    onClick={clickHandler}
+                    disabled={!hasPrev}
+                    aria-label={label}
+                  >
+                    <ArrowBackIcon />
+                  </Fab>
+                )}
+              >
+                {images.map((image) => (
+                  <View key={image.src} photo={image} photoDimensions={photoDimensions} />
+                ))}
+              </Carousel>
+            </div>
+          </Fade>
+        </Modal>
       </>
     );
   }

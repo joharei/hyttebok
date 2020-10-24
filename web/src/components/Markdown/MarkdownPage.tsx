@@ -2,12 +2,12 @@ import { PhotosDetails } from '../../utils/photosDetails';
 import ReactMarkdown from 'react-markdown';
 import * as React from 'react';
 import { Paragraph } from './Paragraph';
-import { ViewType } from 'react-images';
+import { PhotoDetails } from './Photo';
 
 type Props = {
   tripText: string;
   photoDimensions: PhotosDetails;
-  images: ViewType[];
+  images: PhotoDetails[];
 };
 
 export const MarkdownPage = ({ tripText, photoDimensions, images }: Props) => {

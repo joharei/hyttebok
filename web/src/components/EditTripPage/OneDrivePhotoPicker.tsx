@@ -11,7 +11,7 @@ interface Props {
   onCancel: () => void;
 }
 
-export const OneDrivePhotoPicker = ({ onSuccess, onCancel }: Props) => {
+export const OneDrivePhotoPicker: React.FunctionComponent<Props> = ({ onSuccess, onCancel }: Props) => {
   const accessToken = useAccessToken();
   const [loading, setLoading] = useState(false);
 

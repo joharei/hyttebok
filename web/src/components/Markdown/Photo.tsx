@@ -103,7 +103,16 @@ const View = (props: { photo: PhotoDetails; photoDimensions: PhotosDetails }) =>
   );
 };
 
-export const Photo = ({ href, src, width, height, margin, alt, images, photoDimensions }: PhotoProps) => {
+export const Photo: React.FunctionComponent<PhotoProps> = ({
+  href,
+  src,
+  width,
+  height,
+  margin,
+  alt,
+  images,
+  photoDimensions,
+}: PhotoProps) => {
   const classes = usePhotoStyles();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement | null>(null);

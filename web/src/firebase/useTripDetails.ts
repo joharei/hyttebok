@@ -3,7 +3,9 @@ import { Trip, TripDetails } from '../models/Trip';
 import { useTripText } from './useTripText';
 import { useTripId } from './useTripId';
 
-export function useTripDetails(slug: string | undefined) {
+export function useTripDetails(
+  slug: string | undefined
+): { tripDetails: TripDetails | null; error: boolean; loading: boolean } {
   const [error, setError] = React.useState(false);
   const [loading, setLoading] = React.useState(true);
   const [trip, setTrip] = React.useState<Trip | null>(null);

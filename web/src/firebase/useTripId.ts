@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 
-export function useTripId(slug: string | undefined) {
+export function useTripId(slug: string | undefined): { tripId: string | null; error: boolean; loading: boolean } {
   const [error, setError] = React.useState(false);
   const [loading, setLoading] = React.useState(true);
   const [tripId, setTripId] = React.useState<string | null>(null);

@@ -6,7 +6,7 @@ import { Routes } from './components/Routes';
 import { useAuth } from './components/Auth/useAuth';
 import { Loading } from './components/Loading';
 
-export const App = () => {
+export const App: React.FunctionComponent = () => {
   const { user, admin } = useAuth();
 
   if (!user || admin == null) {

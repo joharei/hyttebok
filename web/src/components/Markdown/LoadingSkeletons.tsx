@@ -8,7 +8,7 @@ function randomIntFromInterval(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
-export const LoadingSkeletons = () => {
+export const LoadingSkeletons: React.FunctionComponent = () => {
   const skeletonWidths = useRef<number[]>([]);
   if (skeletonWidths.current.length === 0) {
     skeletonWidths.current = [...Array(5)].map(() => randomIntFromInterval(20, 100));

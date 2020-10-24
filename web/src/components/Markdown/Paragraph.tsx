@@ -21,7 +21,11 @@ interface ParagraphProps {
   photoDimensions: PhotosDetails;
 }
 
-export const Paragraph = ({ children, slideShowImages, photoDimensions }: ParagraphProps) => {
+export const Paragraph: React.FunctionComponent<ParagraphProps> = ({
+  children,
+  slideShowImages,
+  photoDimensions,
+}: ParagraphProps) => {
   const classes = useStyles();
 
   if (children?.[0]?.props?.children?.[0]?.props?.src) {

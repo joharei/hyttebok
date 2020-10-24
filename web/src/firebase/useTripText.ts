@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useTripId } from './useTripId';
 
-export function useTripText(slug: string | undefined) {
+export function useTripText(slug: string | undefined): { error: boolean; loading: boolean; tripText: string | null } {
   const [error, setError] = React.useState(false);
   const [loading, setLoading] = React.useState(true);
   const [tripText, setTripText] = React.useState<string | null>(null);

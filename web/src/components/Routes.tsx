@@ -4,7 +4,7 @@ import { ADMIN, LANDING, TRIP } from '../constants/routes';
 import { AdminPage } from './AdminPage';
 import { ResponsiveDrawer } from './ResponsiveDrawer';
 
-export const Routes = () => (
+export const Routes: React.FunctionComponent = () => (
   <Switch>
     <Route path={LANDING} exact component={ResponsiveDrawer} />
     <Route path={TRIP} component={ResponsiveDrawer} />

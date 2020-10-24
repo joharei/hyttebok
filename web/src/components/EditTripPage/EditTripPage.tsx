@@ -231,7 +231,7 @@ const EditTripPageUI = (props: Props) => {
   );
 };
 
-export const EditTripPage = () => {
+export const EditTripPage: React.FunctionComponent = () => {
   const { slug } = useParams<{ slug?: string }>();
   const { tripDetails, loading, error } = useTripDetails(slug);
 

@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Trip } from '../models/Trip';
 
-export function useTrips() {
+export function useTrips(): { trips: Trip[]; error: boolean; loading: boolean } {
   const [error, setError] = React.useState(false);
   const [loading, setLoading] = React.useState(true);
   const [trips, setTrips] = React.useState<Trip[]>([]);

@@ -17,7 +17,7 @@ const useStyles = makeStyles(({ spacing, mixins }: Theme) => ({
   },
 }));
 
-export const AdminPage = () => {
+export const AdminPage: React.FunctionComponent = () => {
   const classes = useStyles();
   const { path, url } = useRouteMatch();
 

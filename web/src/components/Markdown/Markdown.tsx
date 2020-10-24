@@ -12,7 +12,7 @@ type Props = {
   loading: boolean;
 };
 
-export const Markdown = ({ tripText, tripPhotos, loading }: Props) => {
+export const Markdown: React.FunctionComponent<Props> = ({ tripText, tripPhotos, loading }: Props) => {
   const [images, setImages] = useState<PhotoDetails[] | null>(null);
   const [urls, setUrls] = useState<Urls[] | null>(null);
 

@@ -19,7 +19,7 @@ interface Props {
   setTitle: (title: string) => void;
 }
 
-export const DrawerContent = ({ setTitle }: Props) => {
+export const DrawerContent: React.FunctionComponent<Props> = ({ setTitle }: Props) => {
   const classes = useStyles();
   const location = useLocation();
   const [scrolled, setScrolled] = useState(false);

@@ -15,7 +15,7 @@ interface Props {
   height?: string | number;
 }
 
-export const Loading = (props: Props) => {
+export const Loading: React.FunctionComponent<Props> = (props: Props) => {
   const { parent } = useStyles(props);
 
   return (

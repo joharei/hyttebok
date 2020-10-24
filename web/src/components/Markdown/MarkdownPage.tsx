@@ -10,7 +10,7 @@ type Props = {
   images: PhotoDetails[];
 };
 
-export const MarkdownPage = ({ tripText, photoDimensions, images }: Props) => {
+export const MarkdownPage: React.FunctionComponent<Props> = ({ tripText, photoDimensions, images }: Props) => {
   return (
     <ReactMarkdown
       source={tripText}

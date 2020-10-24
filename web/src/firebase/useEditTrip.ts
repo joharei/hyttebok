@@ -4,7 +4,15 @@ import slugify from 'slugify';
 import { extractUrls } from '../utils/extractUrls';
 import { notEmpty } from '../utils/notEmpty';
 
-export function useEditTrip(onSaveSuccess?: (slug: string) => void) {
+export function useEditTrip(
+  onSaveSuccess?: (slug: string) => void
+): {
+  saveTrip: (
+    tripDetails: Omit<TripDetails, 'id' | 'slug'> & Partial<Pick<TripDetails, 'id' | 'slug'>>
+  ) => Promise<void>;
+  loading: boolean;
+  error: boolean;
+} {
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState(false);
 

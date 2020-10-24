@@ -32,7 +32,7 @@ const useStyles = makeStyles(({ spacing }: Theme) => ({
   },
 }));
 
-export const AdminTripsList = () => {
+export const AdminTripsList: React.FunctionComponent = () => {
   const classes = useStyles();
   const history = useHistory();
 

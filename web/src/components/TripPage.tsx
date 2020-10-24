@@ -4,7 +4,7 @@ import { useTripText } from '../firebase/useTripText';
 import { Markdown } from './Markdown';
 import { useTripPhotos } from '../firebase/useTripPhotos';
 
-export const TripPage = () => {
+export const TripPage: React.FunctionComponent = () => {
   const { slug } = useParams<{ slug: string }>();
 
   const { tripText, loading, error } = useTripText(slug);

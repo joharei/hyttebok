@@ -54,7 +54,9 @@ const useStyles = makeStyles(({ breakpoints, spacing, mixins }: Theme) => ({
   },
 }));
 
-export const ResponsiveDrawer = ({ match: { path, url } }: RouteComponentProps) => {
+export const ResponsiveDrawer: React.FunctionComponent<RouteComponentProps> = ({
+  match: { path, url },
+}: RouteComponentProps) => {
   const classes = useStyles();
 
   const [mobileOpen, setMobileOpen] = useState(false);

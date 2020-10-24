@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { useLocalStorage } from '../../utils/useLocalStorage';
-import { User } from 'firebase';
+import type { User, auth } from 'firebase';
 
 interface Auth {
   signIn: () => void;
@@ -11,7 +11,9 @@ interface Auth {
 
 const authContext = createContext<Auth | null>(null);
 
-export const useAuth = () => {
+export const useAuth = ():
+  | Auth
+  | { signIn: () => undefined; signOut: () => undefined; admin: null; user: User | null } => {
   return (
     useContext(authContext) || {
       signIn: () => undefined,
@@ -23,7 +25,7 @@ export const useAuth = () => {
 };
 
 function useProvideAuth(): Auth {
-  const [user, setUser] = useState<firebase.User | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [admin, setAdmin] = useState<boolean | null>(null);
   const [, setAdAccessToken] = useLocalStorage<string | null>('adAccessToken', null);
 
@@ -46,7 +48,7 @@ function useProvideAuth(): Auth {
       .auth()
       .getRedirectResult()
       .then((result) => {
-        const accessToken = (result.credential as firebase.auth.OAuthCredential | null)?.accessToken ?? null;
+        const accessToken = (result.credential as auth.OAuthCredential | null)?.accessToken ?? null;
         if (accessToken) {
           setAdAccessToken(accessToken);
         }
@@ -109,7 +111,11 @@ function useProvideAuth(): Auth {
   };
 }
 
-export const ProvideAuth = ({ children }: { children: React.ReactElement }) => {
+export const ProvideAuth: ({ children }: { children: React.ReactElement }) => JSX.Element = ({
+  children,
+}: {
+  children: React.ReactElement;
+}) => {
   const auth = useProvideAuth();
 
   return <authContext.Provider value={auth}>{children}</authContext.Provider>;

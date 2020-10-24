@@ -3,7 +3,7 @@ import { useLocalStorage } from '../../utils/useLocalStorage';
 import { useAuth } from './useAuth';
 import { auth } from 'firebase';
 
-export const useAccessToken = () => {
+export const useAccessToken = (): string | null => {
   const { user, signIn } = useAuth();
   const [adAccessToken, setAdAccessToken] = useLocalStorage<string | null>('adAccessToken', null);
   const [reauthenticating, setReauthenticating] = useState(false);

@@ -18,7 +18,6 @@ export const useAccessToken = () => {
         throw Error();
       }
 
-      // eslint-disable-next-line @typescript-eslint/camelcase
       const provider = new firebase.auth.OAuthProvider('microsoft.com').setCustomParameters({ login_hint: user.email });
       user
         .reauthenticateWithPopup(provider)

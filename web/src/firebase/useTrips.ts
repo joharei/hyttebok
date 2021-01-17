@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { Trip } from '../models/Trip';
+import firebase from '.';
 
 export function useTrips(): { trips: Trip[]; error: boolean; loading: boolean } {
   const [error, setError] = React.useState(false);

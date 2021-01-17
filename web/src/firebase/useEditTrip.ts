@@ -3,6 +3,7 @@ import { Trip, TripDetails } from '../models/Trip';
 import slugify from 'slugify';
 import { extractUrls } from '../utils/extractUrls';
 import { notEmpty } from '../utils/notEmpty';
+import firebase from '.';
 
 export function useEditTrip(
   onSaveSuccess?: (slug: string) => void

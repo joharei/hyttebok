@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useLocalStorage } from '../../utils/useLocalStorage';
 import { useAuth } from './useAuth';
-import { auth } from 'firebase';
+import firebase from '../../firebase';
 
 export const useAccessToken = (): string | null => {
   const { user, signIn } = useAuth();
@@ -22,7 +22,7 @@ export const useAccessToken = (): string | null => {
       user
         .reauthenticateWithPopup(provider)
         .then((credentials) => {
-          const accessToken = (credentials.credential as auth.OAuthCredential | null)?.accessToken ?? null;
+          const accessToken = (credentials.credential as firebase.auth.OAuthCredential | null)?.accessToken ?? null;
 
           if (!accessToken) {
             signIn();

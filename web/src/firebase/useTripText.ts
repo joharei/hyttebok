@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { useTripId } from './useTripId';
+import firebase from '.';
 
 export function useTripText(slug: string | undefined): { error: boolean; loading: boolean; tripText: string | null } {
   const [error, setError] = React.useState(false);

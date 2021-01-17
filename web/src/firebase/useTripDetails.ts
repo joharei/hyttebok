@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { Trip, TripDetails } from '../models/Trip';
 import { useTripText } from './useTripText';
 import { useTripId } from './useTripId';
+import firebase from '.';
 
 export function useTripDetails(
   slug: string | undefined

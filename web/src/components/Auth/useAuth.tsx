@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { useLocalStorage } from '../../utils/useLocalStorage';
-import type { User, auth } from 'firebase';
+import firebase from '../../firebase';
+
+type User = firebase.User;
 
 interface Auth {
   signIn: () => void;
@@ -48,7 +50,7 @@ function useProvideAuth(): Auth {
       .auth()
       .getRedirectResult()
       .then((result) => {
-        const accessToken = (result.credential as auth.OAuthCredential | null)?.accessToken ?? null;
+        const accessToken = (result.credential as firebase.auth.OAuthCredential | null)?.accessToken ?? null;
         if (accessToken) {
           setAdAccessToken(accessToken);
         }

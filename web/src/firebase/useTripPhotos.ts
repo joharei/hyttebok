@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { useTripId } from './useTripId';
+import firebase from '.';
 
 type TripPhotos = {
   [original: string]: {

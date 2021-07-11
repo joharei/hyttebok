@@ -1,4 +1,4 @@
-import { AnchorHTMLAttributes, default as React, ReactElement } from 'react';
+import { default as React, ReactNode } from 'react';
 import Gallery, { PhotoProps } from 'react-photo-gallery';
 import { PhotosDetails } from '../../utils/photosDetails';
 import { Photo, PhotoDetails } from './Photo';
@@ -16,7 +16,7 @@ const useStyles = makeStyles({
 });
 
 interface ParagraphProps {
-  children: ReactElement[];
+  children: ReactNode[];
   slideShowImages: PhotoDetails[];
   photoDimensions: PhotosDetails;
 }
@@ -28,19 +28,22 @@ export const Paragraph: React.FunctionComponent<ParagraphProps> = ({
 }: ParagraphProps) => {
   const classes = useStyles();
 
-  if (children?.[0]?.props?.children?.[0]?.props?.src) {
-    const imageChildren = children.filter((child) => child.props.children?.[0]?.props?.src);
+  const childrenArray = React.Children.toArray(children);
+  const firstChild = childrenArray[0];
 
-    if (imageChildren.length > 1) {
-      const photos: PhotoProps<{ href: string }>[] = imageChildren.map(
-        (child: ReactElement<AnchorHTMLAttributes<HTMLAnchorElement>>) => ({
-          href: child.props.href ?? '',
-          src: child.props.children?.[0]?.props?.src,
-          alt: child.props.children?.[0]?.props?.alt,
-          width: photoDimensions[child.props.href ?? '']?.width ?? 400,
-          height: photoDimensions[child.props.href ?? '']?.height ?? 300,
-        })
-      );
+  if (typeof firstChild === 'object' && 'props' in firstChild && firstChild?.props?.children?.[0]?.props?.src) {
+    const imageChildrenProps = childrenArray.flatMap((child) =>
+      typeof child === 'object' && 'props' in child && child.props.children?.[0]?.props?.src ? [child.props] : []
+    );
+
+    if (imageChildrenProps.length > 1) {
+      const photos: PhotoProps<{ href: string }>[] = imageChildrenProps.map((props) => ({
+        href: props.href ?? '',
+        src: props.children?.[0]?.props?.src,
+        alt: props.children?.[0]?.props?.alt,
+        width: photoDimensions[props.href ?? '']?.width ?? 400,
+        height: photoDimensions[props.href ?? '']?.height ?? 300,
+      }));
 
       return (
         <Gallery
@@ -61,14 +64,14 @@ export const Paragraph: React.FunctionComponent<ParagraphProps> = ({
         />
       );
     } else {
-      const dimensions = photoDimensions[imageChildren[0].props.href ?? ''] ?? { width: 400, height: 300 };
+      const dimensions = photoDimensions[imageChildrenProps[0].href ?? ''] ?? { width: 400, height: 300 };
       const width = (300 / dimensions.height) * dimensions.width;
       return (
         <div className={classes.singlePhotoContainer}>
           <Photo
-            href={imageChildren[0].props.href ?? ''}
-            src={imageChildren[0].props.children?.[0]?.props?.src}
-            alt={imageChildren[0].props.children?.[0]?.props?.alt}
+            href={imageChildrenProps[0].href ?? ''}
+            src={imageChildrenProps[0].children?.[0]?.props?.src}
+            alt={imageChildrenProps[0].children?.[0]?.props?.alt}
             width={width}
             height={300}
             images={slideShowImages}

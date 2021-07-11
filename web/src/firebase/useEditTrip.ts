@@ -5,9 +5,7 @@ import { extractUrls } from '../utils/extractUrls';
 import { notEmpty } from '../utils/notEmpty';
 import firebase from '.';
 
-export function useEditTrip(
-  onSaveSuccess?: (slug: string) => void
-): {
+export function useEditTrip(onSaveSuccess?: (slug: string) => void): {
   saveTrip: (
     tripDetails: Omit<TripDetails, 'id' | 'slug'> & Partial<Pick<TripDetails, 'id' | 'slug'>>
   ) => Promise<void>;

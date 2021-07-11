@@ -74,12 +74,11 @@ const EditTripPageUI = (props: Props) => {
 
   const { tripPhotos, loading: tripPhotosLoading } = useTripPhotos(slug);
 
-  const handleChange = (name: 'title' | 'startDate' | 'endDate' | 'text') => (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const value = name === 'startDate' || name === 'endDate' ? new Date(event.target.value) : event.target.value;
-    setTrip((prevTrip) => ({ ...prevTrip, [name]: value }));
-  };
+  const handleChange =
+    (name: 'title' | 'startDate' | 'endDate' | 'text') => (event: React.ChangeEvent<HTMLInputElement>) => {
+      const value = name === 'startDate' || name === 'endDate' ? new Date(event.target.value) : event.target.value;
+      setTrip((prevTrip) => ({ ...prevTrip, [name]: value }));
+    };
   const handleTextChange = (value: string) => {
     setTrip((prevTrip) => ({ ...prevTrip, text: value }));
   };
@@ -138,7 +137,7 @@ const EditTripPageUI = (props: Props) => {
                   value={text}
                   onChange={handleTextChange}
                   disablePreview={!mobileView}
-                  generateMarkdownPreview={async (markdown) => <ReactMarkdown source={markdown} />}
+                  generateMarkdownPreview={async (markdown) => <ReactMarkdown>{markdown}</ReactMarkdown>}
                   selectedTab={selectedTab}
                   onTabChange={setSelectedTab}
                   minEditorHeight={500}

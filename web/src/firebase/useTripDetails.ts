@@ -4,9 +4,11 @@ import { useTripText } from './useTripText';
 import { useTripId } from './useTripId';
 import firebase from '.';
 
-export function useTripDetails(
-  slug: string | undefined
-): { tripDetails: TripDetails | null; error: boolean; loading: boolean } {
+export function useTripDetails(slug: string | undefined): {
+  tripDetails: TripDetails | null;
+  error: boolean;
+  loading: boolean;
+} {
   const [error, setError] = React.useState(false);
   const [loading, setLoading] = React.useState(true);
   const [trip, setTrip] = React.useState<Trip | null>(null);

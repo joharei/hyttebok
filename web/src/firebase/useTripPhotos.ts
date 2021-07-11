@@ -12,9 +12,11 @@ type TripPhotos = {
   };
 };
 
-export function useTripPhotos(
-  slug: string | undefined
-): { tripPhotos: TripPhotos | null; error: boolean; loading: boolean } {
+export function useTripPhotos(slug: string | undefined): {
+  tripPhotos: TripPhotos | null;
+  error: boolean;
+  loading: boolean;
+} {
   const [error, setError] = React.useState(false);
   const [loading, setLoading] = React.useState(true);
   const [tripPhotos, setTripPhotos] = React.useState<TripPhotos | null>(null);

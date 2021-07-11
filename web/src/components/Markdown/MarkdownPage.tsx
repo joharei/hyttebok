@@ -13,15 +13,16 @@ type Props = {
 export const MarkdownPage: React.FunctionComponent<Props> = ({ tripText, photoDimensions, images }: Props) => {
   return (
     <ReactMarkdown
-      source={tripText}
-      renderers={{
+      components={{
         // eslint-disable-next-line react/display-name
-        paragraph: (props: { children: React.ReactElement[] }) => (
+        p: (props) => (
           <Paragraph slideShowImages={images} photoDimensions={photoDimensions}>
             {props.children}
           </Paragraph>
         ),
       }}
-    />
+    >
+      {tripText}
+    </ReactMarkdown>
   );
 };

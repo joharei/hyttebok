@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { Trip, TripDetails } from '../models/Trip';
 import { useTripText } from './useTripText';
 import { useTripId } from './useTripId';
-import firebase from '.';
+import { doc, getFirestore, onSnapshot } from 'firebase/firestore';
 
 export function useTripDetails(slug: string | undefined): {
   tripDetails: TripDetails | null;
@@ -27,10 +27,9 @@ export function useTripDetails(slug: string | undefined): {
 
   useEffect(() => {
     if (tripId) {
-      const unsubscribe = firebase
-        .firestore()
-        .doc(`trips/${tripId}`)
-        .withConverter({
+      const db = getFirestore();
+      const unsubscribe = onSnapshot(
+        doc(db, `trips/${tripId}`).withConverter({
           fromFirestore: (snapshot) => ({
             title: snapshot.data().title,
             slug: snapshot.data().slug,
@@ -38,17 +37,16 @@ export function useTripDetails(slug: string | undefined): {
             endDate: new Date(snapshot.data().endDate.seconds * 1000),
           }),
           toFirestore: (modelObject: Trip) => modelObject,
-        })
-        .onSnapshot(
-          (snapshot) => {
-            const trip = snapshot.data();
-            trip && setTrip(trip);
-          },
-          (error) => {
-            console.log(error);
-            setError(true);
-          }
-        );
+        }),
+        (snapshot) => {
+          const trip = snapshot.data();
+          trip && setTrip(trip);
+        },
+        (error) => {
+          console.log(error);
+          setError(true);
+        }
+      );
 
       return () => unsubscribe();
     }

@@ -3,7 +3,7 @@ import { Trip, TripDetails } from '../models/Trip';
 import slugify from 'slugify';
 import { extractUrls } from '../utils/extractUrls';
 import { notEmpty } from '../utils/notEmpty';
-import firebase from '.';
+import { writeBatch, doc, addDoc, collection, getFirestore } from 'firebase/firestore';
 
 export function useEditTrip(onSaveSuccess?: (slug: string) => void): {
   saveTrip: (
@@ -22,7 +22,8 @@ export function useEditTrip(onSaveSuccess?: (slug: string) => void): {
       setLoading(true);
       setError(false);
 
-      const batch = firebase.firestore().batch();
+      const db = getFirestore();
+      const batch = writeBatch(db);
 
       const trip: Trip = {
         slug: tripDetails.slug ?? slugify(tripDetails.title),
@@ -30,12 +31,12 @@ export function useEditTrip(onSaveSuccess?: (slug: string) => void): {
         startDate: tripDetails.startDate,
         endDate: tripDetails.endDate,
       };
-      const id = tripDetails.id ?? (await firebase.firestore().collection('trips').add(trip)).id;
+      const id = tripDetails.id ?? (await addDoc(collection(db, 'trips'), trip)).id;
       if (tripDetails.id) {
-        batch.set(firebase.firestore().collection('trips').doc(tripDetails.id), trip);
+        batch.set(doc(db, 'trips', tripDetails.id), trip);
       }
 
-      batch.set(firebase.firestore().collection('tripTexts').doc(id), { text: tripDetails.text });
+      batch.set(doc(db, 'tripTexts', id), { text: tripDetails.text });
 
       const photoUrls = extractUrls(tripDetails.text);
       const promises = photoUrls
@@ -70,7 +71,7 @@ export function useEditTrip(onSaveSuccess?: (slug: string) => void): {
 
       try {
         const photos = await allPromises;
-        batch.set(firebase.firestore().collection('tripPhotos').doc(id), photos);
+        batch.set(doc(db, 'tripPhotos', id), photos);
       } catch (e) {
         console.error(e);
         setError(true);

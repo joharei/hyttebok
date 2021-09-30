@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import firebase from '.';
+import { collection, getFirestore, onSnapshot, query, where } from 'firebase/firestore';
 
 export function useTripId(slug: string | undefined): { tripId: string | null; error: boolean; loading: boolean } {
   const [error, setError] = React.useState(false);
@@ -10,27 +10,27 @@ export function useTripId(slug: string | undefined): { tripId: string | null; er
     setLoading(true);
     setTripId(null);
 
+    const db = getFirestore();
+
     if (slug) {
-      const unsubscribe = firebase
-        .firestore()
-        .collection('trips')
-        .where('slug', '==', slug)
-        .onSnapshot(
-          (snapshot) => {
-            const id = snapshot.docs[0].id;
-            if (id) {
-              setTripId(id);
-            } else {
-              setError(true);
-            }
-            setLoading(false);
-          },
-          (error) => {
-            console.log(error);
+      const q = query(collection(db, 'trips'), where('slug', '==', slug));
+      const unsubscribe = onSnapshot(
+        q,
+        (snapshot) => {
+          const id = snapshot.docs[0].id;
+          if (id) {
+            setTripId(id);
+          } else {
             setError(true);
-            setLoading(false);
           }
-        );
+          setLoading(false);
+        },
+        (error) => {
+          console.log(error);
+          setError(true);
+          setLoading(false);
+        }
+      );
 
       return () => unsubscribe();
     }

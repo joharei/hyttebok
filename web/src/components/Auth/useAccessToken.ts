@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useLocalStorage } from '../../utils/useLocalStorage';
 import { useAuth } from './useAuth';
-import firebase from '../../firebase';
+import { OAuthProvider, reauthenticateWithPopup } from 'firebase/auth';
 
 export const useAccessToken = (): string | null => {
   const { user, signIn } = useAuth();
@@ -18,11 +18,13 @@ export const useAccessToken = (): string | null => {
         throw Error();
       }
 
-      const provider = new firebase.auth.OAuthProvider('microsoft.com').setCustomParameters({ login_hint: user.email });
-      user
-        .reauthenticateWithPopup(provider)
+      const provider = new OAuthProvider('microsoft.com');
+      if (user.email != null) {
+        provider.setCustomParameters({ login_hint: user.email });
+      }
+      reauthenticateWithPopup(user, provider)
         .then((credentials) => {
-          const accessToken = (credentials.credential as firebase.auth.OAuthCredential | null)?.accessToken ?? null;
+          const accessToken = OAuthProvider.credentialFromResult(credentials)?.accessToken ?? null;
 
           if (!accessToken) {
             signIn();

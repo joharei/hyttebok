@@ -1,8 +1,7 @@
 import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { useLocalStorage } from '../../utils/useLocalStorage';
-import firebase from '../../firebase';
-
-type User = firebase.User;
+import { User, getAuth, getRedirectResult, OAuthProvider, onAuthStateChanged, signInWithRedirect } from 'firebase/auth';
+import { doc, getFirestore, onSnapshot } from 'firebase/firestore';
 
 interface Auth {
   signIn: () => void;
@@ -20,7 +19,7 @@ export const useAuth = ():
     useContext(authContext) || {
       signIn: () => undefined,
       signOut: () => undefined,
-      user: firebase.auth().currentUser,
+      user: getAuth().currentUser,
       admin: null,
     }
   );
@@ -32,12 +31,11 @@ function useProvideAuth(): Auth {
   const [, setAdAccessToken] = useLocalStorage<string | null>('adAccessToken', null);
 
   const signIn = () => {
-    firebase.auth().signInWithRedirect(new firebase.auth.OAuthProvider('microsoft.com')).then();
+    signInWithRedirect(getAuth(), new OAuthProvider('microsoft.com')).then();
   };
 
   const signOut = () => {
-    return firebase
-      .auth()
+    return getAuth()
       .signOut()
       .then(() => {
         setUser(null);
@@ -46,45 +44,42 @@ function useProvideAuth(): Auth {
 
   const metadataUnsubscribe = useRef<(() => void) | null>(null);
   useEffect(() => {
-    firebase
-      .auth()
-      .getRedirectResult()
+    getRedirectResult(getAuth())
       .then((result) => {
-        const accessToken = (result.credential as firebase.auth.OAuthCredential | null)?.accessToken ?? null;
-        if (accessToken) {
-          setAdAccessToken(accessToken);
+        if (result != null) {
+          const accessToken = OAuthProvider.credentialFromResult(result)?.accessToken;
+          if (accessToken) {
+            setAdAccessToken(accessToken);
+          }
         }
       })
       .catch((error) => {
         console.error(error);
         signOut().then();
       });
-    const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
+    const unsubscribe = onAuthStateChanged(getAuth(), (user) => {
       // Remove previous listener.
       metadataUnsubscribe.current?.();
       // On user login add new listener.
       if (user) {
         // Check if refresh is required.
-        metadataUnsubscribe.current = firebase
-          .firestore()
-          .doc(`metadata/${user.uid}`)
-          .onSnapshot((snapshot) => {
-            if (snapshot.exists) {
-              user.getIdTokenResult().then((value) => {
-                // Check if user is admin
-                if (value.claims.admin === true) {
+        metadataUnsubscribe.current = onSnapshot(doc(getFirestore(), `metadata/${user.uid}`), (snapshot) => {
+          if (snapshot.exists()) {
+            user.getIdTokenResult().then((value) => {
+              // Check if user is admin
+              if ((value.claims.admin as never) === true) {
+                setUser(user);
+                setAdmin(true);
+              } else {
+                // If not, force refresh the token and check again
+                user.getIdTokenResult(true).then((value) => {
                   setUser(user);
-                  setAdmin(true);
-                } else {
-                  // If not, force refresh the token and check again
-                  user.getIdTokenResult(true).then((value) => {
-                    setUser(user);
-                    setAdmin(value.claims.admin === true);
-                  });
-                }
-              });
-            }
-          });
+                  setAdmin((value.claims.admin as never) === true);
+                });
+              }
+            });
+          }
+        });
       } else {
         signIn();
       }

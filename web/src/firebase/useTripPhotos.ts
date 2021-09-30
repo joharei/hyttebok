@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useTripId } from './useTripId';
-import firebase from '.';
+import { doc, getFirestore, onSnapshot } from 'firebase/firestore';
 
 type TripPhotos = {
   [original: string]: {
@@ -22,28 +22,27 @@ export function useTripPhotos(slug: string | undefined): {
   const [tripPhotos, setTripPhotos] = React.useState<TripPhotos | null>(null);
 
   const { tripId } = useTripId(slug);
+  const db = getFirestore();
 
   useEffect(() => {
     if (tripId) {
-      const unsubscribe = firebase
-        .firestore()
-        .doc(`tripPhotos/${tripId}`)
-        .onSnapshot(
-          (snapshot) => {
-            setLoading(false);
-            setError(false);
-            setTripPhotos(snapshot.data() ?? null);
-          },
-          (error) => {
-            console.log(error);
-            setError(true);
-          }
-        );
+      const unsubscribe = onSnapshot(
+        doc(db, `tripPhotos/${tripId}`),
+        (snapshot) => {
+          setLoading(false);
+          setError(false);
+          setTripPhotos(snapshot.data() ?? null);
+        },
+        (error) => {
+          console.log(error);
+          setError(true);
+        }
+      );
 
       return () => unsubscribe();
     }
     return;
-  }, [tripId]);
+  }, [db, tripId]);
 
   return {
     error,

@@ -9,8 +9,8 @@ export const initFirebase = async (): Promise<void> => {
   auth.useDeviceLanguage();
   const firestore = getFirestore();
   if (location.hostname === 'localhost') {
-    connectAuthEmulator(auth, 'http://localhost:9099');
-    connectFirestoreEmulator(firestore, 'localhost', 8080);
+    connectAuthEmulator(auth, 'http://127.0.0.1:9099');
+    connectFirestoreEmulator(firestore, '127.0.0.1', 8080);
   }
   await enableIndexedDbPersistence(firestore).catch(function (err) {
     if (err.code === 'failed-precondition') {

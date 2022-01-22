@@ -1,13 +1,12 @@
 import * as React from 'react';
-import { Route, Switch } from 'react-router';
-import { ADMIN, LANDING, TRIP } from '../constants/routes';
+import { Route, Routes } from 'react-router';
 import { AdminPage } from './AdminPage';
 import { ResponsiveDrawer } from './ResponsiveDrawer';
 
-export const Routes: React.FunctionComponent = () => (
-  <Switch>
-    <Route path={LANDING} exact component={ResponsiveDrawer} />
-    <Route path={TRIP} component={ResponsiveDrawer} />
-    <Route path={ADMIN} component={AdminPage} />
-  </Switch>
+export const AppRoutes: React.FunctionComponent = () => (
+  <Routes>
+    <Route path="/*" element={<ResponsiveDrawer />} />
+    <Route path="trip/*" element={<ResponsiveDrawer />} />
+    <Route path="admin/*" element={<AdminPage />} />
+  </Routes>
 );

@@ -1,10 +1,9 @@
 import { AppBar, Button, Grid, makeStyles, Theme, Toolbar, Typography } from '@material-ui/core';
 import React from 'react';
-import { Route, Switch, useRouteMatch } from 'react-router-dom';
+import { Link as RouterLink, Route, Routes } from 'react-router-dom';
 import * as ROUTES from '../constants/routes';
 import { AdminTripsList } from './AdminTripsList';
 import { EditTripPage } from './EditTripPage';
-import { ReactRouterLink } from './router_links';
 
 const useStyles = makeStyles(({ spacing, mixins }: Theme) => ({
   content: {
@@ -19,7 +18,6 @@ const useStyles = makeStyles(({ spacing, mixins }: Theme) => ({
 
 export const AdminPage: React.FunctionComponent = () => {
   const classes = useStyles();
-  const { path, url } = useRouteMatch();
 
   return (
     <div>
@@ -29,7 +27,7 @@ export const AdminPage: React.FunctionComponent = () => {
             Admin
           </Typography>
 
-          <Button component={ReactRouterLink} color="inherit" to={ROUTES.LANDING}>
+          <Button component={RouterLink} color="inherit" to={ROUTES.LANDING}>
             Til forsiden
           </Button>
         </Toolbar>
@@ -38,12 +36,12 @@ export const AdminPage: React.FunctionComponent = () => {
       <main>
         <div className={classes.toolbar} />
 
-        <Grid container justify="center" className={classes.content}>
-          <Switch>
-            <Route exact path={`${path}/new-trip`} component={EditTripPage} />
-            <Route path={`${path}/:slug`} component={EditTripPage} />
-            <Route path={`${url}/`} exact component={AdminTripsList} />
-          </Switch>
+        <Grid container justifyContent="center" className={classes.content}>
+          <Routes>
+            <Route path="new-trip" element={<EditTripPage />} />
+            <Route path=":slug" element={<EditTripPage />} />
+            <Route path="/" element={<AdminTripsList />} />
+          </Routes>
         </Grid>
       </main>
     </div>

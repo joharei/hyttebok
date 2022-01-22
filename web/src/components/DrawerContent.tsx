@@ -5,8 +5,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import * as React from 'react';
 import { useCallback, useState } from 'react';
 import { TRIP } from '../constants/routes';
-import { ReactRouterLink } from './router_links';
-import { useLocation } from 'react-router-dom';
+import { Link as RouterLink, useLocation } from 'react-router-dom';
 import { useTrips } from '../firebase/useTrips';
 import { formatDateForDisplay } from '../utils/date';
 import { Skeleton } from '@material-ui/lab';
@@ -57,7 +56,7 @@ export const DrawerContent: React.FunctionComponent<Props> = ({ setTitle }: Prop
       <List>
         {trips.map((trip) => (
           <ListItem
-            component={ReactRouterLink}
+            component={RouterLink}
             button
             key={trip.slug}
             to={`${TRIP}/${trip.slug}`}

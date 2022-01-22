@@ -6,7 +6,7 @@ module.exports = function(app) {
   app.use(
     '/__',
     createProxyMiddleware({
-      target: 'http://localhost:4000',
+      target: 'http://127.0.0.1:5000',
     })
   );
 };

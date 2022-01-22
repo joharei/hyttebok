@@ -17,7 +17,7 @@ import { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import ReactMde, { getDefaultToolbarCommands, TextApi } from 'react-mde';
 import 'react-mde/lib/styles/css/react-mde-all.css';
-import { useHistory, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { TripDetails } from '../../models/Trip';
 import { useTripDetails } from '../../firebase/useTripDetails';
 import { formatDateForInput } from '../../utils/date';
@@ -55,7 +55,7 @@ const useStyles = makeStyles(({ spacing }: Theme) => ({
 
 const EditTripPageUI = (props: Props) => {
   const classes = useStyles();
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const [trip, setTrip] = useState<Partial<TripDetails>>(props.trip ?? {});
   const [selectedTab, setSelectedTab] = useState<'write' | 'preview'>('write');
@@ -67,7 +67,7 @@ const EditTripPageUI = (props: Props) => {
   const { title, startDate, endDate, text, slug }: Partial<TripDetails> = trip;
   const { loading, error, saveTrip } = useEditTrip((slug: string) => {
     if (!props.trip) {
-      history.push(`/admin/${slug}`);
+      navigate(`/admin/${slug}`);
     }
     setSavedSuccessfully(true);
   });
@@ -98,7 +98,7 @@ const EditTripPageUI = (props: Props) => {
                 </Grid>
 
                 <Grid item xs={12} sm={4}>
-                  <TextField label="Tittel" value={title} onChange={handleChange('title')} fullWidth />
+                  <TextField label="Tittel" value={title ?? ''} onChange={handleChange('title')} fullWidth />
                 </Grid>
 
                 <Grid item xs={12} sm={4}>
@@ -108,7 +108,7 @@ const EditTripPageUI = (props: Props) => {
                     InputLabelProps={{
                       shrink: true,
                     }}
-                    value={formatDateForInput(startDate)}
+                    value={formatDateForInput(startDate) ?? ''}
                     onChange={handleChange('startDate')}
                     fullWidth
                   />
@@ -121,7 +121,7 @@ const EditTripPageUI = (props: Props) => {
                     InputLabelProps={{
                       shrink: true,
                     }}
-                    value={formatDateForInput(endDate)}
+                    value={formatDateForInput(endDate) ?? ''}
                     onChange={handleChange('endDate')}
                     fullWidth
                   />

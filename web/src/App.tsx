@@ -2,7 +2,7 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import * as React from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import './App.css';
-import { Routes } from './components/Routes';
+import { AppRoutes } from './components/Routes';
 import { useAuth } from './components/Auth/useAuth';
 import { Loading } from './components/Loading';
 
@@ -21,7 +21,7 @@ export const App: React.FunctionComponent = () => {
     <>
       <CssBaseline />
       <Router>
-        <Routes />
+        <AppRoutes />
       </Router>
     </>
   );

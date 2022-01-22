@@ -9,14 +9,12 @@ import LockIcon from '@material-ui/icons/Lock';
 import IconButton from '@material-ui/core/IconButton';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
-import * as React from 'react';
 import { useState } from 'react';
-import { Route, RouteComponentProps } from 'react-router';
 import * as ROUTES from '../constants/routes';
 import { DrawerContent } from './DrawerContent';
-import { ReactRouterLink } from './router_links';
 import { TripPage } from './TripPage';
 import { useAuth } from './Auth/useAuth';
+import { Link as RouterLink, Route, Routes } from 'react-router-dom';
 
 const drawerWidth = 300;
 
@@ -54,9 +52,7 @@ const useStyles = makeStyles(({ breakpoints, spacing, mixins }: Theme) => ({
   },
 }));
 
-export const ResponsiveDrawer: React.FunctionComponent<RouteComponentProps> = ({
-  match: { path, url },
-}: RouteComponentProps) => {
+export const ResponsiveDrawer = () => {
   const classes = useStyles();
 
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -100,7 +96,7 @@ export const ResponsiveDrawer: React.FunctionComponent<RouteComponentProps> = ({
           <div style={{ display: 'flex' }}>
             <Hidden mdUp>
               <Tooltip title="Til adminsiden">
-                <IconButton component={ReactRouterLink} color="inherit" to={ROUTES.ADMIN}>
+                <IconButton component={RouterLink} color="inherit" to={ROUTES.ADMIN}>
                   <EditIcon />
                 </IconButton>
               </Tooltip>
@@ -111,7 +107,7 @@ export const ResponsiveDrawer: React.FunctionComponent<RouteComponentProps> = ({
               </Tooltip>
             </Hidden>
             <Hidden smDown>
-              <Button component={ReactRouterLink} color="inherit" to={ROUTES.ADMIN}>
+              <Button component={RouterLink} color="inherit" to={ROUTES.ADMIN}>
                 Til adminsiden
               </Button>
               <Button color="inherit" onClick={signOut}>
@@ -153,8 +149,10 @@ export const ResponsiveDrawer: React.FunctionComponent<RouteComponentProps> = ({
       </nav>
       <Container component="main" maxWidth="lg">
         <div className={classes.toolbar} />
-        <Route path={`${path}/:slug`} component={TripPage} />
-        <Route path={`${url}/`} exact render={renderRootPage} />
+        <Routes>
+          <Route path=":slug" element={<TripPage />} />
+          <Route path="/" element={renderRootPage()} />
+        </Routes>
       </Container>
     </div>
   );

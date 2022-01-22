@@ -14,7 +14,7 @@ import {
 import AddIcon from '@material-ui/icons/Add';
 import React from 'react';
 import { ADMIN } from '../constants/routes';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useTrips } from '../firebase/useTrips';
 import { formatDateForDisplay } from '../utils/date';
 
@@ -34,7 +34,7 @@ const useStyles = makeStyles(({ spacing }: Theme) => ({
 
 export const AdminTripsList: React.FunctionComponent = () => {
   const classes = useStyles();
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const { trips, loading, error } = useTrips();
 
@@ -63,7 +63,7 @@ export const AdminTripsList: React.FunctionComponent = () => {
                   key={trip.slug}
                   hover
                   classes={{ hover: classes.tableRowHover }}
-                  onClick={() => history.push(`${ADMIN}/${trip.slug}`)}
+                  onClick={() => navigate(`${ADMIN}/${trip.slug}`)}
                 >
                   <TableCell component="th" scope="row">
                     {trip.title}
@@ -82,7 +82,7 @@ export const AdminTripsList: React.FunctionComponent = () => {
         color="primary"
         variant="extended"
         aria-label="Add"
-        onClick={() => history.push(`${ADMIN}/new-trip`)}
+        onClick={() => navigate(`${ADMIN}/new-trip`)}
       >
         <AddIcon className={classes.fabIcon} />
         Ny tur

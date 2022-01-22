@@ -1,39 +1,21 @@
-import {
-  CircularProgress,
-  Fab,
-  Grid,
-  makeStyles,
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
-  Theme,
-} from '@material-ui/core';
-import AddIcon from '@material-ui/icons/Add';
+import { CircularProgress, Fab, Grid, Paper, Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
+import { styled } from '@mui/material/styles';
+import AddIcon from '@mui/icons-material/Add';
 import React from 'react';
 import { ADMIN } from '../constants/routes';
 import { useNavigate } from 'react-router-dom';
 import { useTrips } from '../firebase/useTrips';
 import { formatDateForDisplay } from '../utils/date';
 
-const useStyles = makeStyles(({ spacing }: Theme) => ({
-  fab: {
-    position: 'fixed',
-    bottom: spacing(2),
-    right: spacing(2),
-  },
-  fabIcon: {
-    marginRight: spacing(1),
-  },
-  tableRowHover: {
-    cursor: 'pointer',
-  },
-}));
+const PREFIX = 'AdminTripsList';
 
-export const AdminTripsList: React.FunctionComponent = () => {
-  const classes = useStyles();
+const classes = {
+  fab: `${PREFIX}-fab`,
+  fabIcon: `${PREFIX}-fabIcon`,
+  tableRowHover: `${PREFIX}-tableRowHover`,
+};
+
+const AdminTripsListUI: React.FunctionComponent = () => {
   const navigate = useNavigate();
 
   const { trips, loading, error } = useTrips();
@@ -76,7 +58,6 @@ export const AdminTripsList: React.FunctionComponent = () => {
           </Table>
         </Paper>
       </Grid>
-
       <Fab
         className={classes.fab}
         color="primary"
@@ -90,3 +71,19 @@ export const AdminTripsList: React.FunctionComponent = () => {
     </>
   );
 };
+
+export const AdminTripsList: React.FunctionComponent = styled(AdminTripsListUI)(({ theme: { spacing } }) => ({
+  [`& .${classes.fab}`]: {
+    position: 'fixed',
+    bottom: spacing(2),
+    right: spacing(2),
+  },
+
+  [`& .${classes.fabIcon}`]: {
+    marginRight: spacing(1),
+  },
+
+  [`& .${classes.tableRowHover}`]: {
+    cursor: 'pointer',
+  },
+}));

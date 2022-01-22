@@ -1,17 +1,19 @@
 import {
+  Alert,
   CircularProgress,
   Fab,
   Grid,
   Hidden,
-  makeStyles,
   Paper,
   Snackbar,
   Theme,
   Typography,
   useMediaQuery,
-} from '@material-ui/core';
-import TextField from '@material-ui/core/TextField';
-import SaveIcon from '@material-ui/icons/Save';
+  useTheme,
+} from '@mui/material';
+import { styled } from '@mui/material/styles';
+import TextField from '@mui/material/TextField';
+import SaveIcon from '@mui/icons-material/Save';
 import * as React from 'react';
 import { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
@@ -23,46 +25,36 @@ import { useTripDetails } from '../../firebase/useTripDetails';
 import { formatDateForInput } from '../../utils/date';
 import { useEditTrip } from '../../firebase/useEditTrip';
 import { OneDrivePhotoPicker } from './OneDrivePhotoPicker';
-import SettingsSystemDaydreamIcon from '@material-ui/icons/SettingsSystemDaydream';
-import { Alert } from '@material-ui/lab';
+import SettingsSystemDaydreamIcon from '@mui/icons-material/SettingsSystemDaydream';
 import { Markdown } from '../Markdown';
 import { useTripPhotos } from '../../firebase/useTripPhotos';
+
+const PREFIX = 'EditTripPage';
+
+const classes = {
+  root: `${PREFIX}-root`,
+};
+
+const RootForm = styled(`form`)(({ theme: { spacing } }) => ({
+  [`& .${classes.root}`]: {
+    paddingBottom: spacing(8),
+  },
+}));
 
 interface Props {
   trip: TripDetails | null;
 }
 
-const useStyles = makeStyles(({ spacing }: Theme) => ({
-  root: {
-    paddingBottom: spacing(8),
-  },
-  paper: {
-    padding: spacing(2),
-  },
-  scroll: {
-    height: 555,
-    overflowY: 'scroll',
-  },
-  fab: {
-    position: 'fixed',
-    bottom: spacing(2),
-    right: spacing(2),
-  },
-  fabIcon: {
-    marginRight: spacing(1),
-  },
-}));
-
 const EditTripPageUI = (props: Props) => {
-  const classes = useStyles();
   const navigate = useNavigate();
+  const theme = useTheme();
 
   const [trip, setTrip] = useState<Partial<TripDetails>>(props.trip ?? {});
   const [selectedTab, setSelectedTab] = useState<'write' | 'preview'>('write');
   const [oneDrivePhotoApi, setOneDrivePhotoApi] = useState<TextApi | null>(null);
   const [savedSuccessfully, setSavedSuccessfully] = useState(false);
 
-  const mobileView = useMediaQuery((theme: Theme) => theme.breakpoints.down('xs'));
+  const mobileView = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
 
   const { title, startDate, endDate, text, slug }: Partial<TripDetails> = trip;
   const { loading, error, saveTrip } = useEditTrip((slug: string) => {
@@ -88,10 +80,10 @@ const EditTripPageUI = (props: Props) => {
 
   return (
     <>
-      <form className={classes.root}>
+      <RootForm className={classes.root}>
         <Grid container spacing={2}>
           <Grid item xs={12}>
-            <Paper className={classes.paper}>
+            <Paper sx={{ p: 2 }}>
               <Grid container spacing={2}>
                 <Grid item xs={12}>
                   <Typography variant="h4">Endre tur</Typography>
@@ -158,19 +150,29 @@ const EditTripPageUI = (props: Props) => {
               </Paper>
             </Grid>
 
-            <Hidden xsDown>
+            <Hidden smDown>
               <Grid item xs={6}>
-                <Paper className={`${classes.paper} ${classes.scroll}`}>
+                <Paper
+                  sx={{
+                    p: 2,
+                    height: 555,
+                    overflowY: 'scroll',
+                  }}
+                >
                   <Markdown tripText={text} tripPhotos={tripPhotos ?? undefined} loading={!text || tripPhotosLoading} />
                 </Paper>
               </Grid>
             </Hidden>
           </Grid>
         </Grid>
-      </form>
+      </RootForm>
 
       <Fab
-        className={classes.fab}
+        sx={{
+          position: 'fixed',
+          bottom: theme.spacing(2),
+          right: theme.spacing(2),
+        }}
         color="primary"
         variant="extended"
         aria-label="Add"
@@ -189,11 +191,7 @@ const EditTripPageUI = (props: Props) => {
           });
         }}
       >
-        {loading ? (
-          <CircularProgress className={classes.fabIcon} color="inherit" size={24} />
-        ) : (
-          <SaveIcon className={classes.fabIcon} />
-        )}
+        {loading ? <CircularProgress sx={{ mr: 1 }} color="inherit" size={24} /> : <SaveIcon sx={{ mr: 1 }} />}
         Lagre
       </Fab>
 

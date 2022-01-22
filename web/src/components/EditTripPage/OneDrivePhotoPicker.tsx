@@ -1,7 +1,7 @@
 import { GraphFileBrowser } from '@microsoft/file-browser';
 import * as React from 'react';
 import { useState } from 'react';
-import { Dialog, DialogContent } from '@material-ui/core';
+import { Dialog, DialogContent } from '@mui/material';
 import { useAccessToken } from '../Auth/useAccessToken';
 import { getSharingUrls, Photo } from '../../msgraph/client';
 import { Loading } from '../Loading';

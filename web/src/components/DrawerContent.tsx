@@ -1,17 +1,23 @@
-import { ListItem, makeStyles, Theme } from '@material-ui/core';
-import Divider from '@material-ui/core/Divider';
-import List from '@material-ui/core/List';
-import ListItemText from '@material-ui/core/ListItemText';
+import { ListItem, Skeleton } from '@mui/material';
+import { styled } from '@mui/material/styles';
+import Divider from '@mui/material/Divider';
+import List from '@mui/material/List';
+import ListItemText from '@mui/material/ListItemText';
 import * as React from 'react';
 import { useCallback, useState } from 'react';
 import { TRIP } from '../constants/routes';
 import { Link as RouterLink, useLocation } from 'react-router-dom';
 import { useTrips } from '../firebase/useTrips';
 import { formatDateForDisplay } from '../utils/date';
-import { Skeleton } from '@material-ui/lab';
 
-const useStyles = makeStyles(({ mixins }: Theme) => ({
-  toolbar: mixins.toolbar,
+const PREFIX = 'DrawerContent';
+
+const classes = {
+  toolbar: `${PREFIX}-toolbar`,
+};
+
+const Root = styled('div')(({ theme: { mixins } }) => ({
+  [`& .${classes.toolbar}`]: mixins.toolbar,
 }));
 
 interface Props {
@@ -19,7 +25,6 @@ interface Props {
 }
 
 export const DrawerContent: React.FunctionComponent<Props> = ({ setTitle }: Props) => {
-  const classes = useStyles();
   const location = useLocation();
   const [scrolled, setScrolled] = useState(false);
   const selectedListItemRef = useCallback(
@@ -75,10 +80,10 @@ export const DrawerContent: React.FunctionComponent<Props> = ({ setTitle }: Prop
   };
 
   return (
-    <div>
+    <Root>
       <div className={classes.toolbar} />
       <Divider />
       {content()}
-    </div>
+    </Root>
   );
 };

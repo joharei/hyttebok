@@ -1,26 +1,22 @@
-import { CircularProgress, makeStyles } from '@material-ui/core';
+import { Box, CircularProgress } from '@mui/material';
 import React from 'react';
-
-const useStyles = makeStyles({
-  parent: ({ height }: Props) => ({
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: height ?? '100vh',
-    width: '100%',
-  }),
-});
 
 interface Props {
   height?: string | number;
 }
 
-export const Loading: React.FunctionComponent<Props> = (props: Props) => {
-  const { parent } = useStyles(props);
-
+export const Loading: React.FunctionComponent<Props> = ({ height }: Props) => {
   return (
-    <div className={parent}>
+    <Box
+      sx={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: height ?? '100vh',
+        width: '100%',
+      }}
+    >
       <CircularProgress />
-    </div>
+    </Box>
   );
 };

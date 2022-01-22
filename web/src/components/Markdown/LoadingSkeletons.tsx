@@ -1,5 +1,5 @@
-import { Grid, Typography } from '@material-ui/core';
-import { Skeleton } from '@material-ui/lab';
+import { Grid, Typography } from '@mui/material';
+import { Skeleton } from '@mui/material';
 import * as React from 'react';
 import { useRef } from 'react';
 
@@ -30,13 +30,13 @@ export const LoadingSkeletons: React.FunctionComponent = () => {
 
       <Grid item container spacing={2} style={{ marginBottom: 32 }}>
         <Grid item xs={4}>
-          <Skeleton variant="rect" height={300} />
+          <Skeleton variant="rectangular" height={300} />
         </Grid>
         <Grid item xs={4}>
-          <Skeleton variant="rect" height={300} />
+          <Skeleton variant="rectangular" height={300} />
         </Grid>
         <Grid item xs={4}>
-          <Skeleton variant="rect" height={300} />
+          <Skeleton variant="rectangular" height={300} />
         </Grid>
       </Grid>
 

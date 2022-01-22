@@ -1,65 +1,27 @@
 import { default as React, useRef, useState } from 'react';
-import { Skeleton } from '@material-ui/lab';
-import { Backdrop, Fab, Fade, makeStyles, Modal, Theme, Typography } from '@material-ui/core';
-import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
-import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import { Backdrop, Fab, Fade, keyframes, Modal, Skeleton, Typography, useTheme } from '@mui/material';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ProgressiveImage from 'react-progressive-graceful-image';
-import clsx from 'clsx';
 
 import { PhotosDetails } from '../../utils/photosDetails';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
 import { Carousel } from 'react-responsive-carousel';
 import useFullscreen from '../../utils/useFullscreen';
+import { styled } from '@mui/material/styles';
 
-const usePhotoStyles = makeStyles((theme: Theme) => ({
-  carousel: {
-    '& .slide': {
-      background: 'none',
-    },
-    '& .carousel-slider': {
-      height: '100vh',
-    },
-  },
-  arrowButton: {
-    position: 'absolute',
-    zIndex: 2,
-    top: 'calc(50% - 24px)',
-  },
-  leftArrowButton: {
-    left: theme.spacing(2),
-  },
-  rightArrowButton: {
-    right: theme.spacing(2),
-  },
+const StyledCarousel = styled(Carousel)``;
 
-  fullscreenImage: {
-    width: '100%',
-    height: '100%',
-    maxHeight: '100vh',
-    objectFit: 'contain',
-    userSelect: 'none',
-    '-moz-user-select': 'none',
-    '-webkit-user-drag': 'none',
-    '-webkit-user-select': 'none',
-    '-ms-user-select': 'none',
-  },
+const Img = styled('img')``;
 
-  animated: {
-    'animation-duration': '0.4s',
-    'animation-fill-mode': 'both',
-  },
-  '@keyframes fadeIn': {
-    from: {
-      opacity: 0,
-    },
-    to: {
-      opacity: 1,
-    },
-  },
-  fadeIn: {
-    'animation-name': '$fadeIn',
-  },
-}));
+const fadeIn = keyframes`
+  from: {
+    opacity: 0,
+  }
+  to: {
+    opacity: 1,
+  }
+`;
 
 export interface PhotoDetails {
   src: string;
@@ -80,7 +42,6 @@ interface PhotoProps {
 }
 
 const View = (props: { photo: PhotoDetails; photoDimensions: PhotosDetails }) => {
-  const classes = usePhotoStyles();
   const { photo, photoDimensions } = props;
 
   return (
@@ -88,8 +49,18 @@ const View = (props: { photo: PhotoDetails; photoDimensions: PhotosDetails }) =>
       <ProgressiveImage src={photo.src} placeholder={photo.placeholder}>
         {(src: string) => {
           return (
-            <img
-              className={classes.fullscreenImage}
+            <Img
+              sx={{
+                width: '100%',
+                height: '100%',
+                maxHeight: '100vh',
+                objectFit: 'contain',
+                userSelect: 'none',
+                '-moz-user-select': 'none',
+                '-webkit-user-drag': 'none',
+                '-webkit-user-select': 'none',
+                '-ms-user-select': 'none',
+              }}
               alt={photo.alt}
               src={src}
               width={photoDimensions[photo.src]?.width ?? 400}
@@ -113,7 +84,7 @@ export const Photo: React.FunctionComponent<PhotoProps> = ({
   images,
   photoDimensions,
 }: PhotoProps) => {
-  const classes = usePhotoStyles();
+  const theme = useTheme();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement | null>(null);
   const [, setFullscreen] = useFullscreen(ref);
@@ -136,12 +107,14 @@ export const Photo: React.FunctionComponent<PhotoProps> = ({
           <ProgressiveImage src={src} placeholder="">
             {(src: string, loading: boolean) => {
               return loading ? (
-                <Skeleton variant="rect" height={height} width={width} />
+                <Skeleton variant="rectangular" height={height} width={width} />
               ) : (
-                <img
+                <Img
+                  sx={{
+                    animation: `${fadeIn} 0.4s both`,
+                  }}
                   src={src}
                   alt={alt}
-                  className={clsx(classes.animated, classes.fadeIn)}
                   height={height}
                   width={width}
                 />
@@ -161,15 +134,27 @@ export const Photo: React.FunctionComponent<PhotoProps> = ({
         >
           <Fade in={open}>
             <div ref={ref} onDoubleClick={() => setFullscreen()}>
-              <Carousel
-                className={classes.carousel}
+              <StyledCarousel
+                sx={{
+                  '& .slide': {
+                    background: 'none',
+                  },
+                  '& .carousel-slider': {
+                    height: '100vh',
+                  },
+                }}
                 useKeyboardArrows
                 dynamicHeight
                 showThumbs={false}
                 selectedItem={images.findIndex((value) => value.src === href)}
                 renderArrowNext={(clickHandler, hasNext, label) => (
                   <Fab
-                    className={clsx(classes.arrowButton, classes.rightArrowButton)}
+                    sx={{
+                      position: 'absolute',
+                      zIndex: 2,
+                      top: 'calc(50% - 24px)',
+                      right: theme.spacing(2),
+                    }}
                     onClick={clickHandler}
                     disabled={!hasNext}
                     aria-label={label}
@@ -179,7 +164,12 @@ export const Photo: React.FunctionComponent<PhotoProps> = ({
                 )}
                 renderArrowPrev={(clickHandler, hasPrev, label) => (
                   <Fab
-                    className={clsx(classes.arrowButton, classes.leftArrowButton)}
+                    sx={{
+                      position: 'absolute',
+                      zIndex: 2,
+                      top: 'calc(50% - 24px)',
+                      left: theme.spacing(2),
+                    }}
                     onClick={clickHandler}
                     disabled={!hasPrev}
                     aria-label={label}
@@ -191,7 +181,7 @@ export const Photo: React.FunctionComponent<PhotoProps> = ({
                 {images.map((image) => (
                   <View key={image.src} photo={image} photoDimensions={photoDimensions} />
                 ))}
-              </Carousel>
+              </StyledCarousel>
             </div>
           </Fade>
         </Modal>

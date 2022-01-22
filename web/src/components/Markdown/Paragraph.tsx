@@ -1,11 +1,16 @@
 import { default as React, ReactNode } from 'react';
+import { styled } from '@mui/material/styles';
 import Gallery, { PhotoProps } from 'react-photo-gallery';
 import { PhotosDetails } from '../../utils/photosDetails';
 import { Photo, PhotoDetails } from './Photo';
-import { makeStyles } from '@material-ui/core/styles';
+const PREFIX = 'Paragraph';
 
-const useStyles = makeStyles({
-  singlePhotoContainer: {
+const classes = {
+  singlePhotoContainer: `${PREFIX}-singlePhotoContainer`,
+};
+
+const Root = styled('p')({
+  [`& .${classes.singlePhotoContainer}`]: {
     display: 'flex',
     justifyContent: 'center',
     '& img': {
@@ -26,8 +31,6 @@ export const Paragraph: React.FunctionComponent<ParagraphProps> = ({
   slideShowImages,
   photoDimensions,
 }: ParagraphProps) => {
-  const classes = useStyles();
-
   const childrenArray = React.Children.toArray(children);
   const firstChild = childrenArray[0];
 
@@ -81,5 +84,5 @@ export const Paragraph: React.FunctionComponent<ParagraphProps> = ({
       );
     }
   }
-  return <p>{children}</p>;
+  return <Root>{children}</Root>;
 };

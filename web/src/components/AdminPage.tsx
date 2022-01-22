@@ -1,26 +1,35 @@
-import { AppBar, Button, Grid, makeStyles, Theme, Toolbar, Typography } from '@material-ui/core';
+import { AppBar, Button, Grid, Toolbar, Typography } from '@mui/material';
+import { styled } from '@mui/material/styles';
 import React from 'react';
 import { Link as RouterLink, Route, Routes } from 'react-router-dom';
 import * as ROUTES from '../constants/routes';
 import { AdminTripsList } from './AdminTripsList';
 import { EditTripPage } from './EditTripPage';
 
-const useStyles = makeStyles(({ spacing, mixins }: Theme) => ({
-  content: {
+const PREFIX = 'AdminPage';
+
+const classes = {
+  content: `${PREFIX}-content`,
+  toolbar: `${PREFIX}-toolbar`,
+  grow: `${PREFIX}-grow`,
+};
+
+const Root = styled('div')(({ theme: { spacing, mixins } }) => ({
+  [`& .${classes.content}`]: {
     flexGrow: 1,
     padding: spacing(3),
   },
-  toolbar: mixins.toolbar,
-  grow: {
+
+  [`& .${classes.toolbar}`]: mixins.toolbar,
+
+  [`& .${classes.grow}`]: {
     flexGrow: 1,
   },
 }));
 
 export const AdminPage: React.FunctionComponent = () => {
-  const classes = useStyles();
-
   return (
-    <div>
+    <Root>
       <AppBar position="fixed">
         <Toolbar>
           <Typography variant="h6" color="inherit" noWrap className={classes.grow}>
@@ -44,6 +53,6 @@ export const AdminPage: React.FunctionComponent = () => {
           </Routes>
         </Grid>
       </main>
-    </div>
+    </Root>
   );
 };

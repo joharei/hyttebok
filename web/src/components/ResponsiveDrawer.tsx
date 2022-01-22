@@ -1,14 +1,15 @@
-import { Container, makeStyles, Theme, Tooltip } from '@material-ui/core';
-import AppBar from '@material-ui/core/AppBar';
-import Button from '@material-ui/core/Button';
-import Drawer from '@material-ui/core/Drawer';
-import Hidden from '@material-ui/core/Hidden';
-import MenuIcon from '@material-ui/icons/Menu';
-import EditIcon from '@material-ui/icons/Edit';
-import LockIcon from '@material-ui/icons/Lock';
-import IconButton from '@material-ui/core/IconButton';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
+import { Container, Tooltip } from '@mui/material';
+import { styled } from '@mui/material/styles';
+import AppBar from '@mui/material/AppBar';
+import Button from '@mui/material/Button';
+import Drawer from '@mui/material/Drawer';
+import Hidden from '@mui/material/Hidden';
+import MenuIcon from '@mui/icons-material/Menu';
+import EditIcon from '@mui/icons-material/Edit';
+import LockIcon from '@mui/icons-material/Lock';
+import IconButton from '@mui/material/IconButton';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
 import { useState } from 'react';
 import * as ROUTES from '../constants/routes';
 import { DrawerContent } from './DrawerContent';
@@ -16,45 +17,63 @@ import { TripPage } from './TripPage';
 import { useAuth } from './Auth/useAuth';
 import { Link as RouterLink, Route, Routes } from 'react-router-dom';
 
-const drawerWidth = 300;
+const PREFIX = 'ResponsiveDrawer';
 
-const useStyles = makeStyles(({ breakpoints, spacing, mixins }: Theme) => ({
-  appBar: {
+const classes = {
+  appBar: `${PREFIX}-appBar`,
+  firstParagraph: `${PREFIX}-firstParagraph`,
+  drawer: `${PREFIX}-drawer`,
+  drawerPaper: `${PREFIX}-drawerPaper`,
+  menuButton: `${PREFIX}-menuButton`,
+  root: `${PREFIX}-root`,
+  toolbar: `${PREFIX}-toolbar`,
+  grow: `${PREFIX}-grow`,
+};
+
+const Root = styled('div')(({ theme: { breakpoints, spacing, mixins } }) => ({
+  [`& .${classes.appBar}`]: {
     marginLeft: drawerWidth,
     [breakpoints.up('md')]: {
       width: `calc(100% - ${drawerWidth}px)`,
     },
   },
-  firstParagraph: {
+
+  [`& .${classes.firstParagraph}`]: {
     marginTop: spacing(3),
   },
-  drawer: {
+
+  [`& .${classes.drawer}`]: {
     [breakpoints.up('md')]: {
       flexShrink: 0,
       width: drawerWidth,
     },
   },
-  drawerPaper: {
+
+  [`& .${classes.drawerPaper}`]: {
     width: drawerWidth,
   },
-  menuButton: {
+
+  [`& .${classes.menuButton}`]: {
     marginRight: 20,
     [breakpoints.up('md')]: {
       display: 'none',
     },
   },
-  root: {
+
+  [`&.${classes.root}`]: {
     display: 'flex',
   },
-  toolbar: mixins.toolbar,
-  grow: {
+
+  [`& .${classes.toolbar}`]: mixins.toolbar,
+
+  [`& .${classes.grow}`]: {
     flexGrow: 1,
   },
 }));
 
-export const ResponsiveDrawer = () => {
-  const classes = useStyles();
+const drawerWidth = 300;
 
+export const ResponsiveDrawer = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const toggleDrawer = () => setMobileOpen(!mobileOpen);
 
@@ -84,10 +103,16 @@ export const ResponsiveDrawer = () => {
   }
 
   return (
-    <div className={classes.root}>
+    <Root className={classes.root}>
       <AppBar position="fixed" className={classes.appBar}>
         <Toolbar>
-          <IconButton color="inherit" aria-label="Open drawer" onClick={toggleDrawer} className={classes.menuButton}>
+          <IconButton
+            color="inherit"
+            aria-label="Open drawer"
+            onClick={toggleDrawer}
+            className={classes.menuButton}
+            size="large"
+          >
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" color="inherit" noWrap className={classes.grow}>
@@ -96,17 +121,17 @@ export const ResponsiveDrawer = () => {
           <div style={{ display: 'flex' }}>
             <Hidden mdUp>
               <Tooltip title="Til adminsiden">
-                <IconButton component={RouterLink} color="inherit" to={ROUTES.ADMIN}>
+                <IconButton component={RouterLink} color="inherit" to={ROUTES.ADMIN} size="large">
                   <EditIcon />
                 </IconButton>
               </Tooltip>
               <Tooltip title="Logg ut">
-                <IconButton color="inherit" onClick={signOut}>
+                <IconButton color="inherit" onClick={signOut} size="large">
                   <LockIcon />
                 </IconButton>
               </Tooltip>
             </Hidden>
-            <Hidden smDown>
+            <Hidden mdDown>
               <Button component={RouterLink} color="inherit" to={ROUTES.ADMIN}>
                 Til adminsiden
               </Button>
@@ -135,7 +160,7 @@ export const ResponsiveDrawer = () => {
             />
           </Drawer>
         </Hidden>
-        <Hidden smDown>
+        <Hidden mdDown>
           <Drawer
             classes={{
               paper: classes.drawerPaper,
@@ -154,6 +179,6 @@ export const ResponsiveDrawer = () => {
           <Route path="/" element={renderRootPage()} />
         </Routes>
       </Container>
-    </div>
+    </Root>
   );
 };

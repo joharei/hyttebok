@@ -25,7 +25,7 @@
   },
   "scripts": {
     "start": "run-p --race dev:firebase dev:react",
-    "dev:firebase": "firebase emulators:start",
+    "dev:firebase": "firebase emulators:start --import=../firebase_export",
     "dev:react": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",

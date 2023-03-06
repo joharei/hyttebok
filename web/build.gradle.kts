@@ -11,7 +11,11 @@ repositories {
 
 kotlin {
     js(IR) {
-        browser()
+        browser {
+            commonWebpackConfig {
+                devServer?.proxy = mutableMapOf("/__" to "http://127.0.0.1:5000")
+            }
+        }
         binaries.executable()
     }
     sourceSets {
@@ -22,6 +26,8 @@ kotlin {
             dependencies {
                 implementation(compose.web.core)
                 implementation(compose.runtime)
+
+                implementation(npm("firebase", "9.17.2"))
             }
         }
     }

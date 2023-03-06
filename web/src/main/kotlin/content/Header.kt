@@ -1,6 +1,9 @@
 package content
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
 import style.AppCSSVariables
@@ -39,6 +42,8 @@ private object HeaderStylesheet : StyleSheet(AppStylesheet) {
 
 @Composable
 fun Header() {
+    val viewModel = remember { AuthViewModel() }
+    val loggedIn by viewModel.loginState.collectAsState(false)
     DomHeader({
         style {
             property("padding-top", AppCSSVariables.gapHorizontal.value())
@@ -66,7 +71,17 @@ fun Header() {
                     classes(HeaderStylesheet.nav, Row.row)
                 }) {
                     Li { A { Text("Til adminsiden") } }
-                    Li { A { Text("Logg ut") } }
+                    Li {
+                        A(attrs = {
+                            onClick {
+                                if (loggedIn) {
+                                    viewModel.signOut()
+                                } else {
+                                    viewModel.signIn()
+                                }
+                            }
+                        }) { Text(if (loggedIn) "Logg ut" else "Logg inn") }
+                    }
                 }
             }
         }

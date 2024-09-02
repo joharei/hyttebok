@@ -1,6 +1,14 @@
 import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { useLocalStorage } from '../../utils/useLocalStorage';
-import { User, getAuth, getRedirectResult, OAuthProvider, onAuthStateChanged, signInWithRedirect } from 'firebase/auth';
+import {
+  User,
+  getAuth,
+  getRedirectResult,
+  OAuthProvider,
+  onAuthStateChanged,
+  signInWithRedirect,
+  signInWithPopup,
+} from 'firebase/auth';
 import { doc, getFirestore, onSnapshot } from 'firebase/firestore';
 
 interface Auth {
@@ -31,7 +39,11 @@ function useProvideAuth(): Auth {
   const [, setAdAccessToken] = useLocalStorage<string | null>('adAccessToken', null);
 
   const signIn = () => {
-    signInWithRedirect(getAuth(), new OAuthProvider('microsoft.com')).then();
+    if (location.hostname === 'localhost') {
+      signInWithPopup(getAuth(), new OAuthProvider('microsoft.com')).then();
+    } else {
+      signInWithRedirect(getAuth(), new OAuthProvider('microsoft.com')).then();
+    }
   };
 
   const signOut = () => {

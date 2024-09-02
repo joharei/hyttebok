@@ -4,6 +4,7 @@ import { getFirestore, connectFirestoreEmulator, enableIndexedDbPersistence } fr
 
 export const initFirebase = async (): Promise<void> => {
   const config = await fetch('/__/firebase/init.json');
+  config['authDomain'] = 'hyttebok.reitan.app';
   initializeApp(await config.json());
   const auth = getAuth();
   auth.useDeviceLanguage();

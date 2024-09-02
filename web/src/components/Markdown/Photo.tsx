@@ -105,7 +105,7 @@ export const Photo: React.FunctionComponent<PhotoProps> = ({
           }}
         >
           <ProgressiveImage src={src} placeholder="">
-            {(src: string, loading: boolean) => {
+            {(src: string, loading?: boolean) => {
               return loading ? (
                 <Skeleton variant="rectangular" height={height} width={width} />
               ) : (

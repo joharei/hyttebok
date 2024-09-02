@@ -8,13 +8,13 @@
     ],
     "rewrites": [
       {
-        "source": "**",
+        "source": "/**",
         "destination": "/index.html"
       }
     ],
     "headers": [
       {
-        "source": "static/**",
+        "source": "/static/**",
         "headers": [
           {
             "key": "Cache-Control",
